@@ -1,9 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { 
-  UserIcon, 
-  UserGroupIcon, 
-  CheckCircleIcon, 
   XCircleIcon,
   PlusIcon,
   MagnifyingGlassIcon
@@ -74,19 +71,7 @@ const Users: React.FC = () => {
     return filtered
   }, [users, searchTerm, selectedRole])
 
-  // Calculate statistics
-  const stats = useMemo(() => {
-    const totalUsers = pagination?.total || users.length
-    const activeUsers = users.filter(u => u.is_active).length
-    const inactiveUsers = users.filter(u => !u.is_active).length
-    const newThisMonth = users.filter(u => {
-      const created = new Date(u.created_at)
-      const now = new Date()
-      return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear()
-    }).length
 
-    return { totalUsers, activeUsers, inactiveUsers, newThisMonth }
-  }, [users, pagination])
 
   // Create user mutation
   const createUserMutation = useMutation(
@@ -206,56 +191,7 @@ const Users: React.FC = () => {
     <div className="min-h-screen bg-slate-50 p-4">
       <div className="max-w-7xl mx-auto space-y-6">
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
-              <div className="flex items-center">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <UserGroupIcon className="text-blue-600 w-5 h-5" />
-                </div>
-                <div className="ml-3">
-                  <p className="text-xs font-medium text-slate-500">Total Users</p>
-                  <p className="text-xl font-bold text-slate-800">{stats.totalUsers}</p>
-                </div>
-              </div>
-            </div>
 
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
-              <div className="flex items-center">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <CheckCircleIcon className="text-green-600 w-5 h-5" />
-                </div>
-                <div className="ml-3">
-                  <p className="text-xs font-medium text-slate-500">Active Users</p>
-                  <p className="text-xl font-bold text-slate-800">{stats.activeUsers}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
-              <div className="flex items-center">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <XCircleIcon className="text-orange-600 w-5 h-5" />
-                </div>
-                <div className="ml-3">
-                  <p className="text-xs font-medium text-slate-500">Inactive Users</p>
-                  <p className="text-xl font-bold text-slate-800">{stats.inactiveUsers}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
-              <div className="flex items-center">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <UserIcon className="text-purple-600 w-5 h-5" />
-                </div>
-                <div className="ml-3">
-                  <p className="text-xs font-medium text-slate-500">New This Month</p>
-                  <p className="text-xl font-bold text-slate-800">{stats.newThisMonth}</p>
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* Users Table */}
           <div className="bg-white rounded-lg border border-slate-200 shadow-sm">

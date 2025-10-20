@@ -68,7 +68,14 @@ const Brokers: React.FC = () => {
         toast.success('Broker created successfully!')
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.message || 'Failed to create broker')
+        console.error('Create broker error:', error)
+        if (error.response?.status === 403) {
+          toast.error('Access denied: You do not have permission to create brokers. Please contact your administrator.')
+        } else if (error.response?.status === 401) {
+          toast.error('Authentication required: Please log in again.')
+        } else {
+          toast.error(error.response?.data?.message || 'Failed to create broker')
+        }
       }
     }
   )
@@ -85,7 +92,14 @@ const Brokers: React.FC = () => {
         toast.success('Broker updated successfully!')
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.message || 'Failed to update broker')
+        console.error('Update broker error:', error)
+        if (error.response?.status === 403) {
+          toast.error('Access denied: You do not have permission to update brokers. Please contact your administrator.')
+        } else if (error.response?.status === 401) {
+          toast.error('Authentication required: Please log in again.')
+        } else {
+          toast.error(error.response?.data?.message || 'Failed to update broker')
+        }
       }
     }
   )
@@ -129,7 +143,7 @@ const Brokers: React.FC = () => {
   }
 
   const handleDeleteBroker = (id: number) => {
-    const broker = brokersData?.data?.find((b: Broker) => b.id === id)
+    const broker = brokersData?.brokers?.find((b: Broker) => b.id === id)
     setDeleteConfirmation({
       isOpen: true,
       brokerId: id,
@@ -152,11 +166,11 @@ const Brokers: React.FC = () => {
     toggleStatusMutation.mutate(id)
   }
 
-  const handleSubmit = (data: CreateBrokerData | UpdateBrokerData) => {
+  const handleSubmit = async (data: CreateBrokerData | UpdateBrokerData) => {
     if (editingBroker) {
-      updateBrokerMutation.mutate({ id: editingBroker.id, brokerData: data as UpdateBrokerData })
+      return await updateBrokerMutation.mutateAsync({ id: editingBroker.id, brokerData: data as UpdateBrokerData })
     } else {
-      createBrokerMutation.mutate(data as CreateBrokerData)
+      return await createBrokerMutation.mutateAsync(data as CreateBrokerData)
     }
   }
 

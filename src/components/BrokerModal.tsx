@@ -12,7 +12,7 @@ interface BrokerModalProps {
   broker: Broker | null
   isOpen: boolean
   onClose: () => void
-  onSubmit: (data: CreateBrokerData | UpdateBrokerData) => void
+  onSubmit: (data: CreateBrokerData | UpdateBrokerData) => Promise<Broker | void>
   isLoading: boolean
 }
 
@@ -51,16 +51,15 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   const [accountMappings, setAccountMappings] = useState<AccountMapping[]>([])
   const [pendingMappings, setPendingMappings] = useState<Array<{
     id: string
-    account_type: string
-    account_number: string
     field_name: string
     field_value: string
+    operator_type: string
   }>>([])
   const [accountMappingErrors, setAccountMappingErrors] = useState<Record<string, string>>({})
   const queryClient = useQueryClient()
 
   // Fetch existing account mappings when editing a broker
-  const { data: existingAccountMappings, isLoading: accountMappingsLoading } = useQuery(
+  const { isLoading: accountMappingsLoading } = useQuery(
     ['account-mappings', broker?.id],
     () => accountMappingService.getBrokerAccountMappings(broker!.id),
     {
@@ -315,12 +314,10 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
       if (!broker && pendingMappings.length > 0 && result?.id) {
         try {
           for (const mapping of pendingMappings) {
-            await accountMappingService.createAccountMapping({
-              broker_id: result.id,
-              account_type: mapping.account_type,
-              account_number: mapping.account_number,
+            await accountMappingService.createAccountMapping(result.id, {
               field_name: mapping.field_name,
-              field_value: mapping.field_value
+              field_value: mapping.field_value,
+              operator_type: mapping.operator_type
             })
           }
           setPendingMappings([]) // Clear pending mappings after successful save
@@ -454,19 +451,17 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
 
     const newPendingMapping = {
       id: Date.now().toString(), // Temporary ID
-      account_type: accountMappingData.account_type,
-      account_number: accountMappingData.account_number,
       field_name: accountMappingData.field_name,
-      field_value: accountMappingData.field_value
+      field_value: accountMappingData.field_value,
+      operator_type: accountMappingData.operator_type
     }
 
     setPendingMappings(prev => [...prev, newPendingMapping])
     
     // Reset form
     setAccountMappingData({
-      account_type: '',
-      account_number: '',
       field_name: '',
+      operator_type: '',
       field_value: ''
     })
     
@@ -477,6 +472,29 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   const handleRemovePendingMapping = (id: string) => {
     setPendingMappings(prev => prev.filter(mapping => mapping.id !== id))
     toast.success('Pending mapping removed')
+  }
+
+  // Handle match all condition toggle
+  const handleMatchAllConditionToggle = async () => {
+    const newValue = formData.match_all_condition !== true
+    
+    // Update local state immediately for instant UI feedback
+    setFormData(prev => ({ ...prev, match_all_condition: newValue }))
+    
+    // If broker exists, update it on the server immediately
+    if (broker?.id) {
+      try {
+        await brokerService.updateMatchAllCondition(broker.id, newValue)
+        toast.success(`Match All Condition ${newValue ? 'enabled' : 'disabled'}`)
+      } catch (error: any) {
+        // Revert local state if API call fails
+        setFormData(prev => ({ ...prev, match_all_condition: !newValue }))
+        toast.error(error.response?.data?.message || 'Failed to update match all condition')
+      }
+    } else {
+      // For new brokers, just show feedback that it will be saved with the broker
+      toast.success(`Match All Condition will be ${newValue ? 'enabled' : 'disabled'} when broker is created`)
+    }
   }
 
   // Remove account mapping
@@ -750,22 +768,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                             </select>
                           </div>
 
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Match All Condition</label>
-                            <select 
-                              name="match_all_condition"
-                              value={formData.match_all_condition === undefined ? '' : formData.match_all_condition ? 'true' : 'false'}
-                              onChange={(e) => setFormData(prev => ({ 
-                                ...prev, 
-                                match_all_condition: e.target.value === '' ? undefined : e.target.value === 'true' 
-                              }))}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                              <option value="">Not Set</option>
-                              <option value="true">True</option>
-                              <option value="false">False</option>
-                            </select>
-                          </div>
+
                         </div>
                       </motion.div>
                     )}
@@ -853,9 +856,32 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         transition={{ duration: 0.2 }}
                         className=""
                       >
-                        <div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-4">Account Mappings</h3>
-                          <p className="text-sm text-gray-600 mb-6">Configure field mapping conditions for this broker. You can add multiple mappings.</p>
+                        <div className="flex items-start justify-between mb-6">
+                          <div>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">Account Mappings</h3>
+                            <p className="text-sm text-gray-600">Configure field mapping conditions for this broker. You can add multiple mappings.</p>
+                          </div>
+                          
+                          {/* Match All Condition Toggle */}
+                          <div className="flex items-center space-x-3">
+                            <span className="text-sm font-medium text-gray-700">Match All Conditions</span>
+                            <button
+                              type="button"
+                              onClick={() => handleMatchAllConditionToggle()}
+                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                                formData.match_all_condition === true ? 'bg-blue-600' : 'bg-gray-200'
+                              }`}
+                            >
+                              <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                  formData.match_all_condition === true ? 'translate-x-6' : 'translate-x-1'
+                                }`}
+                              />
+                            </button>
+                            <span className="text-xs text-gray-500">
+                              {formData.match_all_condition === true ? 'ON' : 'OFF'}
+                            </span>
+                          </div>
                         </div>
 
                         {/* Loading state for account mappings */}
@@ -928,12 +954,9 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                   <div className="flex-1">
                                     <span className="text-sm text-gray-700">
                                       <strong className="text-blue-600">{mapping.field_name}</strong> 
-                                      <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">{mapping.account_type}</span> 
+                                      <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">{mapping.operator_type}</span> 
                                       <strong className="text-green-600">{mapping.field_value}</strong>
                                     </span>
-                                    <div className="text-xs text-gray-500 mt-1">
-                                      Account: {mapping.account_number}
-                                    </div>
                                   </div>
                                   <button
                                     type="button"

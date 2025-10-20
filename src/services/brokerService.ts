@@ -53,5 +53,13 @@ export const brokerService = {
       is_active: !currentBroker.is_active
     })
     return response.data.data.broker
+  },
+
+  // Update match all condition
+  async updateMatchAllCondition(id: number, matchAllCondition: boolean): Promise<Broker> {
+    const response = await api.put<ApiResponse<{ broker: Broker }>>(`/api/brokers/${id}`, {
+      match_all_condition: matchAllCondition
+    })
+    return response.data.data.broker
   }
 }

@@ -69,22 +69,7 @@ export const authService = {
     }
   },
 
-  // Refresh token
-  async refreshToken(): Promise<{ access_token: string; expires_in: number; token_type: string }> {
-    const refreshToken = localStorage.getItem('refreshToken')
-    if (!refreshToken) {
-      throw new Error('No refresh token available')
-    }
-
-    const response = await api.post<ApiResponse<{ access_token: string; expires_in: number; token_type: string }>>('/api/auth/refresh', {
-      refresh_token: refreshToken
-    })
-    
-    const data = response.data.data
-    localStorage.setItem('authToken', data.access_token)
-    
-    return data
-  },
+  // Note: Token refresh is handled automatically by the API interceptor
 
   // 2FA Setup
   async setup2FA(): Promise<TwoFASetupResponse> {
@@ -113,7 +98,16 @@ export const authService = {
   // Get current user
   getCurrentUser(): any {
     const user = localStorage.getItem('user')
-    return user ? JSON.parse(user) : null
+    if (!user || user === 'undefined' || user === 'null') {
+      return null
+    }
+    try {
+      return JSON.parse(user)
+    } catch (error) {
+      console.error('Error parsing user data:', error)
+      localStorage.removeItem('user')
+      return null
+    }
   },
 
   // Check if authenticated

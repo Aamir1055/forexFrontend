@@ -124,13 +124,6 @@ const Roles: React.FC = () => {
     role.description?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || []
 
-  const stats = {
-    totalRoles: roles?.length || 24,
-    activeUsers: roles?.reduce((acc, role) => acc + (role.users?.length || 0), 0) || 1247,
-    totalPermissions: permissions?.length || 156,
-    adminRoles: roles?.filter(role => role.name.toLowerCase().includes('admin')).length || 8
-  }
-
   if (error) {
     return (
       <div className="text-center py-12">
@@ -180,6 +173,8 @@ const Roles: React.FC = () => {
       {/* Main Content */}
       <main className="px-6 py-6">
         <div className="max-w-7xl mx-auto">
+
+
           {/* Action Bar */}
           <div className="flex items-center justify-end mb-6">
             <button

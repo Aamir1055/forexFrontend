@@ -3,7 +3,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 interface AuthContextType {
   isAuthenticated: boolean
   user: { username: string; email: string } | null
-  login: (username: string, password: string) => Promise<boolean>
+  login: (username: string, password: string) => Promise<boolean | 'requires_2fa'>
+  verify2FA: (username: string, password: string, totpCode: string) => Promise<boolean>
   logout: () => void
   token: string | null
 }
@@ -39,7 +40,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [])
 
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (username: string, password: string): Promise<boolean | 'requires_2fa'> => {
     try {
       // Use the correct API URL based on environment
       const baseURL = import.meta.env.DEV ? 'http://185.136.159.142:8080' : 'http://185.136.159.142:8080'
@@ -69,8 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Handle 2FA requirement
       if (data.status === 'success' && data.data?.requires_2fa) {
         console.log('2FA required')
-        alert('2FA is required. Please contact admin to disable 2FA for testing.')
-        return false
+        return 'requires_2fa'
       }
 
       // Handle successful login
@@ -103,6 +103,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }
 
+  const verify2FA = async (username: string, password: string, totpCode: string): Promise<boolean> => {
+    try {
+      const baseURL = import.meta.env.DEV ? 'http://185.136.159.142:8080' : 'http://185.136.159.142:8080'
+      const apiUrl = `${baseURL}/api/auth/verify-2fa`
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password, totp_code: totpCode }),
+      })
+
+      if (!response.ok) {
+        return false
+      }
+
+      const data = await response.json()
+
+      if (data.status === 'success' && data.data?.access_token) {
+        const token = data.data.access_token
+        const userData = data.data.user
+
+        localStorage.setItem('authToken', token)
+        localStorage.setItem('authUser', JSON.stringify(userData))
+        
+        setToken(token)
+        setUser(userData)
+        setIsAuthenticated(true)
+        
+        return true
+      }
+
+      return false
+    } catch (error) {
+      console.error('2FA verification error:', error)
+      return false
+    }
+  }
+
   const logout = () => {
     setToken(null)
     setUser(null)
@@ -117,6 +157,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isAuthenticated,
       user,
       login,
+      verify2FA,
       logout,
       token
     }}>

@@ -1,7 +1,5 @@
 import React from 'react'
 import { 
-  PencilIcon, 
-  TrashIcon, 
   UserGroupIcon
 } from '@heroicons/react/24/outline'
 import { User, PaginationInfo } from '../services/userService'
@@ -80,13 +78,13 @@ const UserTable: React.FC<UserTableProps> = ({
             {users.map((user, index) => (
               <tr key={user.id} className="hover:bg-slate-50 transition-colors duration-200">
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <div className="flex items-center">
+                  <div className="flex items-center space-x-3">
                     <img 
                       src={`https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-${(index % 5) + 1}.jpg`} 
                       alt="Avatar" 
-                      className="w-8 h-8 rounded-full border-2 border-slate-200"
+                      className="w-8 h-8 rounded-full border border-slate-200"
                     />
-                    <div className="ml-3">
+                    <div>
                       <div className="text-sm font-medium text-slate-800">{user.username}</div>
                       <div className="text-xs text-slate-500">@{user.username.toLowerCase().replace(' ', '')}</div>
                     </div>
@@ -94,11 +92,11 @@ const UserTable: React.FC<UserTableProps> = ({
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-700">{user.email}</td>
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-1">
                     {user.roles.slice(0, 2).map((role) => (
                       <span
                         key={role.id}
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
                           role.name.toLowerCase() === 'admin' 
                             ? 'bg-blue-100 text-blue-700'
                             : role.name.toLowerCase() === 'editor'
@@ -112,13 +110,13 @@ const UserTable: React.FC<UserTableProps> = ({
                       </span>
                     ))}
                     {user.roles.length > 2 && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
                         +{user.roles.length - 2}
                       </span>
                     )}
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-4 py-3 whitespace-nowrap">
                   <label className="inline-flex relative items-center cursor-pointer">
                     <input 
                       type="checkbox" 
@@ -126,23 +124,29 @@ const UserTable: React.FC<UserTableProps> = ({
                       checked={user.is_active}
                       onChange={() => onToggleStatus(user.id)}
                     />
-                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-blue-600"></div>
                   </label>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{formatDate(user.created_at)}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                  <div className="flex items-center justify-end space-x-2">
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-500">{formatDate(user.created_at)}</td>
+                <td className="px-4 py-3 whitespace-nowrap text-right">
+                  <div className="flex items-center justify-end space-x-1">
                     <button 
                       onClick={() => onEdit(user)}
-                      className="text-slate-500 hover:text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition-all duration-200"
+                      className="group relative p-2.5 text-gray-400 hover:text-white rounded-xl hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-200 hover:shadow-lg hover:scale-105"
+                      title="Edit user"
                     >
-                      <PencilIcon className="w-4 h-4" />
+                      <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
                     </button>
                     <button 
                       onClick={() => onDelete(user.id)}
-                      className="text-slate-500 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-all duration-200"
+                      className="group relative p-2.5 text-gray-400 hover:text-white rounded-xl hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-lg hover:scale-105"
+                      title="Delete user"
                     >
-                      <TrashIcon className="w-4 h-4" />
+                      <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
                     </button>
                   </div>
                 </td>

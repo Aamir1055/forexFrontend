@@ -1,5 +1,5 @@
 import React from 'react'
-import { PencilIcon, TrashIcon, UserGroupIcon } from '@heroicons/react/24/outline'
+import { UserGroupIcon } from '@heroicons/react/24/outline'
 import { ShieldCheckIcon, ChartBarIcon } from '@heroicons/react/24/solid'
 import { Role } from '../types'
 
@@ -81,7 +81,6 @@ const RoleTable: React.FC<RoleTableProps> = ({
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Permissions</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Users</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
@@ -104,9 +103,6 @@ const RoleTable: React.FC<RoleTableProps> = ({
                   <span className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
                     {role.permissions?.length || 0} permissions
                   </span>
-                </td>
-                <td className="px-4 py-3">
-                  <p className="text-sm text-gray-700">{role.users?.length || 0} users</p>
                 </td>
                 <td className="px-4 py-3">
                   <span className="px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
