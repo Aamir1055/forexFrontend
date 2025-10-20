@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useQuery } from 'react-query'
 import { ShieldCheckIcon } from '@heroicons/react/24/outline'
 import { authService } from '../services/authService'
-import TwoFactorSetup from '../components/TwoFactorSetup'
+import TwoFactorSettings from '../components/TwoFactorSettings'
 
 const Settings: React.FC = () => {
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false)
+  
   // Get current user
   const { data: currentUser } = useQuery('currentUser', authService.getCurrentUser, {
     initialData: authService.getCurrentUser()
@@ -63,7 +65,10 @@ const Settings: React.FC = () => {
         </div>
 
         <div className="p-6">
-          <TwoFactorSetup />
+          <TwoFactorSettings 
+            isEnabled={is2FAEnabled}
+            onStatusChange={setIs2FAEnabled}
+          />
         </div>
       </div>
     </div>

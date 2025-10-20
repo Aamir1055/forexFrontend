@@ -1,46 +1,113 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { authService, LoginRequest } from '../services/authService'
+import { authService, LoginRequest, TwoFAVerifyRequest } from '../services/authService'
+import TwoFactorVerification from '../components/TwoFactorVerification'
 import toast from 'react-hot-toast'
+import { useAuth } from '../contexts/AuthContext'
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginRequest>({
     username: '',
-    password: '',
-    code: ''
+    password: ''
   })
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [requires2FA, setRequires2FA] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
+  const [twoFAError, setTwoFAError] = useState('')
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setTwoFAError('')
 
     try {
-      await authService.login(formData)
-      toast.success('Login successful!')
-      navigate('/')
+      const result = await authService.login(formData)
+      
+      // Check if 2FA is required
+      if ('requires_2fa' in result && result.requires_2fa) {
+        setRequires2FA(true)
+        toast.success('Please enter your 2FA code')
+      } else {
+        // Normal login success
+        
+        toast.success('Login successful!')
+        
+        // Small delay to ensure state is updated
+        setTimeout(() => {
+          navigate('/')
+        }, 100)
+      }
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Login failed'
-      
-      if (errorMessage.includes('2FA') || errorMessage.includes('code')) {
-        setRequires2FA(true)
-        toast.error('Please enter your 2FA code')
-      } else {
-        toast.error(errorMessage)
-      }
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }
   }
 
+  const handle2FAVerify = async (code: string) => {
+    setIsLoading(true)
+    setTwoFAError('')
+
+    try {
+      const verifyData: TwoFAVerifyRequest = {
+        username: formData.username,
+        password: formData.password,
+        code: code
+      }
+      
+      await authService.verify2FA(verifyData)
+      
+
+      
+      toast.success('Login successful!')
+      
+      // Small delay to ensure state is updated
+      setTimeout(() => {
+        navigate('/')
+      }, 100)
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || '2FA verification failed'
+      setTwoFAError(errorMessage)
+      toast.error(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleBack2FA = () => {
+    setRequires2FA(false)
+    setTwoFAError('')
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  // Show 2FA verification page if required
+  if (requires2FA) {
+    return (
+      <TwoFactorVerification
+        username={formData.username}
+        password={formData.password}
+        onVerify={handle2FAVerify}
+        onBack={handleBack2FA}
+        isLoading={isLoading}
+        error={twoFAError}
+      />
+    )
   }
 
   return (
@@ -158,41 +225,7 @@ const Login: React.FC = () => {
                 </div>
               </div>
 
-              {/* 2FA */}
-              {requires2FA && (
-                <motion.div 
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6"
-                >
-                  <label htmlFor="code" className="block text-sm font-semibold text-gray-700 mb-3">
-                    Two-Factor Authentication
-                  </label>
-                  <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                    </div>
-                    <input
-                      id="code"
-                      name="code"
-                      type="text"
-                      maxLength={6}
-                      value={formData.code}
-                      onChange={handleInputChange}
-                      className="w-full pl-12 pr-4 py-4 border border-blue-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center font-mono tracking-widest bg-white"
-                      placeholder="000000"
-                    />
-                  </div>
-                  <p className="text-xs text-blue-700 mt-3 flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Enter the 6-digit code from your authenticator app
-                  </p>
-                </motion.div>
-              )}
+
 
               {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between">

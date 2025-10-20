@@ -8,8 +8,10 @@ import Login from './pages/Login'
 import Users from './pages/Users'
 import Roles from './pages/Roles'
 import Brokers from './pages/Brokers'
+import BrokerProfiles from './pages/BrokerProfiles'
 import Groups from './pages/Groups'
 import Settings from './pages/Settings'
+
 import ModalTest from './components/ModalTest'
 import Dashboard from './pages/Dashboard'
 
@@ -36,7 +38,9 @@ function App() {
                                         <Route path="/users" element={<Users />} />
                                         <Route path="/roles" element={<Roles />} />
                                         <Route path="/brokers" element={<Brokers />} />
+                                        <Route path="/broker-profiles" element={<BrokerProfiles />} />
                                         <Route path="/groups" element={<Groups />} />
+
                                         <Route path="/settings" element={<Settings />} />
                                         <Route path="/modal-test" element={<ModalTest />} />
                                     </Routes>

@@ -24,22 +24,7 @@ const Brokers: React.FC = () => {
     brokerName: ''
   })
 
-  // Show notification about enhanced UI
-  React.useEffect(() => {
-    const hasShownNotification = localStorage.getItem('brokerUINotificationShown')
-    if (!hasShownNotification) {
-      setTimeout(() => {
-        toast.success('🎉 Enhanced Broker Management with Tabbed Interface!', {
-          duration: 5000,
-          style: {
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: '#fff',
-          }
-        })
-        localStorage.setItem('brokerUINotificationShown', 'true')
-      }, 1000)
-    }
-  }, [])
+
   const [filters, setFilters] = useState<BrokerFilters>({
     sort_by: 'created_at',
     sort_order: 'DESC'

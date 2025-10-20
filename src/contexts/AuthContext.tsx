@@ -31,12 +31,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Check for existing auth on mount
     const savedToken = localStorage.getItem('authToken')
-    const savedUser = localStorage.getItem('authUser')
+    const savedUser = localStorage.getItem('user') || localStorage.getItem('authUser')
     
     if (savedToken && savedUser) {
-      setToken(savedToken)
-      setUser(JSON.parse(savedUser))
-      setIsAuthenticated(true)
+      try {
+        const userData = JSON.parse(savedUser)
+        setToken(savedToken)
+        setUser(userData)
+        setIsAuthenticated(true)
+      } catch (error) {
+        console.error('Error parsing saved user data:', error)
+        // Clear invalid data
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('user')
+        localStorage.removeItem('authUser')
+      }
     }
   }, [])
 
@@ -84,6 +93,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true)
         
         localStorage.setItem('authToken', token)
+        localStorage.setItem('user', JSON.stringify(userData))
         localStorage.setItem('authUser', JSON.stringify({ username: userData.username, email: userData.email }))
         
         return true
@@ -127,6 +137,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const userData = data.data.user
 
         localStorage.setItem('authToken', token)
+        localStorage.setItem('user', JSON.stringify(userData))
         localStorage.setItem('authUser', JSON.stringify(userData))
         
         setToken(token)
@@ -149,6 +160,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsAuthenticated(false)
     
     localStorage.removeItem('authToken')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('user')
     localStorage.removeItem('authUser')
   }
 

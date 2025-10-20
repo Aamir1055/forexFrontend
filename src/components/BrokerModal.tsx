@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { brokerRightsService } from '../services/brokerRightsService'
 import { brokerService } from '../services/brokerService'
 import { accountMappingService } from '../services/accountMappingService'
+import { brokerProfileService } from '../services/brokerProfileService'
 import { Broker, CreateBrokerData, UpdateBrokerData, AccountMapping } from '../types'
 import toast from 'react-hot-toast'
 
@@ -23,7 +24,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   onSubmit,
   isLoading
 }) => {
-  const [activeTab, setActiveTab] = useState<'basic' | 'permissions' | 'account-mapping'>('basic')
+  const [activeTab, setActiveTab] = useState<'basic' | 'permissions' | 'profiles' | 'account-mapping'>('basic')
+  const [selectedProfile, setSelectedProfile] = useState<number | null>(null)
   const [formData, setFormData] = useState<CreateBrokerData>({
     username: '',
     password: '',
@@ -71,6 +73,15 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
         console.error('Failed to fetch account mappings:', error)
         setAccountMappings([])
       }
+    }
+  )
+
+  // Fetch all broker profiles
+  const { data: brokerProfiles, isLoading: profilesLoading } = useQuery(
+    ['broker-profiles'],
+    () => brokerProfileService.getAllProfiles(),
+    {
+      enabled: isOpen
     }
   )
 
@@ -525,6 +536,24 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     }
   }
 
+  // Handle profile selection - applies all rights and groups from the profile
+  const handleProfileSelect = async (profileId: number) => {
+    setSelectedProfile(profileId)
+    
+    try {
+      // Fetch the profile details to get its rights and groups
+      const profileDetails = await brokerProfileService.getProfileById(profileId)
+      
+      // Update selected rights with profile's rights
+      const profileRightIds = profileDetails.rights.map(r => r.rightId)
+      setSelectedRights(profileRightIds)
+      
+      toast.success(`Profile applied! ${profileRightIds.length} rights assigned.`)
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to load profile details')
+    }
+  }
+
 
 
 
@@ -599,6 +628,17 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                       }`}
                     >
                       Broker Permissions
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('profiles')}
+                      className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
+                        activeTab === 'profiles'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      Assign Profile
                     </button>
                     <button
                       type="button"
@@ -843,6 +883,114 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                               </div>
                             ))}
                           </div>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {activeTab === 'profiles' && (
+                      <motion.div
+                        key="profiles"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.2 }}
+                        className=""
+                      >
+                        <div>
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">Assign Broker Profile</h3>
+                          <p className="text-sm text-gray-600 mb-4">Select a pre-configured profile to automatically assign all its rights and groups to this broker.</p>
+                          
+                          {selectedProfile && (
+                            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                              <p className="text-sm text-blue-800">
+                                <strong>Note:</strong> The selected profile's rights have been applied. You can modify them in the "Broker Permissions" tab if needed.
+                              </p>
+                            </div>
+                          )}
+                          
+                          {profilesLoading ? (
+                            <div className="flex items-center justify-center py-12">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                            </div>
+                          ) : brokerProfiles?.profiles?.length === 0 ? (
+                            <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                              <p className="text-gray-500">No profiles available. Create profiles in the Broker Profiles section first.</p>
+                            </div>
+                          ) : (
+                            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                              <div className="overflow-x-auto">
+                                <table className="w-full">
+                                  <thead className="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-16">
+                                        Select
+                                      </th>
+                                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Profile Name
+                                      </th>
+                                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Description
+                                      </th>
+                                      <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Rights
+                                      </th>
+                                      <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Groups
+                                      </th>
+                                      <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Created
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-gray-200">
+                                    {brokerProfiles?.profiles?.map((profile) => (
+                                      <tr
+                                        key={profile.id}
+                                        onClick={() => handleProfileSelect(profile.id)}
+                                        className={`cursor-pointer transition-colors ${
+                                          selectedProfile === profile.id
+                                            ? 'bg-blue-50 hover:bg-blue-100'
+                                            : 'hover:bg-gray-50'
+                                        }`}
+                                      >
+                                        <td className="px-4 py-3">
+                                          <div className="flex items-center justify-center">
+                                            <input
+                                              type="radio"
+                                              checked={selectedProfile === profile.id}
+                                              onChange={() => handleProfileSelect(profile.id)}
+                                              className="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                            />
+                                          </div>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                          <div className="text-sm font-medium text-gray-900">{profile.name}</div>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                          <div className="text-sm text-gray-600">{profile.description}</div>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            {profile.rightsCount}
+                                          </span>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            {profile.groupsCount}
+                                          </span>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                          <div className="text-sm text-gray-500">
+                                            {new Date(profile.createdAt).toLocaleDateString()}
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </motion.div>
                     )}

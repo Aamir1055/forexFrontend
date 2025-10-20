@@ -7,6 +7,17 @@ export interface LoginRequest {
   code?: string // For 2FA
 }
 
+export interface LoginStep1Response {
+  requires_2fa: boolean
+  message: string
+}
+
+export interface TwoFAVerifyRequest {
+  username: string
+  password: string
+  code: string
+}
+
 export interface LoginResponse {
   access_token: string
   refresh_token: string
@@ -38,12 +49,38 @@ export interface TwoFADisableRequest {
 }
 
 export const authService = {
-  // Login
-  async login(credentials: LoginRequest): Promise<LoginResponse> {
-    const response = await api.post<ApiResponse<LoginResponse>>('/api/auth/login', credentials)
+  // Login (Step 1 - may require 2FA)
+  async login(credentials: LoginRequest): Promise<LoginResponse | LoginStep1Response> {
+    const response = await api.post<ApiResponse<LoginResponse | LoginStep1Response>>('/api/auth/login', credentials)
     const data = response.data.data
     
-    // Store tokens
+    // Check if 2FA is required
+    if ('requires_2fa' in data && data.requires_2fa) {
+      return data as LoginStep1Response
+    }
+    
+    // Normal login success - store tokens
+    const loginData = data as LoginResponse
+    localStorage.setItem('authToken', loginData.access_token)
+    localStorage.setItem('refreshToken', loginData.refresh_token)
+    localStorage.setItem('user', JSON.stringify(loginData.user))
+    
+    return loginData
+  },
+
+  // Verify 2FA (Step 2)
+  async verify2FA(credentials: TwoFAVerifyRequest): Promise<LoginResponse> {
+    // Based on your API, we need to call the login endpoint again with the 2FA code
+    const loginData = {
+      username: credentials.username,
+      password: credentials.password,
+      code: credentials.code
+    }
+    
+    const response = await api.post<ApiResponse<LoginResponse>>('/api/auth/login', loginData)
+    const data = response.data.data
+    
+    // Store tokens after successful 2FA verification
     localStorage.setItem('authToken', data.access_token)
     localStorage.setItem('refreshToken', data.refresh_token)
     localStorage.setItem('user', JSON.stringify(data.user))

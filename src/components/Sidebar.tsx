@@ -6,6 +6,7 @@ import {
   Users,
   Shield, 
   Building2, 
+  FileText,
   Layers,
   Settings,
   X,
@@ -27,6 +28,7 @@ const navigation = [
   { name: 'Users', href: '/users', icon: Users },
   { name: 'Roles', href: '/roles', icon: Shield },
   { name: 'Brokers', href: '/brokers', icon: Building2 },
+  { name: 'Broker Profiles', href: '/broker-profiles', icon: FileText },
   { name: 'Groups', href: '/groups', icon: Layers },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
