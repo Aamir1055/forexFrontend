@@ -33,7 +33,17 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
   // Fetch all rights
   const { data: allRights, isLoading: loadingRights } = useQuery(
     ['broker-rights-all'],
-    () => brokerProfileService.getAllRights()
+    () => brokerProfileService.getAllRights(),
+    {
+      onSuccess: (data) => {
+        console.log('All Rights fetched:', data)
+        console.log('Sample right structure:', data?.[0])
+        const ids = data?.map(r => r.id) || []
+        console.log('All Right IDs:', JSON.stringify(ids))
+        console.log('First 3 IDs:', ids.slice(0, 3))
+        console.log('Type of first ID:', typeof data?.[0]?.id)
+      }
+    }
   )
 
   // Fetch all groups
@@ -54,10 +64,17 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
   // Initialize form data
   useEffect(() => {
     if (profile && profileDetails) {
+      console.log('Profile Details:', profileDetails)
+      console.log('Rights from profile:', profileDetails.rights)
+      const rightIds = profileDetails.rights.map(r => r.rightId)
+      console.log('Selected Right IDs (rightId from profile):', JSON.stringify(rightIds))
+      console.log('First 3 IDs:', rightIds.slice(0, 3))
+      console.log('Type of first ID:', typeof rightIds[0])
+      
       setFormData({
         name: profile.name,
         description: profile.description,
-        selectedRights: profileDetails.rights.map(r => r.rightId),
+        selectedRights: rightIds,
         selectedGroups: profileDetails.groups.map(g => g.groupId)
       })
     } else {
@@ -254,6 +271,11 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
                   <div className="space-y-4">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-gray-900">Select Rights</h3>
+                      {console.log('=== RIGHTS TAB RENDER ===')} 
+                      {console.log('Selected Rights:', JSON.stringify(formData.selectedRights))}
+                      {console.log('All Rights IDs:', JSON.stringify(allRights?.map(r => r.id)))}
+                      {console.log('Does [1] include 1?', formData.selectedRights.includes(1))}
+                      {console.log('First right id:', allRights?.[0]?.id, 'Is included?', formData.selectedRights.includes(allRights?.[0]?.id))}
                       <div className="flex gap-2">
                         <button
                           type="button"

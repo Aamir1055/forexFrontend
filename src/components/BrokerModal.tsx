@@ -6,6 +6,7 @@ import { brokerRightsService } from '../services/brokerRightsService'
 import { brokerService } from '../services/brokerService'
 import { accountMappingService } from '../services/accountMappingService'
 import { brokerProfileService } from '../services/brokerProfileService'
+import { brokerGroupMappingService } from '../services/brokerGroupMappingService'
 import { Broker, CreateBrokerData, UpdateBrokerData, AccountMapping } from '../types'
 import toast from 'react-hot-toast'
 
@@ -42,6 +43,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [selectedRights, setSelectedRights] = useState<number[]>([])
+  const [selectedGroups, setSelectedGroups] = useState<number[]>([])
   const [isSyncingToAll, setIsSyncingToAll] = useState(false)
   
   // Account mapping form state
@@ -188,6 +190,21 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
       },
       onError: (error: any) => {
         toast.error(error.response?.data?.message || 'Failed to update permissions')
+      }
+    }
+  )
+
+  // Sync groups mutation
+  const syncGroupsMutation = useMutation(
+    ({ brokerId, groupIds }: { brokerId: number; groupIds: number[] }) =>
+      brokerGroupMappingService.syncBrokerGroups(brokerId, groupIds),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['broker-groups'])
+        toast.success('Broker groups updated successfully!')
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Failed to update groups')
       }
     }
   )
@@ -339,13 +356,22 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
         }
       }
       
-      // Then sync permissions if broker exists or was just created
+      // Then sync permissions and groups if broker exists or was just created
       const brokerId = broker?.id || result?.id
       if (brokerId) {
+        // Sync rights
         await syncRightsMutation.mutateAsync({ 
           brokerId: brokerId, 
           rightIds: selectedRights 
         })
+        
+        // Sync groups
+        if (selectedGroups.length > 0) {
+          await syncGroupsMutation.mutateAsync({
+            brokerId: brokerId,
+            groupIds: selectedGroups
+          })
+        }
       }
     } catch (error) {
       // Error handling is done in the parent component and mutations
@@ -548,7 +574,11 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
       const profileRightIds = profileDetails.rights.map(r => r.rightId)
       setSelectedRights(profileRightIds)
       
-      toast.success(`Profile applied! ${profileRightIds.length} rights assigned.`)
+      // Update selected groups with profile's groups
+      const profileGroupIds = profileDetails.groups.map(g => g.groupId)
+      setSelectedGroups(profileGroupIds)
+      
+      toast.success(`Profile applied! ${profileRightIds.length} rights and ${profileGroupIds.length} groups assigned.`)
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to load profile details')
     }
@@ -903,7 +933,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                           {selectedProfile && (
                             <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                               <p className="text-sm text-blue-800">
-                                <strong>Note:</strong> The selected profile's rights have been applied. You can modify them in the "Broker Permissions" tab if needed.
+                                <strong>Note:</strong> The selected profile's rights and groups have been applied. You can modify the rights in the "Broker Permissions" tab if needed.
                               </p>
                             </div>
                           )}

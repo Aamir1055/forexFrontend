@@ -102,7 +102,7 @@ export const brokerProfileService = {
 
   // Get all available groups
   async getAllGroups(): Promise<Group[]> {
-    const response = await api.get<ApiResponse<{ groups: Group[] }>>('/api/admin/groups/all')
+    const response = await api.get<ApiResponse<{ groups: Group[] }>>('/api/groups?limit=1000')
     return response.data.data.groups
   }
 }
