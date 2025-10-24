@@ -16,6 +16,7 @@ import Logs from './pages/Logs'
 
 import ModalTest from './components/ModalTest'
 import Dashboard from './pages/Dashboard'
+import CreateBroker from './pages/CreateBroker'
 
 
 
@@ -47,6 +48,7 @@ function App() {
 
                                         <Route path="/settings" element={<Settings />} />
                                         <Route path="/modal-test" element={<ModalTest />} />
+                                        <Route path="/create-broker" element={<CreateBroker />} />
                                     </Routes>
                                 </motion.div>
                             </Layout>

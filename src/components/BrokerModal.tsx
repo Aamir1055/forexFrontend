@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { brokerRightsService } from '../services/brokerRightsService'
 import { brokerService } from '../services/brokerService'
 import { accountMappingService } from '../services/accountMappingService'
 import { brokerProfileService } from '../services/brokerProfileService'
 import { brokerGroupMappingService } from '../services/brokerGroupMappingService'
-import { roleService } from '../services/roleService'
 import { groupService } from '../services/groupService'
 import { mt5SuggestionsService } from '../services/mt5SuggestionsService'
 import { Broker, CreateBrokerData, UpdateBrokerData, AccountMapping } from '../types'
@@ -30,13 +29,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'basic' | 'permissions' | 'profiles' | 'account-mapping'>('basic')
   const [profileSubTab, setProfileSubTab] = useState<'rights' | 'groups'>('rights')
-  const [resourceType, setResourceType] = useState<'profile' | 'role' | 'group'>('profile')
   const [selectedProfile, setSelectedProfile] = useState<number | null>(null)
-  const [selectedRole, setSelectedRole] = useState<number | null>(null)
-  const [selectedGroup, setSelectedGroup] = useState<number | null>(null)
-  const [rolePermissions, setRolePermissions] = useState<number[]>([])
   const [editableRolePermissions, setEditableRolePermissions] = useState<number[]>([])
-  const [profileGroups, setProfileGroups] = useState<number[]>([])
   const [editableProfileGroups, setEditableProfileGroups] = useState<number[]>([])
   const [formData, setFormData] = useState<CreateBrokerData>({
     username: '',
@@ -55,7 +49,6 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [selectedRights, setSelectedRights] = useState<number[]>([])
   const [selectedGroups, setSelectedGroups] = useState<number[]>([])
-  const [isSyncingToAll, setIsSyncingToAll] = useState(false)
   
   // Account mapping form state
   const [accountMappingData, setAccountMappingData] = useState({
@@ -73,7 +66,6 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   const [accountMappingErrors, setAccountMappingErrors] = useState<Record<string, string>>({})
   const [mt5Suggestions, setMt5Suggestions] = useState<string[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
-  const [loadingSuggestions, setLoadingSuggestions] = useState(false)
   const queryClient = useQueryClient()
 
   // Fetch existing account mappings when editing a broker
@@ -101,15 +93,6 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     }
   )
 
-  // Fetch all roles
-  const { data: roles, isLoading: rolesLoading } = useQuery(
-    ['roles'],
-    () => roleService.getRoles(true),
-    {
-      enabled: isOpen
-    }
-  )
-
   // Fetch all groups
   const { data: groupsData, isLoading: groupsLoading } = useQuery(
     ['groups-all'],
@@ -132,7 +115,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   const fetchMT5Suggestions = async (fieldName: string, query?: string) => {
     if (!fieldName) return
     
-    setLoadingSuggestions(true)
+    // setLoadingSuggestions(true)
     try {
       // Map field names to MT5 API field names
       const fieldMapping: Record<string, string> = {
@@ -164,7 +147,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
       // Silently fail - user can still type manually
       setMt5Suggestions([])
     } finally {
-      setLoadingSuggestions(false)
+      // setLoadingSuggestions(false)
     }
   }
 
@@ -182,7 +165,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   // Bulk sync mutation
   const bulkSyncMutation = useMutation(
     async (rightIds: number[]) => {
-      setIsSyncingToAll(true)
+      // setIsSyncingToAll(true)
       
       // First fetch all brokers
       const brokersResponse = await brokerService.getBrokers(1, 1000)
@@ -217,7 +200,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
         toast.error(`Failed to sync rights: ${error.response?.data?.message || error.message}`)
       },
       onSettled: () => {
-        setIsSyncingToAll(false)
+        // setIsSyncingToAll(false)
       }
     }
   )
@@ -485,13 +468,14 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     }
   }
 
-  const handleRightToggle = (rightId: number) => {
-    setSelectedRights(prev => 
-      prev.includes(rightId)
-        ? prev.filter(id => id !== rightId)
-        : [...prev, rightId]
-    )
-  }
+  // COMMENTED OUT - UNUSED FUNCTION
+  // const handleRightToggle = (rightId: number) => {
+  //   setSelectedRights(prev => 
+  //     prev.includes(rightId)
+  //       ? prev.filter(id => id !== rightId)
+  //       : [...prev, rightId]
+  //   )
+  // }
 
   // Mock permissions data organized by categories
   const permissionCategories = [
@@ -632,7 +616,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   }
 
   // Handle sync selected rights to all brokers
-  const handleSyncToAllBrokers = () => {
+  const _handleSyncToAllBrokers = () => {
     if (selectedRights.length === 0) {
       toast.error('Please select at least one permission to sync')
       return
@@ -653,7 +637,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   }
 
   // Handle profile selection - applies all rights and groups from the profile
-  const handleProfileSelect = async (profileId: number) => {
+  const _handleProfileSelect = async (profileId: number) => {
     setSelectedProfile(profileId)
     
     try {
@@ -675,7 +659,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   }
 
   // Handle profile selection for ROLES tab - applies only rights from the profile
-  const handleProfileSelectRoles = async (profileId: number) => {
+  const _handleProfileSelectRoles = async (profileId: number) => {
     setSelectedProfile(profileId)
     
     try {
@@ -693,7 +677,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   }
 
   // Handle profile selection for GROUPS tab - applies only groups from the profile
-  const handleProfileSelectGroups = async (profileId: number) => {
+  const _handleProfileSelectGroups = async (profileId: number) => {
     setSelectedProfile(profileId)
     
     try {
@@ -715,7 +699,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     setSelectedProfile(profileId)
     
     if (!profileId) {
-      setRolePermissions([])
+      // setRolePermissions([])
       setEditableRolePermissions([])
       return
     }
@@ -723,7 +707,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     try {
       const profileDetails = await brokerProfileService.getProfileById(profileId)
       const profileRightIds = profileDetails.rights.map(r => r.rightId)
-      setRolePermissions(profileRightIds)
+      // setRolePermissions(profileRightIds)
       setEditableRolePermissions([...profileRightIds])
       toast.success(`Profile loaded! You can now edit the ${profileRightIds.length} rights before assigning.`)
     } catch (error: any) {
@@ -736,7 +720,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     setSelectedProfile(profileId)
     
     if (!profileId) {
-      setProfileGroups([])
+      // setProfileGroups([])
       setEditableProfileGroups([])
       return
     }
@@ -744,7 +728,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     try {
       const profileDetails = await brokerProfileService.getProfileById(profileId)
       const profileGroupIds = profileDetails.groups.map(g => g.groupId)
-      setProfileGroups(profileGroupIds)
+      // setProfileGroups(profileGroupIds)
       setEditableProfileGroups([...profileGroupIds])
       toast.success(`Profile loaded! You can now edit the ${profileGroupIds.length} groups before assigning.`)
     } catch (error: any) {
@@ -764,7 +748,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   }
 
   // Apply edited role permissions to broker
-  const handleApplyRolePermissions = () => {
+  const _handleApplyRolePermissions = () => {
     setSelectedRights(editableRolePermissions)
     toast.success(`${editableRolePermissions.length} permissions from role applied to broker!`)
   }
@@ -781,7 +765,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   }
 
   // Apply edited profile groups to broker
-  const handleApplyProfileGroups = () => {
+  const _handleApplyProfileGroups = () => {
     setSelectedGroups(editableProfileGroups)
     toast.success(`${editableProfileGroups.length} groups from profile applied to broker!`)
   }

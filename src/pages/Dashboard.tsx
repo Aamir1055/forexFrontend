@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
   UsersIcon, 
@@ -12,8 +13,72 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline'
 import { HeartIcon } from '@heroicons/react/24/solid'
+import BrokerModal from '../components/BrokerModal'
+import GroupModal from '../components/GroupModal'
+import { useMutation, useQueryClient } from 'react-query'
+import { brokerService } from '../services/brokerService'
+import { groupService } from '../services/groupService'
+import { CreateBrokerData, CreateGroupData } from '../types'
+import toast from 'react-hot-toast'
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  
+  // Modal states
+  const [isBrokerModalOpen, setIsBrokerModalOpen] = useState(false)
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false)
+
+  // Mutations for creating entities
+  const createBrokerMutation = useMutation(
+    (brokerData: CreateBrokerData) => brokerService.createBroker(brokerData),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['brokers'])
+        setIsBrokerModalOpen(false)
+        toast.success('Broker created successfully!')
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Failed to create broker')
+      }
+    }
+  )
+
+  const createGroupMutation = useMutation(
+    (groupData: CreateGroupData) => groupService.createGroup(groupData),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['groups'])
+        setIsGroupModalOpen(false)
+        toast.success('Group created successfully!')
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Failed to create group')
+      }
+    }
+  )
+
+  // Handle Quick Action clicks
+  const handleQuickAction = (action: string) => {
+    console.log('Quick Action clicked:', action)
+    
+    switch (action) {
+      case 'Add New Broker':
+        setIsBrokerModalOpen(true)
+        break
+      case 'Create Group':
+        setIsGroupModalOpen(true)
+        break
+      case 'Manage Roles':
+        navigate('/roles')
+        break
+      case 'System Settings':
+        navigate('/settings')
+        break
+      default:
+        console.log('Unknown action:', action)
+    }
+  }
   // Mock data
   const stats = [
     {
@@ -106,7 +171,10 @@ const Dashboard: React.FC = () => {
               <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
               <p className="text-sm text-gray-500 mt-1">Welcome back, here's what's happening today</p>
             </div>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+            <button 
+              onClick={() => handleQuickAction('Add New Broker')}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+            >
               <UserPlusIcon className="w-4 h-4" />
               <span>New Broker</span>
             </button>
@@ -294,6 +362,7 @@ const Dashboard: React.FC = () => {
                   return (
                     <button
                       key={index}
+                      onClick={() => handleQuickAction(action.title)}
                       className="w-full flex items-center space-x-3 p-3 text-left hover:bg-blue-50 rounded-lg transition-colors group"
                     >
                       <div className={`w-8 h-8 ${action.color} rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
@@ -308,6 +377,32 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* Broker Modal */}
+      {isBrokerModalOpen && (
+        <BrokerModal
+          broker={null}
+          isOpen={isBrokerModalOpen}
+          onClose={() => setIsBrokerModalOpen(false)}
+          onSubmit={async (data) => {
+            await createBrokerMutation.mutateAsync(data as CreateBrokerData)
+          }}
+          isLoading={createBrokerMutation.isLoading}
+        />
+      )}
+
+      {/* Group Modal */}
+      {isGroupModalOpen && (
+        <GroupModal
+          group={null}
+          isOpen={isGroupModalOpen}
+          onClose={() => setIsGroupModalOpen(false)}
+          onSubmit={async (data) => {
+            await createGroupMutation.mutateAsync(data as CreateGroupData)
+          }}
+          isLoading={createGroupMutation.isLoading}
+        />
+      )}
     </div>
   )
 }

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from 'react-query'
-import { motion } from 'framer-motion'
 import { 
   MagnifyingGlassIcon,
   ChevronLeftIcon,
   ChevronRightIcon
 } from '@heroicons/react/24/outline'
 import { DocumentTextIcon } from '@heroicons/react/24/solid'
-import { logsService, LogFile, LogContentResponse } from '../services/logsService'
+import { logsService, LogContentResponse } from '../services/logsService'
 import toast from 'react-hot-toast'
 
 const Logs: React.FC = () => {
@@ -22,7 +21,7 @@ const Logs: React.FC = () => {
   const [isLoadingContent, setIsLoadingContent] = useState(false)
 
   // Fetch log files list
-  const { data: logFiles, isLoading: isLoadingFiles, error: logFilesError } = useQuery(
+  const { data: logFiles, isLoading: isLoadingFiles } = useQuery(
     ['logs-list'],
     () => logsService.listLogs(),
     {
@@ -106,9 +105,9 @@ const Logs: React.FC = () => {
     return mb > 1 ? `${mb.toFixed(2)} MB` : `${(bytes / 1024).toFixed(2)} KB`
   }
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleString()
-  }
+  // const formatDate = (timestamp: number) => {
+  //   return new Date(timestamp * 1000).toLocaleString()
+  // }
 
   return (
     <div className="h-screen bg-gray-50 font-sans flex flex-col overflow-hidden">

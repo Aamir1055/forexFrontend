@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useQuery } from 'react-query'
 import { motion } from 'framer-motion'
 import { 
@@ -33,7 +33,7 @@ const AuditLogs: React.FC = () => {
   const [endDateValue, setEndDateValue] = useState('') // YYYY-MM-DD format for input
 
   // Fetch audit logs (without search parameter since we filter client-side)
-  const { data, isLoading, error, refetch } = useQuery(
+  const { data, isLoading } = useQuery(
     ['auditLogs', filters],
     () => {
       // Don't send search to API, we'll filter client-side

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { 
   PlusIcon, 
-  MagnifyingGlassIcon,
-  FunnelIcon,
-  ArrowPathIcon
+  MagnifyingGlassIcon
 } from '@heroicons/react/24/outline'
 import { groupService } from '../services/groupService'
 import { Group, CreateGroupData, UpdateGroupData, GroupFilters } from '../types'
@@ -22,7 +20,7 @@ const Groups: React.FC = () => {
   const [pageSize, setPageSize] = useState(20)
   const [filters, setFilters] = useState<GroupFilters>({})
   const [viewMode] = useState<'table' | 'grid'>('table')
-  const [showFilters, setShowFilters] = useState(false)
+  // const [showFilters, setShowFilters] = useState(false)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
     groupId: number | null
@@ -160,12 +158,12 @@ const Groups: React.FC = () => {
     }
   }
 
-  const handleFilterChange = (newFilters: GroupFilters) => {
+  const _handleFilterChange = (newFilters: GroupFilters) => {
     setFilters(newFilters)
     setCurrentPage(1)
   }
 
-  const clearFilters = () => {
+  const _clearFilters = () => {
     setFilters({})
     setSearchTerm('')
     setCurrentPage(1)

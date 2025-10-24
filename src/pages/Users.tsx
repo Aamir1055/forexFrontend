@@ -50,7 +50,7 @@ const Users: React.FC = () => {
 
   // Extract users and pagination from response
   const users = usersResponse?.data?.users || []
-  const pagination = usersResponse?.data?.pagination
+  // const pagination = usersResponse?.data?.pagination
 
   // Filter users based on search term and role
   const filteredUsers = useMemo(() => {

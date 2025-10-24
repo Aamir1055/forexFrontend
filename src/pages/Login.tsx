@@ -40,10 +40,9 @@ const Login: React.FC = () => {
         toast.success('Please enter your 2FA code')
       } else {
         // Normal login success - authService already saved to localStorage
-        // The AuthContext useEffect will pick up the changes and trigger redirect
         toast.success('Login successful!')
         
-        // Reload to trigger AuthContext to pick up the new tokens
+        // Force page reload to trigger AuthContext to read from localStorage
         window.location.href = '/'
       }
     } catch (error: any) {
@@ -69,7 +68,7 @@ const Login: React.FC = () => {
       
       toast.success('Login successful!')
       
-      // Reload to trigger AuthContext to pick up the new tokens
+      // Force page reload to trigger AuthContext
       window.location.href = '/'
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || '2FA verification failed'

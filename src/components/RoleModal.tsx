@@ -198,7 +198,7 @@ const RoleModal: React.FC<RoleModalProps> = ({
                             <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide">{category}</h4>
                             <div className="ml-auto flex items-center gap-2">
                               <div className="text-xs text-gray-500 bg-gray-50 px-2 py-0.5 rounded-full font-medium">
-                                {categoryPermissions.filter(p => formData.permission_ids.includes(p.id)).length}/{categoryPermissions.length}
+                                {categoryPermissions.filter(p => p.id !== undefined && formData.permission_ids.includes(p.id)).length}/{categoryPermissions.length}
                               </div>
                               <label className="flex items-center cursor-pointer">
                                 <input 
