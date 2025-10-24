@@ -271,11 +271,6 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
                   <div className="space-y-4">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-gray-900">Select Rights</h3>
-                      {console.log('=== RIGHTS TAB RENDER ===')} 
-                      {console.log('Selected Rights:', JSON.stringify(formData.selectedRights))}
-                      {console.log('All Rights IDs:', JSON.stringify(allRights?.map(r => r.id)))}
-                      {console.log('Does [1] include 1?', formData.selectedRights.includes(1))}
-                      {console.log('First right id:', allRights?.[0]?.id, 'Is included?', formData.selectedRights.includes(allRights?.[0]?.id))}
                       <div className="flex gap-2">
                         <button
                           type="button"

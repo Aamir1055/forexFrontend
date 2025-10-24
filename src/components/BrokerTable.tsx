@@ -4,9 +4,7 @@ import {
   TrashIcon, 
   PowerIcon,
   ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  ChevronDownIcon
+  ChevronRightIcon
 } from '@heroicons/react/24/outline'
 import { Broker } from '../types'
 
@@ -40,14 +38,6 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
   currentPage,
   onPageChange
 }) => {
-  const getSortIcon = (field: string) => {
-    if (currentSort.field !== field) {
-      return <ChevronUpIcon className="h-4 w-4 text-gray-300" />
-    }
-    return currentSort.order === 'ASC' ? 
-      <ChevronUpIcon className="h-4 w-4 text-gray-600" /> : 
-      <ChevronDownIcon className="h-4 w-4 text-gray-600" />
-  }
 
   if (isLoading) {
     return (
@@ -118,36 +108,69 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
       </div>
 
       {/* Desktop view */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden backdrop-blur-sm">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Broker</th>
-                <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Email</th>
-                <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Phone</th>
-                <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
-                <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Clients</th>
-                <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Rights</th>
-                <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
+                <th 
+                  onDoubleClick={() => onSort('full_name')}
+                  className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
+                  title="Double-click to sort"
+                >
+                  <div className="flex items-center space-x-1">
+                    <span>Broker</span>
+                    {currentSort.field === 'full_name' && (
+                      <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    )}
+                  </div>
+                </th>
+                <th 
+                  onDoubleClick={() => onSort('email')}
+                  className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
+                  title="Double-click to sort"
+                >
+                  <div className="flex items-center space-x-1">
+                    <span>Email</span>
+                    {currentSort.field === 'email' && (
+                      <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    )}
+                  </div>
+                </th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide">Phone</th>
+                <th 
+                  onDoubleClick={() => onSort('is_active')}
+                  className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
+                  title="Double-click to sort"
+                >
+                  <div className="flex items-center space-x-1">
+                    <span>Status</span>
+                    {currentSort.field === 'is_active' && (
+                      <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    )}
+                  </div>
+                </th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide">Clients</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide">Rights</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {brokers.map((broker, index) => (
+              {brokers.map((broker) => (
                 <tr key={broker.id} className="hover:bg-gray-50 transition-colors duration-150">
-                  <td className="px-4 py-3">
-                    <p className="text-sm font-semibold text-gray-900">
+                  <td className="px-2 py-2">
+                    <p className="text-xs font-semibold text-gray-900">
                       {broker.full_name || 'Unnamed Broker'}
                     </p>
                   </td>
-                  <td className="px-4 py-3">
-                    <p className="text-sm text-gray-700">{broker.email || '-'}</p>
+                  <td className="px-2 py-2">
+                    <p className="text-xs text-gray-700">{broker.email || '-'}</p>
                   </td>
-                  <td className="px-4 py-3">
-                    <p className="text-sm text-gray-700">{broker.phone || '-'}</p>
+                  <td className="px-2 py-2">
+                    <p className="text-xs text-gray-700">{broker.phone || '-'}</p>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${
+                  <td className="px-2 py-2">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
                       broker.is_active 
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-red-100 text-red-800'
@@ -155,13 +178,13 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                       {broker.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <p className="text-sm font-semibold text-blue-600">{Math.floor(Math.random() * 50) + 10}</p>
+                  <td className="px-2 py-2">
+                    <p className="text-xs font-semibold text-blue-600">{Math.floor(Math.random() * 50) + 10}</p>
                   </td>
-                  <td className="px-4 py-3">
-                    <p className="text-sm font-semibold text-purple-600">{Math.floor(Math.random() * 20) + 5}</p>
+                  <td className="px-2 py-2">
+                    <p className="text-xs font-semibold text-purple-600">{Math.floor(Math.random() * 20) + 5}</p>
                   </td>
-                  <td className="px-3 py-2">
+                  <td className="px-2 py-2">
                     <div className="flex items-center space-x-1">
                       <button 
                         onClick={() => onEdit(broker)}

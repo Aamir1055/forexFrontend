@@ -14,6 +14,8 @@ const Roles: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingRole, setEditingRole] = useState<Role | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
     roleId: number | null
@@ -124,6 +126,18 @@ const Roles: React.FC = () => {
     role.description?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || []
 
+  // Pagination calculations
+  const totalItems = filteredRoles.length
+  const totalPages = Math.ceil(totalItems / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedRoles = filteredRoles.slice(startIndex, endIndex)
+
+  // Reset to page 1 when search changes
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm])
+
   if (error) {
     return (
       <div className="text-center py-12">
@@ -135,9 +149,10 @@ const Roles: React.FC = () => {
   return (
     <div className="bg-gray-50 font-sans">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
+      <div className="px-6 pt-6">
+        <header className="bg-white border border-gray-200 rounded-xl sticky top-0 z-40">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                 <ShieldCheckIcon className="w-5 h-5 text-white" />
@@ -158,32 +173,71 @@ const Roles: React.FC = () => {
                 />
                 <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               </div>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
-                <img 
-                  src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" 
-                  alt="User" 
-                  className="w-10 h-10 rounded-full object-cover"
-                />
+              <button
+                onClick={handleCreateRole}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-sm"
+              >
+                <PlusIcon className="w-4 h-4" />
+                <span>Create Role</span>
+              </button>
               </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
+      </div>
 
       {/* Main Content */}
-      <main className="px-6 py-6">
-        <div className="max-w-7xl mx-auto">
-
-
-          {/* Action Bar */}
-          <div className="flex items-center justify-end mb-6">
-            <button
-              onClick={handleCreateRole}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
-            >
-              <PlusIcon className="w-4 h-4" />
-              <span>Create Role</span>
-            </button>
+      <main className="px-6 pb-6">
+        <div>
+          {/* Pagination dropdown */}
+          <div className="mt-4 mb-3 flex items-center justify-between">
+            <div className="flex items-center space-x-1.5">
+              <span className="text-xs text-gray-600">Show</span>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value))
+                  setCurrentPage(1)
+                }}
+                className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white text-xs"
+              >
+                <option value={9999}>All</option>
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span className="text-xs text-gray-600">entries</span>
+            </div>
+            <div className="text-xs text-gray-700">
+              Showing {totalItems === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} results
+            </div>
+            {totalPages > 1 && (
+              <div className="flex items-center space-x-1.5">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <span className="text-xs text-gray-700">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Roles Table */}
@@ -193,7 +247,7 @@ const Roles: React.FC = () => {
             transition={{ delay: 0.4 }}
           >
             <RoleTable
-              roles={filteredRoles}
+              roles={paginatedRoles}
               isLoading={isLoading}
               onEdit={handleEditRole}
               onDelete={handleDeleteRole}

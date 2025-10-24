@@ -3,8 +3,10 @@ import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { 
   XCircleIcon,
   PlusIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  UserGroupIcon
 } from '@heroicons/react/24/outline'
+import { motion } from 'framer-motion'
 import { userService, User, CreateUserData, UpdateUserData } from '../services/userService'
 import UserTable from '../components/UserTable'
 import UserModal from '../components/UserModal'
@@ -17,6 +19,9 @@ const Users: React.FC = () => {
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedRole, setSelectedRole] = useState('all')
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [sortField, setSortField] = useState<string>('created_at')
+  const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('DESC')
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
     userId: number | null
@@ -144,7 +149,7 @@ const Users: React.FC = () => {
   }
 
   const handleDeleteUser = (id: number) => {
-    const user = usersResponse?.users?.find((u: User) => u.id === id)
+    const user = usersResponse?.data?.users?.find((u: User) => u.id === id)
     setDeleteConfirmation({
       isOpen: true,
       userId: id,
@@ -175,6 +180,33 @@ const Users: React.FC = () => {
     }
   }
 
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'ASC' ? 'DESC' : 'ASC')
+    } else {
+      setSortField(field)
+      setSortOrder('ASC')
+    }
+  }
+
+  // Sort filtered users
+  const sortedUsers = useMemo(() => {
+    return [...filteredUsers].sort((a, b) => {
+      let aValue: any = a[sortField as keyof User]
+      let bValue: any = b[sortField as keyof User]
+
+      // Handle boolean for is_active
+      if (sortField === 'is_active') {
+        aValue = aValue ? 1 : 0
+        bValue = bValue ? 1 : 0
+      }
+
+      if (aValue < bValue) return sortOrder === 'ASC' ? -1 : 1
+      if (aValue > bValue) return sortOrder === 'ASC' ? 1 : -1
+      return 0
+    })
+  }, [filteredUsers, sortField, sortOrder])
+
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -187,61 +219,143 @@ const Users: React.FC = () => {
     )
   }
 
+  // Pagination for sorted users
+  const totalItems = sortedUsers.length
+  const totalPages = Math.ceil(totalItems / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedUsers = sortedUsers.slice(startIndex, endIndex)
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm, selectedRole])
+
   return (
-    <div className="min-h-screen bg-slate-50 p-4">
-      <div className="max-w-7xl mx-auto space-y-6">
-
-
-
-          {/* Users Table */}
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
-            {/* Table Header */}
-            <div className="px-4 py-4 border-b border-slate-200">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="relative flex-1 max-w-md">
-                    <input 
-                      type="text" 
-                      placeholder="Search users..." 
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                    />
-                    <MagnifyingGlassIcon className="absolute left-3 top-2.5 text-slate-400 w-4 h-4" />
-                  </div>
-                  <select 
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
-                    className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                  >
-                    <option value="all">All Roles</option>
-                    {roles?.map(role => (
-                      <option key={role.id} value={role.name}>{role.name}</option>
-                    ))}
-                  </select>
+    <div className="bg-gray-50 font-sans">
+      {/* Header */}
+      <div className="px-6 pt-6">
+        <header className="bg-white border border-gray-200 rounded-xl sticky top-0 z-40">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <UserGroupIcon className="w-5 h-5 text-white" />
                 </div>
-                <button 
-                  onClick={handleCreateUser}
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap"
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">User Management</h1>
+                  <p className="text-sm text-gray-500">Manage users and their roles efficiently</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search users..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                </div>
+                <select
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm"
                 >
-                  <PlusIcon className="w-4 h-4 mr-2 inline" />
-                  Create User
+                  <option value="all">All Roles</option>
+                  {roles?.map(role => (
+                    <option key={role.id} value={role.name}>{role.name}</option>
+                  ))}
+                </select>
+                <button
+                  onClick={handleCreateUser}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-sm"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                  <span>Create User</span>
                 </button>
               </div>
             </div>
+          </div>
+        </header>
+      </div>
 
+      {/* Main Content */}
+      <main className="px-6 pb-6">
+        <div>
+          {/* Pagination dropdown */}
+          <div className="mt-4 mb-3 flex items-center justify-between">
+            <div className="flex items-center space-x-1.5">
+              <span className="text-xs text-gray-600">Show</span>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value))
+                  setCurrentPage(1)
+                }}
+                className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white text-xs"
+              >
+                <option value={9999}>All</option>
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span className="text-xs text-gray-600">entries</span>
+            </div>
+            <div className="text-xs text-gray-700">
+              Showing {totalItems === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} results
+            </div>
+            {totalPages > 1 && (
+              <div className="flex items-center space-x-1.5">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <span className="text-xs text-gray-700">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Users Table */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
             <UserTable
-              users={filteredUsers}
+              users={paginatedUsers}
               isLoading={isLoading}
               onEdit={handleEditUser}
               onDelete={handleDeleteUser}
               onToggleStatus={handleToggleStatus}
-              pagination={searchTerm || selectedRole !== 'all' ? undefined : pagination}
+              onSort={handleSort}
+              currentSort={{ field: sortField, order: sortOrder }}
+              pagination={undefined}
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />
+          </motion.div>
         </div>
-      </div>
+      </main>
 
       {/* User Modal */}
       {isModalOpen && (

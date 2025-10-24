@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils'
 interface BadgeProps {
   children: React.ReactNode
   variant?: 'default' | 'success' | 'warning' | 'danger' | 'info' | 'purple'
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'xs' | 'sm' | 'md' | 'lg'
   className?: string
   pulse?: boolean
 }
@@ -29,6 +29,7 @@ const Badge: React.FC<BadgeProps> = ({
   }
   
   const sizes = {
+    xs: "px-1.5 py-0.5 text-[10px]",
     sm: "px-2 py-1 text-xs",
     md: "px-3 py-1 text-sm",
     lg: "px-4 py-2 text-base"

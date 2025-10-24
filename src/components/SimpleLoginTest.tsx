@@ -42,7 +42,7 @@ const SimpleLoginTest: React.FC = () => {
       
     } catch (error) {
       console.error('Network error:', error)
-      setResult(`❌ Network Error: ${error.message}`)
+      setResult(`❌ Network Error: ${(error as Error).message}`)
     } finally {
       setLoading(false)
     }
@@ -63,7 +63,7 @@ const SimpleLoginTest: React.FC = () => {
         setResult(`❌ Server error: ${response.status}`)
       }
     } catch (error) {
-      setResult(`❌ Cannot reach server: ${error.message}`)
+      setResult(`❌ Cannot reach server: ${(error as Error).message}`)
     } finally {
       setLoading(false)
     }

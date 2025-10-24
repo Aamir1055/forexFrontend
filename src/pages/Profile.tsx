@@ -5,7 +5,6 @@ import {
   CogIcon,
   ShieldCheckIcon,
   ClockIcon,
-  DevicePhoneMobileIcon,
   ComputerDesktopIcon
 } from '@heroicons/react/24/outline'
 import { profileService } from '../services/profileService'

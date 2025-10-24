@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { XMarkIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
-import { userRoleService, UserRole } from '../services/userRoleService'
+import { userRoleService } from '../services/userRoleService'
 import { roleService } from '../services/roleService'
-import { User, Role } from '../types'
+import { User } from '../types'
 import toast from 'react-hot-toast'
 
 interface UserRolesModalProps {

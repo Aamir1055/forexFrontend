@@ -10,6 +10,8 @@ interface UserTableProps {
   onEdit: (user: User) => void
   onDelete: (id: number) => void
   onToggleStatus: (id: number) => void
+  onSort?: (field: string) => void
+  currentSort?: { field: string; order: 'ASC' | 'DESC' }
   pagination?: PaginationInfo
   currentPage: number
   onPageChange: (page: number) => void
@@ -21,6 +23,8 @@ const UserTable: React.FC<UserTableProps> = ({
   onEdit,
   onDelete,
   onToggleStatus,
+  onSort,
+  currentSort,
   pagination,
   currentPage,
   onPageChange
@@ -62,15 +66,60 @@ const UserTable: React.FC<UserTableProps> = ({
   return (
     <>
       {/* Table Content */}
-      <div className="overflow-x-auto">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-slate-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">User</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Email</th>
+              <th 
+                onDoubleClick={() => onSort?.('username')}
+                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
+                title={onSort ? 'Double-click to sort' : ''}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>User</span>
+                  {currentSort?.field === 'username' && (
+                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th 
+                onDoubleClick={() => onSort?.('email')}
+                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
+                title={onSort ? 'Double-click to sort' : ''}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Email</span>
+                  {currentSort?.field === 'email' && (
+                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Roles</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Created</th>
+              <th 
+                onDoubleClick={() => onSort?.('is_active')}
+                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
+                title={onSort ? 'Double-click to sort' : ''}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Status</span>
+                  {currentSort?.field === 'is_active' && (
+                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th 
+                onDoubleClick={() => onSort?.('created_at')}
+                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
+                title={onSort ? 'Double-click to sort' : ''}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Created</span>
+                  {currentSort?.field === 'created_at' && (
+                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
               <th className="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
@@ -154,6 +203,7 @@ const UserTable: React.FC<UserTableProps> = ({
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Pagination */}

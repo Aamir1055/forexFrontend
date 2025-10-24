@@ -11,6 +11,8 @@ import Brokers from './pages/Brokers'
 import BrokerProfiles from './pages/BrokerProfiles'
 import Groups from './pages/Groups'
 import Settings from './pages/Settings'
+import AuditLogs from './pages/AuditLogs'
+import Logs from './pages/Logs'
 
 import ModalTest from './components/ModalTest'
 import Dashboard from './pages/Dashboard'
@@ -40,6 +42,8 @@ function App() {
                                         <Route path="/brokers" element={<Brokers />} />
                                         <Route path="/broker-profiles" element={<BrokerProfiles />} />
                                         <Route path="/groups" element={<Groups />} />
+                                        <Route path="/audit-logs" element={<AuditLogs />} />
+                                        <Route path="/logs" element={<Logs />} />
 
                                         <Route path="/settings" element={<Settings />} />
                                         <Route path="/modal-test" element={<ModalTest />} />

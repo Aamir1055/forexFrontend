@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { motion } from 'framer-motion'
 import { PlusIcon, FunnelIcon, MagnifyingGlassIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
-import { BuildingOfficeIcon, UserGroupIcon, ChartBarIcon, ClockIcon } from '@heroicons/react/24/solid'
+import { BuildingOfficeIcon } from '@heroicons/react/24/solid'
 import { brokerService } from '../services/brokerService'
 import BrokerTable from '../components/BrokerTable'
 import BrokerModal from '../components/BrokerModal'
@@ -30,7 +30,7 @@ const Brokers: React.FC = () => {
     sort_order: 'DESC'
   })
   const [searchTerm, setSearchTerm] = useState('')
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
   const [pageSize, setPageSize] = useState(10)
   const queryClient = useQueryClient()
 
@@ -132,7 +132,7 @@ const Brokers: React.FC = () => {
     setDeleteConfirmation({
       isOpen: true,
       brokerId: id,
-      brokerName: broker?.name || 'Unknown Broker'
+      brokerName: broker?.full_name || 'Unknown Broker'
     })
   }
 
@@ -183,321 +183,241 @@ const Brokers: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-50 font-sans">
+    <div className="bg-gray-50 font-sans min-h-screen">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <BuildingOfficeIcon className="w-5 h-5 text-white" />
+      <div className="px-6 pt-6">
+        <header className="bg-white border border-gray-200 rounded-xl shadow-sm">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <BuildingOfficeIcon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Broker Management</h1>
+                  <p className="text-sm text-gray-500">Manage brokers and their permissions</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Broker Management</h1>
-                <p className="text-sm text-gray-500">Manage brokers and their permissions</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search by name, email, username..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="w-80 pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                {searchTerm && (
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search by name, email, username..."
+                    value={searchTerm}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="w-80 pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  {searchTerm && (
+                    <button
+                      onClick={() => handleSearch('')}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+                <div className="relative">
                   <button
-                    onClick={() => handleSearch('')}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    ×
-                  </button>
-                )}
-              </div>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
-                <img 
-                  src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" 
-                  alt="User" 
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="px-6 py-8">
-        <div className="max-w-7xl mx-auto">
-
-
-
-          {/* Filters & Actions */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
-            {/* Main Filter Bar */}
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  {/* Quick Filters */}
-                  <select
-                    value={filters.is_active?.toString() || 'all'}
-                    onChange={(e) => handleFilterChange({ 
-                      is_active: e.target.value === 'all' ? undefined : e.target.value === 'true' 
-                    })}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="all">All Status</option>
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
-                  </select>
-
-                  <select
-                    value={filters.has_rights?.toString() || 'all'}
-                    onChange={(e) => handleFilterChange({ 
-                      has_rights: e.target.value === 'all' ? undefined : e.target.value === 'true' 
-                    })}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="all">All Rights</option>
-                    <option value="true">Has Rights</option>
-                    <option value="false">No Rights</option>
-                  </select>
-
-                  <select
-                    value={filters.sort_by || 'created_at'}
-                    onChange={(e) => handleFilterChange({ sort_by: e.target.value })}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="created_at">Sort by Created</option>
-                    <option value="username">Sort by Username</option>
-                    <option value="full_name">Sort by Name</option>
-                    <option value="email">Sort by Email</option>
-                    <option value="last_login_at">Sort by Last Login</option>
-                    <option value="id">Sort by ID</option>
-                  </select>
-
-                  <button
-                    onClick={() => handleFilterChange({ 
-                      sort_order: filters.sort_order === 'ASC' ? 'DESC' : 'ASC' 
-                    })}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors"
-                  >
-                    {filters.sort_order === 'ASC' ? '↑ ASC' : '↓ DESC'}
-                  </button>
-
-                  <button
-                    onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2"
                   >
                     <FunnelIcon className="w-4 h-4" />
-                    <span>Advanced</span>
+                    <span>Filters</span>
                   </button>
+                  
+                  {/* Filter Dropdown */}
+                  {showFilters && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute right-0 mt-2 w-96 bg-white rounded-xl border border-gray-200 shadow-lg z-50 p-4"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="font-semibold text-gray-900">Filters</h3>
+                          <button
+                            onClick={() => setShowFilters(false)}
+                            className="text-gray-400 hover:text-gray-600"
+                          >
+                            ×
+                          </button>
+                        </div>
+
+                        {/* Status Filter */}
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                          <select
+                            value={filters.is_active?.toString() || 'all'}
+                            onChange={(e) => handleFilterChange({ 
+                              is_active: e.target.value === 'all' ? undefined : e.target.value === 'true' 
+                            })}
+                            className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          >
+                            <option value="all">All Status</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                          </select>
+                        </div>
+
+                        {/* Rights Filter */}
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Rights</label>
+                          <select
+                            value={filters.has_rights?.toString() || 'all'}
+                            onChange={(e) => handleFilterChange({ 
+                              has_rights: e.target.value === 'all' ? undefined : e.target.value === 'true' 
+                            })}
+                            className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          >
+                            <option value="all">All Rights</option>
+                            <option value="true">Has Rights</option>
+                            <option value="false">No Rights</option>
+                          </select>
+                        </div>
+
+                        {/* Account Range From */}
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Account Range From</label>
+                          <input
+                            type="number"
+                            placeholder="e.g. 1000"
+                            value={filters.account_range_from || ''}
+                            onChange={(e) => handleFilterChange({ 
+                              account_range_from: e.target.value ? Number(e.target.value) : undefined 
+                            })}
+                            className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        {/* Account Range To */}
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Account Range To</label>
+                          <input
+                            type="number"
+                            placeholder="e.g. 5000"
+                            value={filters.account_range_to || ''}
+                            onChange={(e) => handleFilterChange({ 
+                              account_range_to: e.target.value ? Number(e.target.value) : undefined 
+                            })}
+                            className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        {/* Created Date From */}
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Created From</label>
+                          <input
+                            type="date"
+                            value={filters.created_from || ''}
+                            onChange={(e) => handleFilterChange({ 
+                              created_from: e.target.value || undefined 
+                            })}
+                            className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        {/* Created Date To */}
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Created To</label>
+                          <input
+                            type="date"
+                            value={filters.created_to || ''}
+                            onChange={(e) => handleFilterChange({ 
+                              created_to: e.target.value || undefined 
+                            })}
+                            className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                          <button
+                            onClick={() => {
+                              setFilters({ sort_by: 'created_at', sort_order: 'DESC' })
+                              setSearchTerm('')
+                            }}
+                            className="text-xs text-gray-600 hover:text-gray-800"
+                          >
+                            Clear All
+                          </button>
+                          <button
+                            onClick={() => setShowFilters(false)}
+                            className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700"
+                          >
+                            Apply
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
-
-                <div className="flex items-center space-x-4">
-                  <select
-                    value={pageSize}
-                    onChange={(e) => {
-                      setPageSize(Number(e.target.value))
-                      setCurrentPage(1)
-                    }}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value={10}>10 per page</option>
-                    <option value={25}>25 per page</option>
-                    <option value={50}>50 per page</option>
-                    <option value={100}>100 per page</option>
-                  </select>
-
-                  <button className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2">
-                    <ArrowDownTrayIcon className="w-4 h-4 text-gray-500" />
-                    <span>Export</span>
-                  </button>
-
-                  <button
-                    onClick={handleCreateBroker}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center space-x-2 shadow-sm"
-                  >
-                    <PlusIcon className="w-4 h-4" />
-                    <span>Create Broker</span>
-                  </button>
-                </div>
+                <button
+                  onClick={handleCreateBroker}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-sm"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                  <span>Create Broker</span>
+                </button>
               </div>
             </div>
-
-            {/* Advanced Filters */}
-            {showAdvancedFilters && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="p-4 bg-gray-50 border-t border-gray-200"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* Account Range From */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Account Range From
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="e.g. 1000"
-                      value={filters.account_range_from || ''}
-                      onChange={(e) => handleFilterChange({ 
-                        account_range_from: e.target.value ? Number(e.target.value) : undefined 
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  {/* Account Range To */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Account Range To
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="e.g. 5000"
-                      value={filters.account_range_to || ''}
-                      onChange={(e) => handleFilterChange({ 
-                        account_range_to: e.target.value ? Number(e.target.value) : undefined 
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  {/* Created Date From */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Created From
-                    </label>
-                    <input
-                      type="date"
-                      value={filters.created_from || ''}
-                      onChange={(e) => handleFilterChange({ 
-                        created_from: e.target.value || undefined 
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  {/* Created Date To */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Created To
-                    </label>
-                    <input
-                      type="date"
-                      value={filters.created_to || ''}
-                      onChange={(e) => handleFilterChange({ 
-                        created_to: e.target.value || undefined 
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Filter Actions */}
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
-                  <div className="text-sm text-gray-600">
-                    {Object.keys(filters).filter(key => filters[key] !== undefined && filters[key] !== '').length > 2 && (
-                      <span>
-                        {Object.keys(filters).filter(key => filters[key] !== undefined && filters[key] !== '').length - 2} active filters
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => {
-                        setFilters({ sort_by: 'created_at', sort_order: 'DESC' })
-                        setSearchTerm('')
-                        setCurrentPage(1)
-                      }}
-                      className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 transition-colors"
-                    >
-                      Clear All
-                    </button>
-                    <button
-                      onClick={() => setShowAdvancedFilters(false)}
-                      className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-                    >
-                      Apply Filters
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
           </div>
+        </header>
+      </div>
 
-          {/* Results Summary */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-4">
-              <p className="text-sm text-gray-600">
-                Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, brokersData?.pagination.total || 0)} of {brokersData?.pagination.total || 0} brokers
-              </p>
-              
-              {/* Active Filters */}
-              {(searchTerm || Object.keys(filters).filter(key => 
-                filters[key] !== undefined && 
-                filters[key] !== '' && 
-                key !== 'sort_by' && 
-                key !== 'sort_order'
-              ).length > 0) && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-500">Active filters:</span>
-                  {searchTerm && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      Search: "{searchTerm}"
-                      <button
-                        onClick={() => handleSearch('')}
-                        className="ml-1 text-blue-600 hover:text-blue-800"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  )}
-                  {filters.is_active !== undefined && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Status: {filters.is_active ? 'Active' : 'Inactive'}
-                      <button
-                        onClick={() => handleFilterChange({ is_active: undefined })}
-                        className="ml-1 text-green-600 hover:text-green-800"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  )}
-                  {filters.has_rights !== undefined && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                      Rights: {filters.has_rights ? 'Has Rights' : 'No Rights'}
-                      <button
-                        onClick={() => handleFilterChange({ has_rights: undefined })}
-                        className="ml-1 text-purple-600 hover:text-purple-800"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  )}
-                  {(filters.account_range_from || filters.account_range_to) && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                      Range: {filters.account_range_from || '0'} - {filters.account_range_to || '∞'}
-                      <button
-                        onClick={() => handleFilterChange({ account_range_from: undefined, account_range_to: undefined })}
-                        className="ml-1 text-orange-600 hover:text-orange-800"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  )}
-                </div>
-              )}
+      {/* Main Content */}
+      <main className="px-6 pb-6">
+        <div>
+
+          {/* Pagination dropdown */}
+          <div className="mt-3 mb-2 flex items-center justify-between">
+            <div className="flex items-center space-x-1.5">
+              <span className="text-xs text-gray-600">Show</span>
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value))
+                  setCurrentPage(1)
+                }}
+                className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white text-xs"
+              >
+                <option value={9999}>All</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span className="text-xs text-gray-600">entries</span>
             </div>
-            
-            <div className="text-sm text-gray-500">
-              Page {currentPage} of {brokersData?.pagination.pages || 1}
+            <div className="text-xs text-gray-700">
+              Showing {brokersData?.pagination.total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, brokersData?.pagination.total || 0)} of {brokersData?.pagination.total || 0} results
             </div>
+            {brokersData?.pagination && brokersData.pagination.pages > 1 && (
+              <div className="flex items-center space-x-1.5">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <span className="text-xs text-gray-700">
+                  Page {currentPage} of {brokersData.pagination.pages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(brokersData.pagination.pages, prev + 1))}
+                  disabled={currentPage === brokersData.pagination.pages}
+                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Brokers Table */}

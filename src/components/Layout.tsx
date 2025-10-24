@@ -29,10 +29,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-br from-indigo-100/20 to-pink-100/20 rounded-full blur-3xl transform -translate-x-48 translate-y-48"></div>
           </div>
           
-          <div className="relative z-10 p-4 md:p-6 lg:p-8">
-            <div className="max-w-7xl mx-auto">
-              {children}
-            </div>
+          <div className="relative z-10">
+            {children}
           </div>
         </motion.main>
       </div>

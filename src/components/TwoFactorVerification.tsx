@@ -12,7 +12,6 @@ interface TwoFactorVerificationProps {
 
 const TwoFactorVerification: React.FC<TwoFactorVerificationProps> = ({
   username,
-  password,
   onVerify,
   onBack,
   isLoading,

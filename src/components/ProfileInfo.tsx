@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { 
   CameraIcon,
-  TrashIcon,
   CheckCircleIcon,
   XCircleIcon,
   PencilIcon

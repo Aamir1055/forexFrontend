@@ -153,6 +153,7 @@ export interface BrokerFilters {
   sort_by?: string
   sort_order?: 'ASC' | 'DESC'
   search?: string
+  [key: string]: string | number | boolean | undefined
 }
 
 export interface BrokerRight {
@@ -221,8 +222,9 @@ export interface AccountMappingsResponse {
 
 export interface GroupMappingsResponse {
   group_mappings: GroupMapping[]
-}// Grou
-p interfaces
+}
+
+// Group interfaces
 export interface Group {
   id: number
   mt5_group: string
@@ -262,4 +264,54 @@ export interface GroupFilters {
   search?: string
   page?: number
   limit?: number
+}
+
+// Audit Log interfaces
+export interface AuditLog {
+  id: number
+  user_id: number | null
+  username: string
+  action: string
+  table_name: string
+  record_id: number
+  ip_address: string
+  user_agent: string
+  created_at: string
+  old_values?: Record<string, any>
+  new_values?: Record<string, any>
+  user_email?: string
+}
+
+export interface AuditLogsResponse {
+  success: boolean
+  logs: AuditLog[]
+  pagination: {
+    current_page: number
+    per_page: number
+    total_items: number
+    total_pages: number
+  }
+}
+
+export interface AuditLogFilters {
+  page?: number
+  limit?: number
+  action?: string
+  user_id?: number
+  table_name?: string
+  start_date?: string
+  end_date?: string
+  search?: string
+  sort?: string
+  order?: 'asc' | 'desc'
+}
+
+export interface ExportAuditLogsParams {
+  format: 'csv' | 'json'
+  action?: string
+  user_id?: number
+  table_name?: string
+  start_date?: string
+  end_date?: string
+  search?: string
 }

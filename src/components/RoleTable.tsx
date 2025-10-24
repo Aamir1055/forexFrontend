@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 import { UserGroupIcon } from '@heroicons/react/24/outline'
 import { ShieldCheckIcon, ChartBarIcon } from '@heroicons/react/24/solid'
 import { Role } from '../types'
@@ -16,6 +16,36 @@ const RoleTable: React.FC<RoleTableProps> = ({
   onEdit,
   onDelete
 }) => {
+  const [sortField, setSortField] = useState<string | null>(null)
+  const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('ASC')
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'ASC' ? 'DESC' : 'ASC')
+    } else {
+      setSortField(field)
+      setSortOrder('ASC')
+    }
+  }
+
+  const sortedRoles = useMemo(() => {
+    if (!sortField) return roles
+
+    return [...roles].sort((a, b) => {
+      let aValue: any = a[sortField as keyof Role]
+      let bValue: any = b[sortField as keyof Role]
+
+      // Special handling for permissions count
+      if (sortField === 'permissions') {
+        aValue = a.permissions?.length || 0
+        bValue = b.permissions?.length || 0
+      }
+
+      if (aValue < bValue) return sortOrder === 'ASC' ? -1 : 1
+      if (aValue > bValue) return sortOrder === 'ASC' ? 1 : -1
+      return 0
+    })
+  }, [roles, sortField, sortOrder])
   const getRoleIcon = (roleName: string) => {
     const name = roleName.toLowerCase()
     if (name.includes('admin')) {
@@ -78,15 +108,48 @@ const RoleTable: React.FC<RoleTableProps> = ({
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Permissions</th>
+              <th 
+                onDoubleClick={() => handleSort('name')}
+                className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                title="Double-click to sort"
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Role</span>
+                  {sortField === 'name' && (
+                    <span className="text-blue-600">{sortOrder === 'ASC' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th 
+                onDoubleClick={() => handleSort('description')}
+                className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                title="Double-click to sort"
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Description</span>
+                  {sortField === 'description' && (
+                    <span className="text-blue-600">{sortOrder === 'ASC' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th 
+                onDoubleClick={() => handleSort('permissions')}
+                className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                title="Double-click to sort"
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Permissions</span>
+                  {sortField === 'permissions' && (
+                    <span className="text-blue-600">{sortOrder === 'ASC' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {roles.map((role) => (
+            {sortedRoles.map((role) => (
               <tr key={role.id} className="hover:bg-gray-50 transition-colors duration-150">
                 <td className="px-4 py-3">
                   <div className="flex items-center space-x-3">
@@ -141,28 +204,6 @@ const RoleTable: React.FC<RoleTableProps> = ({
             ))}
           </tbody>
         </table>
-      </div>
-
-      {/* Pagination */}
-      <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-        <div className="text-sm text-gray-700">
-          Showing 1 to {roles.length} of {roles.length} results
-        </div>
-        <div className="flex items-center space-x-2">
-          <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50" disabled>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button className="px-3 py-2 bg-blue-600 text-white rounded-lg">1</button>
-          <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">2</button>
-          <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">3</button>
-          <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
       </div>
     </div>
   )

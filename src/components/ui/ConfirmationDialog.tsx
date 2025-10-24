@@ -4,12 +4,14 @@ import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 interface ConfirmationDialogProps {
   isOpen: boolean
-  onClose: () => void
+  onClose?: () => void
+  onCancel?: () => void
   onConfirm: () => void
   title: string
   message: string
   confirmText?: string
   cancelText?: string
+  confirmButtonClass?: string
   type?: 'danger' | 'warning' | 'info'
   isLoading?: boolean
 }
@@ -17,14 +19,17 @@ interface ConfirmationDialogProps {
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   isOpen,
   onClose,
+  onCancel,
   onConfirm,
   title,
   message,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
+  confirmButtonClass,
   type = 'danger',
   isLoading = false
 }) => {
+  const handleClose = onCancel || onClose || (() => {})
   const getTypeStyles = () => {
     switch (type) {
       case 'danger':
@@ -66,7 +71,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
-            onClick={onClose}
+            onClick={handleClose}
           />
 
           {/* Dialog */}
@@ -89,7 +94,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
                     <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
                   </div>
                   <button
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                     disabled={isLoading}
                   >
@@ -106,7 +111,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
               {/* Actions */}
               <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end space-x-3">
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   disabled={isLoading}
                   className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -115,7 +120,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
                 <button
                   onClick={onConfirm}
                   disabled={isLoading}
-                  className={`px-4 py-2 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${styles.confirmButton} ${
+                  className={`px-4 py-2 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${confirmButtonClass || styles.confirmButton} ${
                     isLoading ? 'cursor-not-allowed' : 'hover:shadow-lg transform hover:scale-105'
                   }`}
                 >

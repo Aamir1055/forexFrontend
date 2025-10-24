@@ -5,9 +5,7 @@ import {
   PlusIcon, 
   MagnifyingGlassIcon,
   FunnelIcon,
-  ArrowPathIcon,
-  Squares2X2Icon,
-  ListBulletIcon
+  ArrowPathIcon
 } from '@heroicons/react/24/outline'
 import { groupService } from '../services/groupService'
 import { Group, CreateGroupData, UpdateGroupData, GroupFilters } from '../types'
@@ -23,7 +21,7 @@ const Groups: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
   const [filters, setFilters] = useState<GroupFilters>({})
-  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table')
+  const [viewMode] = useState<'table' | 'grid'>('table')
   const [showFilters, setShowFilters] = useState(false)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
@@ -131,11 +129,11 @@ const Groups: React.FC = () => {
   }
 
   const handleDeleteGroup = (id: number) => {
-    const group = groupsData?.data?.find((g: Group) => g.id === id)
+    const group = groupsData?.groups?.find((g: Group) => g.id === id)
     setDeleteConfirmation({
       isOpen: true,
       groupId: id,
-      groupName: group?.name || 'Unknown Group'
+      groupName: group?.broker_view_group || 'Unknown Group'
     })
   }
 
@@ -177,164 +175,133 @@ const Groups: React.FC = () => {
   const pagination = groupsData?.pagination
 
   return (
-    <div className="space-y-6">
-      {/* Simple Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Groups</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage trading groups</p>
-        </div>
-        <div className="text-sm text-gray-500">
-          {pagination?.total || 0} total
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          {/* Search and Filters */}
-          <div className="flex flex-col sm:flex-row gap-3 flex-1">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search groups..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            {/* Filter Toggle */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                showFilters || Object.keys(filters).length > 0
-                  ? 'bg-blue-50 border-blue-200 text-blue-700'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <FunnelIcon className="w-4 h-4" />
-              <span>Filters</span>
-              {Object.keys(filters).length > 0 && (
-                <span className="bg-blue-600 text-white text-xs rounded-full px-2 py-0.5">
-                  {Object.keys(filters).length}
-                </span>
-              )}
-            </button>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center space-x-2">
-            {/* Refresh */}
-            <button
-              onClick={() => queryClient.invalidateQueries(['groups'])}
-              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              title="Refresh"
-            >
-              <ArrowPathIcon className="w-5 h-5" />
-            </button>
-
-            {/* Create Group */}
-            <button
-              onClick={handleCreateGroup}
-              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-            >
-              <PlusIcon className="w-4 h-4" />
-              <span>Create</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Filters Panel */}
-        <AnimatePresence>
-          {showFilters && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mt-3 pt-3 border-t border-gray-200"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Status
-                  </label>
-                  <select
-                    value={filters.is_active === undefined ? '' : filters.is_active ? 'active' : 'inactive'}
-                    onChange={(e) => handleFilterChange({
-                      ...filters,
-                      is_active: e.target.value === '' ? undefined : e.target.value === 'active'
-                    })}
-                    className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
+    <div className="bg-gray-50 font-sans">
+      {/* Header */}
+      <div className="px-6 pt-6">
+        <header className="bg-white border border-gray-200 rounded-xl sticky top-0 z-40">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                  </svg>
                 </div>
-
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Page Size
-                  </label>
-                  <select
-                    value={pageSize}
-                    onChange={(e) => setPageSize(Number(e.target.value))}
-                    className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value={10}>10 per page</option>
-                    <option value={20}>20 per page</option>
-                    <option value={50}>50 per page</option>
-                    <option value={100}>100 per page</option>
-                  </select>
-                </div>
-
-                <div className="flex items-end">
-                  <button
-                    onClick={clearFilters}
-                    className="w-full px-3 py-1.5 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors text-sm"
-                  >
-                    Clear Filters
-                  </button>
+                  <h1 className="text-xl font-bold text-gray-900">Groups</h1>
+                  <p className="text-sm text-gray-500">Manage trading groups</p>
                 </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search groups..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                </div>
+                <button
+                  onClick={handleCreateGroup}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-sm"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                  <span>Create Group</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
       </div>
 
-      {/* Content */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        {error ? (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <div className="text-red-600 mb-2">Failed to load groups</div>
-            <button
-              onClick={() => queryClient.invalidateQueries(['groups'])}
-              className="text-red-600 hover:text-red-700 underline"
-            >
-              Try again
-            </button>
-          </div>
-        ) : (
-          <GroupTable
-            groups={groups}
-            isLoading={isLoading}
-            onEdit={handleEditGroup}
-            onDelete={handleDeleteGroup}
-            onToggleStatus={handleToggleStatus}
-            pagination={pagination}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-            viewMode={viewMode}
-          />
-        )}
-      </motion.div>
+      {/* Main Content */}
+      <main className="px-6 pb-6">
+        <div>
+          {/* Pagination Controls */}
+          {!isLoading && pagination && (
+            <div className="mt-4 mb-3 flex items-center justify-between">
+              <div className="flex items-center space-x-1.5">
+                <span className="text-xs text-gray-600">Show</span>
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value))
+                    setCurrentPage(1)
+                  }}
+                  className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white text-xs"
+                >
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span className="text-xs text-gray-600">entries</span>
+              </div>
+              <div className="text-xs text-gray-700">
+                Showing {pagination.total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, pagination.total)} of {pagination.total} results
+              </div>
+              {pagination.total_pages > 1 && (
+                <div className="flex items-center space-x-1.5">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <span className="text-xs text-gray-700">
+                    Page {currentPage} of {pagination.total_pages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(pagination.total_pages, prev + 1))}
+                    disabled={currentPage === pagination.total_pages}
+                    className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Groups Table */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            {error ? (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                <div className="text-red-600 mb-2">Failed to load groups</div>
+                <button
+                  onClick={() => queryClient.invalidateQueries(['groups'])}
+                  className="text-red-600 hover:text-red-700 underline"
+                >
+                  Try again
+                </button>
+              </div>
+            ) : (
+              <GroupTable
+                groups={groups}
+                isLoading={isLoading}
+                onEdit={handleEditGroup}
+                onDelete={handleDeleteGroup}
+                onToggleStatus={handleToggleStatus}
+                pagination={pagination}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+                viewMode={viewMode}
+              />
+            )}
+          </motion.div>
+        </div>
+      </main>
 
       {/* Modal */}
       <GroupModal

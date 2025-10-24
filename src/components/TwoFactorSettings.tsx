@@ -83,7 +83,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
   const regenerateCodesMutation = useMutation(
     () => twoFactorService.regenerateBackupCodes(),
     {
-      onSuccess: (data) => {
+      onSuccess: () => {
         toast.success('Backup codes regenerated successfully!')
         // You might want to show the new codes in a modal
       },

@@ -30,7 +30,7 @@ const LoginDebug: React.FC = () => {
         addResult(`❌ API server responded with status: ${response.status}`)
       }
     } catch (error) {
-      addResult(`❌ API connectivity failed: ${error.message}`)
+      addResult(`❌ API connectivity failed: ${(error as Error).message}`)
     }
     
     // Test 2: Try login endpoint with correct credentials
@@ -65,7 +65,7 @@ const LoginDebug: React.FC = () => {
         addResult(`📋 Error: ${loginData.message || 'Unknown error'}`)
       }
     } catch (error) {
-      addResult(`❌ Login test failed: ${error.message}`)
+      addResult(`❌ Login test failed: ${(error as Error).message}`)
     }
     
     setIsLoading(false)
@@ -105,7 +105,7 @@ const LoginDebug: React.FC = () => {
         addResult(`❌ Login failed: ${data.message || 'Unknown error'}`)
       }
     } catch (error) {
-      addResult(`❌ Custom login failed: ${error.message}`)
+      addResult(`❌ Custom login failed: ${(error as Error).message}`)
     }
     
     setIsLoading(false)
@@ -137,7 +137,7 @@ const LoginDebug: React.FC = () => {
         addResult('❌ AuthContext method would fail')
       }
     } catch (error) {
-      addResult(`❌ AuthContext test failed: ${error.message}`)
+      addResult(`❌ AuthContext test failed: ${(error as Error).message}`)
     }
     
     setIsLoading(false)

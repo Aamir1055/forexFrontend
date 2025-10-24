@@ -12,7 +12,9 @@ import {
   X,
   ChevronRight,
   LogOut,
-  Sparkles
+  Sparkles,
+  ClipboardList,
+  FileSpreadsheet
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { authService } from '../services/authService'
@@ -30,6 +32,8 @@ const navigation = [
   { name: 'Brokers', href: '/brokers', icon: Building2 },
   { name: 'Broker Profiles', href: '/broker-profiles', icon: FileText },
   { name: 'Groups', href: '/groups', icon: Layers },
+  { name: 'Audit Logs', href: '/audit-logs', icon: ClipboardList },
+  { name: 'Logs', href: '/logs', icon: FileSpreadsheet },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
