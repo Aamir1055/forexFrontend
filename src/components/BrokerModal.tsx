@@ -254,6 +254,15 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     }
   )
 
+  // Fetch broker's current groups if editing
+  const { data: brokerGroups } = useQuery(
+    ['broker-groups', broker?.id],
+    () => brokerGroupMappingService.getBrokerGroupMappings(broker!.id),
+    {
+      enabled: !!broker?.id
+    }
+  )
+
   // Sync rights mutation
   const syncRightsMutation = useMutation(
     ({ brokerId, rightIds }: { brokerId: number; rightIds: number[] }) =>
@@ -301,6 +310,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
       })
       // Set selected rights for existing broker
       setSelectedRights(brokerRights?.map(right => right.id) || [])
+      // Set selected groups for existing broker
+      setSelectedGroups(brokerGroups?.map(group => group.group_id) || [])
     } else {
       setFormData({
         username: '',
@@ -316,15 +327,17 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
         match_all_condition: undefined
       })
       setSelectedRights([])
+      setSelectedGroups([])
       setAccountMappings([])
       setPendingMappings([]) // Clear pending mappings for new broker
     }
     setErrors({})
-    setActiveTab('basic')
+    // Set active tab based on mode: 'profiles' for edit to show rights/groups, 'basic' for new broker
+    setActiveTab(broker ? 'profiles' : 'basic')
     // Reset account mapping form
     setAccountMappingData({ field_name: '', operator_type: '=', field_value: '' })
     setAccountMappingErrors({})
-  }, [broker, brokerRights])
+  }, [broker, brokerRights, brokerGroups])
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
@@ -470,14 +483,23 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     }
   }
 
-  // COMMENTED OUT - UNUSED FUNCTION
-  // const handleRightToggle = (rightId: number) => {
-  //   setSelectedRights(prev => 
-  //     prev.includes(rightId)
-  //       ? prev.filter(id => id !== rightId)
-  //       : [...prev, rightId]
-  //   )
-  // }
+  // Toggle right in selected rights (for edit mode)
+  const handleRightToggle = (rightId: number) => {
+    setSelectedRights(prev => 
+      prev.includes(rightId)
+        ? prev.filter(id => id !== rightId)
+        : [...prev, rightId]
+    )
+  }
+
+  // Toggle group in selected groups (for edit mode)
+  const handleGroupToggle = (groupId: number) => {
+    setSelectedGroups(prev => 
+      prev.includes(groupId)
+        ? prev.filter(id => id !== groupId)
+        : [...prev, groupId]
+    )
+  }
 
   // Mock permissions data organized by categories
   const permissionCategories = [
@@ -1075,50 +1097,58 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         transition={{ duration: 0.2 }}
                         className=""
                       >
-                        {/* Header with Profile Dropdown */}
+                        {/* Header - Different for Edit vs Create */}
                         <div className="flex items-start justify-between mb-4">
                           <div>
-                            <h3 className="text-base font-semibold text-gray-900 mb-1">Assign Profile</h3>
-                            <p className="text-xs text-gray-600">Select a profile and customize its rights and groups before assigning to this broker.</p>
+                            <h3 className="text-base font-semibold text-gray-900 mb-1">
+                              {broker ? 'Broker Rights & Groups' : 'Assign Profile'}
+                            </h3>
+                            <p className="text-xs text-gray-600">
+                              {broker 
+                                ? 'View and edit the rights and groups assigned to this broker.' 
+                                : 'Select a profile and customize its rights and groups before assigning to this broker.'}
+                            </p>
                           </div>
                           
-                          {/* Profile Dropdown at top right */}
-                          <div className="ml-4" style={{ minWidth: '200px' }}>
-                            <select
-                              value={selectedProfile || ''}
-                              onChange={(e) => {
-                                const profileId = e.target.value ? Number(e.target.value) : null
-                                if (profileId) {
-                                  handleProfileSelectForRoleEditing(profileId)
-                                  handleProfileSelectForGroupEditing(profileId)
-                                } else {
-                                  setSelectedProfile(null)
-                                  setEditableRolePermissions([])
-                                  setEditableProfileGroups([])
-                                }
-                              }}
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white"
-                              disabled={profilesLoading}
-                            >
-                              <option value="">-- Select Profile --</option>
-                              {brokerProfiles?.profiles?.map((profile) => (
-                                <option key={profile.id} value={profile.id}>
-                                  {profile.name}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
+                          {/* Profile Dropdown - Only show for new broker */}
+                          {!broker && (
+                            <div className="ml-4" style={{ minWidth: '200px' }}>
+                              <select
+                                value={selectedProfile || ''}
+                                onChange={(e) => {
+                                  const profileId = e.target.value ? Number(e.target.value) : null
+                                  if (profileId) {
+                                    handleProfileSelectForRoleEditing(profileId)
+                                    handleProfileSelectForGroupEditing(profileId)
+                                  } else {
+                                    setSelectedProfile(null)
+                                    setEditableRolePermissions([])
+                                    setEditableProfileGroups([])
+                                  }
+                                }}
+                                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white"
+                                disabled={profilesLoading}
+                              >
+                                <option value="">-- Select Profile --</option>
+                                {brokerProfiles?.profiles?.map((profile) => (
+                                  <option key={profile.id} value={profile.id}>
+                                    {profile.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
                         </div>
 
                         {/* Profile Loading State */}
-                        {profilesLoading && (
+                        {profilesLoading && !broker && (
                           <div className="flex items-center justify-center py-12">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                           </div>
                         )}
 
-                        {/* No Profiles Message */}
-                        {!profilesLoading && brokerProfiles?.profiles?.length === 0 && (
+                        {/* No Profiles Message - Only for new broker */}
+                        {!profilesLoading && !broker && brokerProfiles?.profiles?.length === 0 && (
                           <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
                             <svg className="w-12 h-12 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -1127,8 +1157,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                           </div>
                         )}
 
-                        {/* Show content when profile is selected */}
-                        {selectedProfile && !profilesLoading && (
+                        {/* Show content when editing existing broker OR when profile is selected for new broker */}
+                        {(broker || selectedProfile) && !profilesLoading && (
                           <div>
                             {/* Sub-tabs for Rights and Groups */}
                             <div className="border-b border-gray-200 mb-4">
@@ -1142,7 +1172,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                   }`}
                                 >
-                                  Rights ({editableRolePermissions.length})
+                                  Rights ({broker ? selectedRights.length : editableRolePermissions.length})
                                 </button>
                                 <button
                                   type="button"
@@ -1153,7 +1183,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                   }`}
                                 >
-                                  Groups ({editableProfileGroups.length})
+                                  Groups ({broker ? selectedRights.length : editableProfileGroups.length})
                                 </button>
                               </nav>
                             </div>
@@ -1169,7 +1199,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                   <div className="bg-white rounded-lg border border-gray-200 p-3">
                                     <div className="mb-2 pb-2 border-b border-gray-200">
                                       <h4 className="text-sm font-semibold text-gray-900">
-                                        Rights ({editableRolePermissions.length} selected)
+                                        Rights ({broker ? selectedRights.length : editableRolePermissions.length} selected)
                                       </h4>
                                     </div>
                                     <div className="space-y-2 overflow-y-auto pr-2" style={{ maxHeight: '400px' }}>
@@ -1189,19 +1219,19 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                               <label 
                                                 key={right.id} 
                                                 className={`flex items-center cursor-pointer px-2 py-1.5 rounded-md transition-all ${
-                                                  editableRolePermissions.includes(right.id) 
+                                                  (broker ? selectedRights : editableRolePermissions).includes(right.id) 
                                                     ? 'bg-blue-50 border border-blue-200' 
                                                     : 'bg-white border border-transparent hover:border-gray-300'
                                                 }`}
                                               >
                                                 <input
                                                   type="checkbox"
-                                                  checked={editableRolePermissions.includes(right.id)}
-                                                  onChange={() => handleRolePermissionToggle(right.id)}
+                                                  checked={(broker ? selectedRights : editableRolePermissions).includes(right.id)}
+                                                  onChange={() => broker ? handleRightToggle(right.id) : handleRolePermissionToggle(right.id)}
                                                   className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                                                 />
                                                 <span className={`ml-2.5 text-xs ${
-                                                  editableRolePermissions.includes(right.id) ? 'text-blue-900 font-medium' : 'text-gray-700'
+                                                  (broker ? selectedRights : editableRolePermissions).includes(right.id) ? 'text-blue-900 font-medium' : 'text-gray-700'
                                                 }`}>
                                                   {right.description || right.name}
                                                 </span>
@@ -1240,7 +1270,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                           {/* Header with Selection Count */}
                                           <div className="mb-3 pb-2 border-b border-gray-200">
                                             <h4 className="text-sm font-semibold text-gray-900">
-                                              Groups ({editableProfileGroups.length} selected)
+                                              Groups ({broker ? selectedGroups.length : editableProfileGroups.length} selected)
                                             </h4>
                                           </div>
 
@@ -1312,7 +1342,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                               <details 
                                                 key={group.id}
                                                 className={`group border rounded-md transition-all ${
-                                                  editableProfileGroups.includes(group.id) 
+                                                  (broker ? selectedGroups : editableProfileGroups).includes(group.id) 
                                                     ? 'bg-blue-50 border-blue-200' 
                                                     : 'bg-white border-gray-200 hover:border-blue-300'
                                                 }`}
@@ -1320,17 +1350,17 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                                 <summary className="flex items-center cursor-pointer px-2.5 py-2 list-none">
                                                   <input
                                                     type="checkbox"
-                                                    checked={editableProfileGroups.includes(group.id)}
+                                                    checked={(broker ? selectedGroups : editableProfileGroups).includes(group.id)}
                                                     onChange={(e) => {
                                                       e.stopPropagation()
-                                                      handleProfileGroupToggle(group.id)
+                                                      broker ? handleGroupToggle(group.id) : handleProfileGroupToggle(group.id)
                                                     }}
                                                     onClick={(e) => e.stopPropagation()}
                                                     className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                                                   />
                                                   <div className="ml-2.5 flex-1">
                                                     <div className={`text-xs font-semibold ${
-                                                      editableProfileGroups.includes(group.id) ? 'text-blue-900' : 'text-gray-900'
+                                                      (broker ? selectedGroups : editableProfileGroups).includes(group.id) ? 'text-blue-900' : 'text-gray-900'
                                                     }`}>
                                                       {group.broker_view_group}
                                                     </div>

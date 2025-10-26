@@ -13,7 +13,11 @@
     "deploy": "powershell -ExecutionPolicy Bypass -File ./deploy.ps1",
     "deploy:backup": "powershell -ExecutionPolicy Bypass -File ./deploy.ps1 -Backup",
     "deploy:quick": "powershell -ExecutionPolicy Bypass -File ./deploy.ps1 -SkipBuild",
-    "watch:deploy": "powershell -ExecutionPolicy Bypass -File ./watch-deploy.ps1"
+    "watch:deploy": "powershell -ExecutionPolicy Bypass -File ./watch-deploy.ps1",
+    "push": "powershell -ExecutionPolicy Bypass -File ./auto-push.ps1",
+    "push:schedule": "powershell -ExecutionPolicy Bypass -File ./auto-push-scheduler.ps1",
+    "push:setup": "powershell -ExecutionPolicy Bypass -File ./setup-scheduled-task.ps1",
+    "push:remove": "powershell -ExecutionPolicy Bypass -File ./remove-scheduled-task.ps1"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
