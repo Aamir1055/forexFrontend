@@ -1242,18 +1242,6 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                           >
                                             Previous
                                           </button>
-                                          
-                                          <select
-                                            value={groupsPage}
-                                            onChange={(e) => setGroupsPage(Number(e.target.value))}
-                                            className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer"
-                                          >
-                                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                              <option key={page} value={page}>
-                                                Page {page}
-                                              </option>
-                                            ))}
-                                          </select>
 
                                           <button
                                             type="button"
