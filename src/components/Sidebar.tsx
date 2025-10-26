@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   LayoutDashboard, 
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { authService } from '../services/authService'
+import { useAuth } from '../contexts/AuthContext'
 import toast from 'react-hot-toast'
 
 interface SidebarProps {
@@ -40,20 +41,23 @@ const navigation = [
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const navigate = useNavigate()
 
+  const { logout } = useAuth()
   const handleLogout = async () => {
+    // Clear local auth immediately
+    logout()
     try {
       await authService.logout()
-      toast.success('Logged out successfully')
-      window.location.href = '/login'
     } catch (error) {
-      console.error('Logout error:', error)
-      toast.error('Logout failed, but clearing session...')
-      localStorage.removeItem('authToken')
-      localStorage.removeItem('refreshToken')
-      localStorage.removeItem('user')
-      window.location.href = '/login'
+      console.error('Logout error (continuing):', error)
     }
+    toast.success('Logged out successfully')
+    const base = (import.meta as any).env?.VITE_ADMIN_BASE_URL || `${window.location.protocol}//${window.location.host}/brk-eye-adm`
+    const normalized = (typeof base === 'string' && base.endsWith('/')) ? base : `${base}/`
+    const loginUrl = `${normalized}login`
+    // Hard redirect to prevent history back to protected pages
+    window.location.replace(loginUrl)
   }
 
   return (

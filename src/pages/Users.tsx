@@ -47,6 +47,7 @@ const Users: React.FC = () => {
   const { data: roles } = useQuery('roles', userService.getRoles, {
     retry: 1,
   })
+  const rolesList = Array.isArray(roles) ? roles : []
 
   // Extract users and pagination from response
   const users = usersResponse?.data?.users || []
@@ -75,6 +76,11 @@ const Users: React.FC = () => {
     
     return filtered
   }, [users, searchTerm, selectedRole])
+
+  // Reset to page 1 when filters change (must be before any conditional returns to keep hooks order stable)
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm, selectedRole])
 
 
 
@@ -226,10 +232,7 @@ const Users: React.FC = () => {
   const endIndex = startIndex + itemsPerPage
   const paginatedUsers = sortedUsers.slice(startIndex, endIndex)
 
-  // Reset to page 1 when filters change
-  React.useEffect(() => {
-    setCurrentPage(1)
-  }, [searchTerm, selectedRole])
+  
 
   return (
     <div className="bg-gray-50 font-sans">
@@ -264,7 +267,7 @@ const Users: React.FC = () => {
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm"
                 >
                   <option value="all">All Roles</option>
-                  {roles?.map(role => (
+                  {rolesList.map(role => (
                     <option key={role.id} value={role.name}>{role.name}</option>
                   ))}
                 </select>

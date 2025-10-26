@@ -32,6 +32,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   const [selectedProfile, setSelectedProfile] = useState<number | null>(null)
   const [editableRolePermissions, setEditableRolePermissions] = useState<number[]>([])
   const [editableProfileGroups, setEditableProfileGroups] = useState<number[]>([])
+  const [groupsPage, setGroupsPage] = useState(1)
+  const [groupsPerPage, setGroupsPerPage] = useState(5)
   const [formData, setFormData] = useState<CreateBrokerData>({
     username: '',
     password: '',
@@ -1227,43 +1229,144 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                   </div>
                                 ) : groupsData?.groups && groupsData.groups.length > 0 ? (
                                   <div className="bg-white rounded-lg border border-gray-200 p-3">
-                                    <div className="mb-2 pb-2 border-b border-gray-200">
-                                      <h4 className="text-sm font-semibold text-gray-900">
-                                        Groups ({editableProfileGroups.length} selected)
-                                      </h4>
-                                    </div>
-                                    <div className="space-y-1.5 overflow-y-auto pr-2" style={{ maxHeight: '400px' }}>
-                                      {groupsData.groups.map((group) => (
-                                        <label 
-                                          key={group.id} 
-                                          className={`flex items-center cursor-pointer px-2.5 py-2 rounded-md border transition-all ${
-                                            editableProfileGroups.includes(group.id) 
-                                              ? 'bg-blue-50 border-blue-200' 
-                                              : 'bg-white border-gray-200 hover:border-blue-300'
-                                          }`}
-                                        >
-                                          <input
-                                            type="checkbox"
-                                            checked={editableProfileGroups.includes(group.id)}
-                                            onChange={() => handleProfileGroupToggle(group.id)}
-                                            className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                          />
-                                          <div className="ml-2.5 flex-1">
-                                            <div className={`text-xs font-semibold ${
-                                              editableProfileGroups.includes(group.id) ? 'text-blue-900' : 'text-gray-900'
-                                            }`}>
-                                              {group.broker_view_group}
-                                            </div>
-                                            <div className="text-[11px] text-gray-600 mt-0.5 leading-tight">{group.mt5_group}</div>
+                                    {(() => {
+                                      const startIndex = (groupsPage - 1) * groupsPerPage
+                                      const endIndex = startIndex + groupsPerPage
+                                      const paginatedGroups = groupsData.groups.slice(startIndex, endIndex)
+                                      const totalPages = Math.ceil(groupsData.groups.length / groupsPerPage)
+
+                                      return (
+                                        <>
+                                          {/* Header with Selection Count */}
+                                          <div className="mb-3 pb-2 border-b border-gray-200">
+                                            <h4 className="text-sm font-semibold text-gray-900">
+                                              Groups ({editableProfileGroups.length} selected)
+                                            </h4>
                                           </div>
-                                          <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                                            group.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                          }`}>
-                                            {group.is_active ? 'Active' : 'Inactive'}
-                                          </span>
-                                        </label>
-                                      ))}
-                                    </div>
+
+                                          {/* Pagination Controls at Top */}
+                                          <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
+                                            <div className="text-xs text-gray-600">
+                                              Showing {startIndex + 1}-{Math.min(endIndex, groupsData.groups.length)} of {groupsData.groups.length}
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                              {/* Items Per Page Dropdown */}
+                                              <div className="flex items-center gap-1.5">
+                                                <label className="text-xs text-gray-600">Show:</label>
+                                                <select
+                                                  value={groupsPerPage}
+                                                  onChange={(e) => {
+                                                    setGroupsPerPage(Number(e.target.value))
+                                                    setGroupsPage(1) // Reset to first page when changing items per page
+                                                  }}
+                                                  className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer"
+                                                >
+                                                  <option value={5}>5</option>
+                                                  <option value={10}>10</option>
+                                                  <option value={25}>25</option>
+                                                  <option value={50}>50</option>
+                                                  <option value={100}>100</option>
+                                                </select>
+                                              </div>
+
+                                              {totalPages > 1 && (
+                                                <>
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => setGroupsPage(Math.max(1, groupsPage - 1))}
+                                                    disabled={groupsPage === 1}
+                                                    className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                  >
+                                                    Previous
+                                                  </button>
+                                                  
+                                                  {/* Page Dropdown */}
+                                                  <select
+                                                    value={groupsPage}
+                                                    onChange={(e) => setGroupsPage(Number(e.target.value))}
+                                                    className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer"
+                                                  >
+                                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                                      <option key={page} value={page}>
+                                                        Page {page}
+                                                      </option>
+                                                    ))}
+                                                  </select>
+
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => setGroupsPage(Math.min(totalPages, groupsPage + 1))}
+                                                    disabled={groupsPage === totalPages}
+                                                    className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                  >
+                                                    Next
+                                                  </button>
+                                                </>
+                                              )}
+                                            </div>
+                                          </div>
+
+                                          {/* Groups as Dropdown/Accordion Style */}
+                                          <div className="space-y-1.5 overflow-y-auto pr-2" style={{ maxHeight: '400px' }}>
+                                            {paginatedGroups.map((group) => (
+                                              <details 
+                                                key={group.id}
+                                                className={`group border rounded-md transition-all ${
+                                                  editableProfileGroups.includes(group.id) 
+                                                    ? 'bg-blue-50 border-blue-200' 
+                                                    : 'bg-white border-gray-200 hover:border-blue-300'
+                                                }`}
+                                              >
+                                                <summary className="flex items-center cursor-pointer px-2.5 py-2 list-none">
+                                                  <input
+                                                    type="checkbox"
+                                                    checked={editableProfileGroups.includes(group.id)}
+                                                    onChange={(e) => {
+                                                      e.stopPropagation()
+                                                      handleProfileGroupToggle(group.id)
+                                                    }}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                                  />
+                                                  <div className="ml-2.5 flex-1">
+                                                    <div className={`text-xs font-semibold ${
+                                                      editableProfileGroups.includes(group.id) ? 'text-blue-900' : 'text-gray-900'
+                                                    }`}>
+                                                      {group.broker_view_group}
+                                                    </div>
+                                                  </div>
+                                                  <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                                                    group.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                                  }`}>
+                                                    {group.is_active ? 'Active' : 'Inactive'}
+                                                  </span>
+                                                  <svg 
+                                                    className="ml-2 w-4 h-4 text-gray-500 transition-transform group-open:rotate-180" 
+                                                    fill="none" 
+                                                    stroke="currentColor" 
+                                                    viewBox="0 0 24 24"
+                                                  >
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                  </svg>
+                                                </summary>
+                                                <div className="px-2.5 pb-2 pt-1 border-t border-gray-200 bg-gray-50/50">
+                                                  <div className="text-[11px] text-gray-600">
+                                                    <div className="flex items-center justify-between py-1">
+                                                      <span className="font-medium text-gray-700">MT5 Group:</span>
+                                                      <span className="text-gray-900 font-mono">{group.mt5_group}</span>
+                                                    </div>
+                                                    <div className="flex items-center justify-between py-1">
+                                                      <span className="font-medium text-gray-700">Group ID:</span>
+                                                      <span className="text-gray-900">#{group.id}</span>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </details>
+                                            ))}
+                                          </div>
+                                        </>
+                                      )
+                                    })()}
                                   </div>
                                 ) : (
                                   <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">

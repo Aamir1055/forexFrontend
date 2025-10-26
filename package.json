@@ -5,9 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "clean:dist": "powershell -NoProfile -Command \"if (Test-Path dist) { Remove-Item -Recurse -Force dist }\"",
     "build": "tsc && vite build",
+    "build:clean": "npm run clean:dist && npm run build",
     "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "deploy": "powershell -ExecutionPolicy Bypass -File ./deploy.ps1",
+    "deploy:backup": "powershell -ExecutionPolicy Bypass -File ./deploy.ps1 -Backup",
+    "deploy:quick": "powershell -ExecutionPolicy Bypass -File ./deploy.ps1 -SkipBuild",
+    "watch:deploy": "powershell -ExecutionPolicy Bypass -File ./watch-deploy.ps1"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",

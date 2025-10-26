@@ -1,12 +1,18 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /admin-panel/
+  RewriteBase /brk-eye-adm/
+
+  # 1) Proxy API requests to backend on :8080 (avoid CORS)
+  # Requires mod_proxy + mod_proxy_http + mod_rewrite enabled in Apache
+  # Example: http://185.136.159.142/brk-eye-adm -> app, http://185.136.159.142/api -> backend via proxy
+  RewriteCond %{REQUEST_URI} ^/api/
+  RewriteRule ^api/(.*)$ http://127.0.0.1:8080/api/$1 [P,L]
   
-  # Don't rewrite files or directories
+  # 2) Don't rewrite files or directories (for SPA assets)
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   
-  # Rewrite everything else to index.html to allow React Router to work
+  # 3) Rewrite everything else to index.html to allow React Router to work
   RewriteRule ^ index.html [L]
 </IfModule>
 

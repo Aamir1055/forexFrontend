@@ -1,5 +1,5 @@
-import React from 'react'
-import { Navigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 interface ProtectedRouteProps {
@@ -7,10 +7,23 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, initialized } = useAuth()
+  const navigate = useNavigate()
   
+  useEffect(() => {
+    if (initialized && !isAuthenticated) {
+      navigate('/login', { replace: true })
+    }
+  }, [initialized, isAuthenticated, navigate])
+  
+  if (!initialized) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="text-gray-600">Loading...</div>
+    </div>
+  }
+
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    return null
   }
   
   return <>{children}</>

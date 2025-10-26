@@ -10,12 +10,21 @@ export interface LoginRequest {
 export interface LoginStep1Response {
   requires_2fa: boolean
   message: string
+  // When true, user must perform initial 2FA setup using temp_token
+  requires_2fa_setup?: boolean
+  temp_token?: string  // For forced 2FA setup
 }
 
 export interface TwoFAVerifyRequest {
   username: string
   password: string
   code: string
+}
+
+export interface TwoFAVerifyBackupRequest {
+  username: string
+  password: string
+  backup_code: string
 }
 
 export interface LoginResponse {
@@ -48,44 +57,147 @@ export interface TwoFADisableRequest {
   password: string
 }
 
+export interface TwoFASetupTempRequest {
+  temp_token: string
+}
+
+export interface TwoFAEnableTempRequest {
+  temp_token: string
+  code: string
+  backup_codes: string[]
+}
+
 export const authService = {
+  // Internal helper to safely persist auth
+  _saveAuth(loginData: any) {
+    const at = loginData?.access_token
+    const rt = loginData?.refresh_token
+    if (!at || !rt) {
+      throw new Error('Missing tokens in response')
+    }
+    localStorage.setItem('authToken', at)
+    localStorage.setItem('refreshToken', rt)
+    if (loginData?.user) {
+      try {
+        localStorage.setItem('user', JSON.stringify(loginData.user))
+      } catch {}
+    }
+  },
   // Login (Step 1 - may require 2FA)
   async login(credentials: LoginRequest): Promise<LoginResponse | LoginStep1Response> {
-    const response = await api.post<ApiResponse<LoginResponse | LoginStep1Response>>('/api/auth/login', credentials)
-    const data = response.data.data
-    
-    // Check if 2FA is required
-    if ('requires_2fa' in data && data.requires_2fa) {
-      return data as LoginStep1Response
+    try {
+      const response = await api.post<ApiResponse<LoginResponse | LoginStep1Response>>('/api/auth/login', credentials)
+      const data = response.data.data
+      
+      // Normalize backend response shapes
+      const d: any = data as any
+      const requires2FASetup = d?.requires_2fa_setup === true
+      const requires2FA = d?.requires_2fa === true || requires2FASetup
+
+      if (requires2FA) {
+        const result: LoginStep1Response = {
+          requires_2fa: true,
+          message: d?.message || 'Two-factor authentication required',
+        }
+        // Only mark as setup flow (and include temp_token) if backend explicitly says so
+        if (requires2FASetup && d?.temp_token) {
+          result.requires_2fa_setup = true
+          result.temp_token = d.temp_token
+        }
+        return result
+      }
+      
+      // Normal login success - store tokens
+      const loginData = data as LoginResponse
+      // Persist tokens defensively
+      authService._saveAuth(loginData)
+      
+      return loginData
+    } catch (error: any) {
+      // Handle 403 error for forced 2FA setup
+      if (error.response?.status === 403) {
+        const errorData = error.response.data
+        // Check if it's a forced 2FA setup requirement
+        const temp = errorData?.data?.temp_token || errorData?.temp_token
+        const setup = errorData?.data?.requires_2fa_setup === true || errorData?.requires_2fa_setup === true
+        if (temp) {
+          const result: LoginStep1Response = {
+            requires_2fa: true,
+            message: errorData.message || 'Two-factor authentication setup required',
+          }
+          // Mark setup only when backend indicates setup explicitly, else treat as regular 2FA
+          if (setup) {
+            result.requires_2fa_setup = true
+            result.temp_token = temp
+          }
+          return result
+        }
+      }
+      // Re-throw other errors
+      throw error
     }
-    
-    // Normal login success - store tokens
-    const loginData = data as LoginResponse
-    localStorage.setItem('authToken', loginData.access_token)
-    localStorage.setItem('refreshToken', loginData.refresh_token)
-    localStorage.setItem('user', JSON.stringify(loginData.user))
-    
-    return loginData
+  },
+
+  // Verify with backup code
+  async verify2FAWithBackupCode(credentials: TwoFAVerifyBackupRequest): Promise<LoginResponse> {
+    const attempts: Array<{ url: string; body: Record<string, any> }> = [
+      { url: '/api/auth/verify-2fa', body: { username: credentials.username, password: credentials.password, backup_code: credentials.backup_code } },
+      { url: '/api/auth/login', body: { username: credentials.username, password: credentials.password, backup_code: credentials.backup_code } },
+    ]
+
+    let lastError: any
+    for (const attempt of attempts) {
+      try {
+        const resp = await api.post<ApiResponse<LoginResponse>>(attempt.url, attempt.body)
+        const data = resp?.data?.data
+        if (data?.access_token && data?.refresh_token) {
+          authService._saveAuth(data)
+          return data
+        }
+        lastError = new Error('Backup code verify response missing tokens')
+      } catch (err: any) {
+        lastError = err
+        const status = err?.response?.status
+        if (status && ![400, 404, 405, 422].includes(status)) {
+          break
+        }
+      }
+    }
+    throw lastError || new Error('Backup code verification failed')
   },
 
   // Verify 2FA (Step 2)
   async verify2FA(credentials: TwoFAVerifyRequest): Promise<LoginResponse> {
-    // Based on your API, we need to call the login endpoint again with the 2FA code
-    const loginData = {
-      username: credentials.username,
-      password: credentials.password,
-      code: credentials.code
+    // Try multiple endpoint/payload combinations to match backend
+    const attempts: Array<{ url: string; body: Record<string, any> }> = [
+      { url: '/api/auth/verify-2fa', body: { username: credentials.username, password: credentials.password, totp_code: credentials.code } },
+      { url: '/api/auth/verify-2fa', body: { username: credentials.username, password: credentials.password, code: credentials.code } },
+      { url: '/api/auth/login', body: { username: credentials.username, password: credentials.password, code: credentials.code } },
+      { url: '/api/auth/login', body: { username: credentials.username, password: credentials.password, totp_code: credentials.code } },
+    ]
+
+    let lastError: any
+    for (const attempt of attempts) {
+      try {
+        const resp = await api.post<ApiResponse<LoginResponse>>(attempt.url, attempt.body)
+        const data = resp?.data?.data
+        if (data?.access_token && data?.refresh_token) {
+          authService._saveAuth(data)
+          return data
+        }
+        // If no tokens were returned, remember error and continue
+        lastError = new Error('2FA verify response missing tokens')
+      } catch (err: any) {
+        lastError = err
+        // Continue to the next attempt on client or validation errors
+        const status = err?.response?.status
+        if (status && ![400, 404, 405, 422].includes(status)) {
+          // For unexpected statuses, break early
+          break
+        }
+      }
     }
-    
-    const response = await api.post<ApiResponse<LoginResponse>>('/api/auth/login', loginData)
-    const data = response.data.data
-    
-    // Store tokens after successful 2FA verification
-    localStorage.setItem('authToken', data.access_token)
-    localStorage.setItem('refreshToken', data.refresh_token)
-    localStorage.setItem('user', JSON.stringify(data.user))
-    
-    return data
+    throw lastError || new Error('2FA verification failed')
   },
 
   // Logout
@@ -130,6 +242,22 @@ export const authService = {
   async regenerateBackupCodes(): Promise<{ backup_codes: string[] }> {
     const response = await api.post<ApiResponse<{ backup_codes: string[] }>>('/api/auth/2fa/backup-codes')
     return response.data.data
+  },
+
+  // Setup 2FA with temp token (for forced 2FA)
+  async setup2FAWithTempToken(data: TwoFASetupTempRequest): Promise<TwoFASetupResponse> {
+    const response = await api.post<ApiResponse<TwoFASetupResponse>>('/api/auth/2fa/setup-temp', data)
+    return response.data.data
+  },
+
+  // Enable 2FA with temp token (for forced 2FA)
+  async enable2FAWithTempToken(data: TwoFAEnableTempRequest): Promise<LoginResponse> {
+    const response = await api.post<ApiResponse<LoginResponse>>('/api/auth/2fa/enable-temp', data)
+    const loginData = response.data.data
+    // Store tokens after successful 2FA setup (throws if missing)
+    authService._saveAuth(loginData)
+
+    return loginData
   },
 
   // Get current user

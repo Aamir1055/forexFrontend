@@ -1,7 +1,20 @@
 import axios from 'axios'
+import { getApiBaseUrl } from '../lib/apiBase'
+
+// Import the redirect utility
+const redirectToLogin = () => {
+  const envBase = (import.meta as any).env?.VITE_ADMIN_BASE_URL as string | undefined
+  const base = envBase && envBase.trim().length > 0
+    ? envBase
+    : `${window.location.protocol}//${window.location.host}/brk-eye-adm`
+  const normalized = base.endsWith('/') ? base : `${base}/`
+  const absoluteUrl = `${normalized}login`
+  console.log('🔒 API Error - Redirecting to login:', absoluteUrl)
+  window.location.href = absoluteUrl
+}
 
 const api = axios.create({
-  baseURL: import.meta.env.DEV ? '' : 'http://185.136.159.142:8080',
+  baseURL: getApiBaseUrl(),
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -10,7 +23,7 @@ const api = axios.create({
 
 // Create a separate instance for refresh calls to avoid interceptor loops
 const refreshApi = axios.create({
-  baseURL: import.meta.env.DEV ? '' : 'http://185.136.159.142:8080',
+  baseURL: getApiBaseUrl(),
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -53,8 +66,10 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
     
-    // Don't retry refresh token requests to prevent infinite loops
-    if (originalRequest.url?.includes('/api/auth/refresh')) {
+    // Don't retry refresh token requests or login requests to prevent infinite loops
+    if (originalRequest.url?.includes('/api/auth/refresh') || 
+        originalRequest.url?.includes('/api/auth/login') ||
+        originalRequest.url?.includes('/api/auth/verify-2fa')) {
       return Promise.reject(error)
     }
     
@@ -101,7 +116,7 @@ api.interceptors.response.use(
         localStorage.removeItem('authToken')
         localStorage.removeItem('refreshToken')
         localStorage.removeItem('user')
-        window.location.href = '/login'
+        redirectToLogin()
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false

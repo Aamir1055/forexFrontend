@@ -25,7 +25,8 @@ const UserModal: React.FC<UserModalProps> = ({
     email: '',
     password: '',
     is_active: true,
-    role_ids: []
+    role_ids: [],
+    force_two_factor: false
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -37,7 +38,8 @@ const UserModal: React.FC<UserModalProps> = ({
         email: user.email,
         password: '',
         is_active: user.is_active,
-        role_ids: user.roles.map(role => role.id)
+        role_ids: user.roles.map(role => role.id),
+        force_two_factor: user.force_two_factor || false
       })
     } else {
       setFormData({
@@ -45,7 +47,8 @@ const UserModal: React.FC<UserModalProps> = ({
         email: '',
         password: '',
         is_active: true,
-        role_ids: []
+        role_ids: [],
+        force_two_factor: false
       })
     }
     setErrors({})
@@ -271,19 +274,35 @@ const UserModal: React.FC<UserModalProps> = ({
                     <h4 className="text-sm font-semibold text-slate-800 mb-3 pb-1 border-b border-slate-200">
                       Account Status
                     </h4>
-                    <label className="flex items-center cursor-pointer p-2 border border-slate-200 rounded hover:bg-slate-50 transition-colors">
-                      <input
-                        type="checkbox"
-                        name="is_active"
-                        checked={formData.is_active}
-                        onChange={handleInputChange}
-                        className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-colors duration-200"
-                      />
-                      <div className="ml-2">
-                        <span className="text-xs font-medium text-slate-700">User is active</span>
-                        <p className="text-xs text-slate-500">Active users can log in and access the system</p>
-                      </div>
-                    </label>
+                    <div className="space-y-2">
+                      <label className="flex items-center cursor-pointer p-2 border border-slate-200 rounded hover:bg-slate-50 transition-colors">
+                        <input
+                          type="checkbox"
+                          name="is_active"
+                          checked={formData.is_active}
+                          onChange={handleInputChange}
+                          className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-colors duration-200"
+                        />
+                        <div className="ml-2">
+                          <span className="text-xs font-medium text-slate-700">User is active</span>
+                          <p className="text-xs text-slate-500">Active users can log in and access the system</p>
+                        </div>
+                      </label>
+                      
+                      <label className="flex items-center cursor-pointer p-2 border border-slate-200 rounded hover:bg-slate-50 transition-colors">
+                        <input
+                          type="checkbox"
+                          name="force_two_factor"
+                          checked={formData.force_two_factor}
+                          onChange={handleInputChange}
+                          className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-colors duration-200"
+                        />
+                        <div className="ml-2">
+                          <span className="text-xs font-medium text-slate-700">Force Two-Factor Authentication</span>
+                          <p className="text-xs text-slate-500">User must set up 2FA on first login</p>
+                        </div>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </form>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { authService } from '../services/authService'
 import toast from 'react-hot-toast'
 
 const QuickLogin: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
   const [credentials, setCredentials] = useState({
     username: 'admin',
     password: 'admin123'
@@ -75,10 +77,9 @@ const QuickLogin: React.FC = () => {
         
         toast.success('Direct login successful!')
         
-        // Small delay to ensure localStorage is updated
-        setTimeout(() => {
-          window.location.href = '/'
-        }, 100)
+        // Dispatch auth update and navigate
+        window.dispatchEvent(new Event('auth:updated'))
+        navigate('/', { replace: true })
       } else if (data.data?.requires_2fa) {
         toast.error('This account has 2FA enabled. Please use the main login page.')
       } else {

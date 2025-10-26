@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { buildApiUrl } from '../lib/apiBase'
 
 interface AuthContextType {
   isAuthenticated: boolean
@@ -7,6 +8,7 @@ interface AuthContextType {
   verify2FA: (username: string, password: string, totpCode: string) => Promise<boolean>
   logout: () => void
   token: string | null
+  initialized: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -27,33 +29,77 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState<{ username: string; email: string } | null>(null)
   const [token, setToken] = useState<string | null>(null)
+  const [initialized, setInitialized] = useState(false)
 
   useEffect(() => {
     // Check for existing auth on mount
     const savedToken = localStorage.getItem('authToken')
     const savedUser = localStorage.getItem('user') || localStorage.getItem('authUser')
-    
-    if (savedToken && savedUser) {
+
+    if (savedToken && savedToken !== 'undefined' && savedToken !== 'null') {
+      setToken(savedToken)
+      setIsAuthenticated(true)
+    }
+
+    if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
       try {
         const userData = JSON.parse(savedUser)
-        setToken(savedToken)
         setUser(userData)
-        setIsAuthenticated(true)
       } catch (error) {
         console.error('Error parsing saved user data:', error)
-        // Clear invalid data
-        localStorage.removeItem('authToken')
+        // Clear invalid user data only; keep tokens so user stays logged in
         localStorage.removeItem('user')
         localStorage.removeItem('authUser')
       }
+    }
+    setInitialized(true)
+  }, [])
+
+  // Listen for explicit auth updates (after login/2FA) and storage changes
+  useEffect(() => {
+    const handler = () => {
+      const savedToken = localStorage.getItem('authToken')
+      const savedUser = localStorage.getItem('user') || localStorage.getItem('authUser')
+
+      if (savedToken && savedToken !== 'undefined' && savedToken !== 'null') {
+        setToken(savedToken)
+        setIsAuthenticated(true)
+      } else {
+        setToken(null)
+        setIsAuthenticated(false)
+      }
+
+      if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
+        try {
+          setUser(JSON.parse(savedUser))
+        } catch {
+          setUser(null)
+        }
+      } else {
+        setUser(null)
+      }
+
+      setInitialized(true)
+    }
+
+    const storageListener = (e: StorageEvent) => {
+      if (e.key && ['authToken', 'user', 'authUser', 'refreshToken'].includes(e.key)) {
+        handler()
+      }
+    }
+
+    window.addEventListener('auth:updated', handler as EventListener)
+    window.addEventListener('storage', storageListener)
+    return () => {
+      window.removeEventListener('auth:updated', handler as EventListener)
+      window.removeEventListener('storage', storageListener)
     }
   }, [])
 
   const login = async (username: string, password: string): Promise<boolean | 'requires_2fa'> => {
     try {
-      // Use the correct API URL based on environment
-      const baseURL = import.meta.env.DEV ? 'http://185.136.159.142:8080' : 'http://185.136.159.142:8080'
-      const apiUrl = `${baseURL}/api/auth/login`
+  // Build API URL from centralized helper
+  const apiUrl = buildApiUrl('/api/auth/login')
       
       console.log('Attempting login to:', apiUrl)
       console.log('Credentials:', { username, password: '***' })
@@ -68,13 +114,48 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       console.log('Response status:', response.status)
       
+      // Try to parse JSON response
+      let data;
+      try {
+        data = await response.json()
+        console.log('Login response:', data)
+      } catch (parseError) {
+        console.error('Failed to parse response:', parseError)
+        // If JSON parsing fails, throw based on status code
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('Invalid username or password')
+          } else if (response.status === 403) {
+            throw new Error('Account is disabled or locked')
+          } else if (response.status === 500) {
+            throw new Error('Server error. Please try again later')
+          } else {
+            throw new Error('Login failed. Please try again')
+          }
+        }
+        throw new Error('Invalid server response')
+      }
+      
+      // Check for error status in response body
+      if (data.status === 'error') {
+        console.error('Login error from server:', data.message)
+        throw new Error(data.message || 'Invalid username or password')
+      }
+      
+      // Check HTTP status for errors
       if (!response.ok) {
         console.error('HTTP error:', response.status, response.statusText)
-        return false
+        
+        if (response.status === 401) {
+          throw new Error(data.message || 'Invalid username or password')
+        } else if (response.status === 403) {
+          throw new Error(data.message || 'Account is disabled or locked')
+        } else if (response.status === 500) {
+          throw new Error('Server error. Please try again later')
+        } else {
+          throw new Error(data.message || 'Login failed. Please try again')
+        }
       }
-
-      const data = await response.json()
-      console.log('Login response:', data)
 
       // Handle 2FA requirement
       if (data.status === 'success' && data.data?.requires_2fa) {
@@ -99,24 +180,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return true
       }
 
-      // Handle other success cases or errors
-      if (data.status === 'error') {
-        console.error('Login error from server:', data.message)
-        return false
-      }
-
       console.log('Unexpected response format:', data)
-      return false
+      throw new Error('Invalid username or password')
     } catch (error) {
-      console.error('Login network error:', error)
-      return false
+      console.error('Login error caught:', error)
+      // Re-throw to allow the component to handle it
+      throw error
     }
   }
 
   const verify2FA = async (username: string, password: string, totpCode: string): Promise<boolean> => {
     try {
-      const baseURL = import.meta.env.DEV ? 'http://185.136.159.142:8080' : 'http://185.136.159.142:8080'
-      const apiUrl = `${baseURL}/api/auth/verify-2fa`
+  const apiUrl = buildApiUrl('/api/auth/verify-2fa')
       
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -163,6 +238,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('user')
     localStorage.removeItem('authUser')
+    
+    // Dispatch event to notify other components
+    window.dispatchEvent(new Event('auth:updated'))
   }
 
   return (
@@ -172,7 +250,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       login,
       verify2FA,
       logout,
-      token
+      token,
+      initialized
     }}>
       {children}
     </AuthContext.Provider>

@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
 const UIEnhancementNotification: React.FC = () => {
+  const navigate = useNavigate()
+  
   useEffect(() => {
     // Show notification about UI enhancements
     const hasShownNotification = localStorage.getItem('uiEnhancementNotificationShown')
@@ -63,7 +66,7 @@ const UIEnhancementNotification: React.FC = () => {
                       <button
                         onClick={() => {
                           toast.dismiss(t.id)
-                          window.location.href = '/brokers'
+                          navigate('/brokers')
                         }}
                         className="px-4 py-2 bg-white text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors"
                       >

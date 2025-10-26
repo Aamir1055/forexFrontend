@@ -1,23 +1,4 @@
-import axios from 'axios'
-
-const API_BASE_URL = '/api'
-
-// Create axios instance with default config
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
-
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('authToken')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+import api from './api'
 
 export interface User {
   id: number
@@ -33,6 +14,7 @@ export interface User {
   two_factor_secret: string | null
   two_factor_backup_codes: string | null
   two_factor_verified_at: string | null
+  force_two_factor: boolean
   roles: Role[]
 }
 
@@ -59,6 +41,7 @@ export interface CreateUserData {
   password: string
   is_active: boolean
   role_ids: number[]
+  force_two_factor?: boolean
 }
 
 export interface UpdateUserData {
@@ -67,6 +50,7 @@ export interface UpdateUserData {
   password?: string
   is_active: boolean
   role_ids?: number[]
+  force_two_factor?: boolean
 }
 
 export interface PaginationInfo {
@@ -96,42 +80,61 @@ export interface UserResponse {
 export const userService = {
   // Get users with pagination
   async getUsers(page: number = 1, limit: number = 20): Promise<UsersResponse> {
-    const response = await api.get(`/users?page=${page}&limit=${limit}`)
-    return response.data
+    const response = await api.get(`/api/users?page=${page}&limit=${limit}`)
+    const d = response?.data
+    // Normalize to { data: { users, pagination }, message, status }
+    const users = (d?.data?.users ?? d?.users ?? d?.data?.data?.users)
+    const pagination = (d?.data?.pagination ?? d?.pagination ?? d?.data?.data?.pagination)
+    const normalized: UsersResponse = {
+      data: {
+        users: Array.isArray(users) ? users : [],
+        pagination: pagination || { limit, page, pages: 0, total: 0 },
+      },
+      message: d?.message ?? '',
+      status: d?.status ?? 'success',
+    }
+    return normalized
   },
 
   // Get single user
   async getUser(id: number): Promise<UserResponse> {
-    const response = await api.get(`/users/${id}`)
+    const response = await api.get(`/api/users/${id}`)
     return response.data
   },
 
   // Create user
   async createUser(userData: CreateUserData): Promise<UserResponse> {
-    const response = await api.post('/users', userData)
+    const response = await api.post('/api/users', userData)
     return response.data
   },
 
   // Update user
   async updateUser(id: number, userData: UpdateUserData): Promise<UserResponse> {
-    const response = await api.put(`/users/${id}`, userData)
+    const response = await api.put(`/api/users/${id}`, userData)
     return response.data
   },
 
   // Delete user
   async deleteUser(id: number): Promise<void> {
-    await api.delete(`/users/${id}`)
+    await api.delete(`/api/users/${id}`)
   },
 
   // Toggle user status
   async toggleUserStatus(id: number): Promise<UserResponse> {
-    const response = await api.post(`/users/${id}/toggle-status`)
+    const response = await api.post(`/api/users/${id}/toggle-status`)
     return response.data
   },
 
   // Get roles for user form
   async getRoles(): Promise<Role[]> {
-    const response = await api.get('/roles')
-    return response.data.data?.roles || response.data
+    const response = await api.get('/api/roles')
+    const d = response?.data
+    const candidates = [
+      d?.data?.roles,
+      d?.roles,
+      d,
+    ]
+    const roles = candidates.find((c: any) => Array.isArray(c))
+    return Array.isArray(roles) ? roles as Role[] : []
   }
 }

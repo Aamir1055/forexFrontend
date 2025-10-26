@@ -19,7 +19,7 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename={import.meta.env.DEV ? '' : '/admin-panel'}>
+      <BrowserRouter basename={import.meta.env.DEV ? '' : '/brk-eye-adm'}>
         <AuthProvider>
           <App />
           <Toaster position="top-right" />

@@ -11,6 +11,7 @@ import {
   Sun,
   Moon
 } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
 import { authService } from '../services/authService'
 import ApiStatus from './ApiStatus'
 import toast from 'react-hot-toast'
@@ -24,22 +25,32 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [showDropdown, setShowDropdown] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const navigate = useNavigate()
+  const { logout } = useAuth()
   const currentUser = authService.getCurrentUser()
 
   const handleLogout = async () => {
+    setShowDropdown(false)
+
+    // Clear auth state immediately so ProtectedRoute blocks dashboard
+    logout()
+
     try {
-      setShowDropdown(false)
+      // Try to invalidate server token (non-blocking for UX)
       await authService.logout()
-      toast.success('Logged out successfully')
-      window.location.href = '/login'
     } catch (error) {
-      console.error('Logout error:', error)
-      toast.error('Logout failed, but clearing session...')
-      localStorage.removeItem('authToken')
-      localStorage.removeItem('refreshToken')
-      localStorage.removeItem('user')
-      window.location.href = '/login'
+      console.error('Logout API error (continuing anyway):', error)
     }
+
+    // Compute absolute login URL to avoid any SPA/basename edge cases
+    const envBase = (import.meta as any).env?.VITE_ADMIN_BASE_URL as string | undefined
+    const fallbackBase = `${window.location.protocol}//${window.location.host}/brk-eye-adm`
+    const base = (envBase && envBase.trim().length > 0) ? envBase : fallbackBase
+    const normalized = base.endsWith('/') ? base : `${base}/`
+    const loginUrl = `${normalized}login`
+
+    toast.success('Logged out successfully')
+    // Hard redirect so the browser history can't go "back" into an authed page
+    window.location.replace(loginUrl)
   }
 
   return (

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { authService, LoginRequest, TwoFAVerifyRequest } from '../services/authService'
 import TwoFactorVerification from '../components/TwoFactorVerification'
+import Forced2FASetup from '../components/Forced2FASetup'
 import toast from 'react-hot-toast'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -14,42 +15,75 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [requires2FA, setRequires2FA] = useState(false)
+  const [requiresForced2FASetup, setRequiresForced2FASetup] = useState(false)
+  const [tempToken, setTempToken] = useState<string>('')
   const [rememberMe, setRememberMe] = useState(false)
   const [twoFAError, setTwoFAError] = useState('')
+  const [loginError, setLoginError] = useState('')
   const navigate = useNavigate()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, initialized } = useAuth()
 
   // Redirect to dashboard if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    if (initialized && isAuthenticated) {
+      // Prefer SPA navigation to avoid reload loops
       navigate('/', { replace: true })
     }
-  }, [isAuthenticated, navigate])
+  }, [initialized, isAuthenticated, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setTwoFAError('')
+    setLoginError('')
+
+    console.log('=== LOGIN PAGE: Submit started ===')
+    console.log('Form data:', { username: formData.username, password: '***' })
 
     try {
-      const result = await authService.login(formData)
+  const result = await authService.login(formData)
+      console.log('=== LOGIN PAGE: Login result ===', result)
       
       // Check if 2FA is required
       if ('requires_2fa' in result && result.requires_2fa) {
-        setRequires2FA(true)
-        toast.success('Please enter your 2FA code')
+        const step1 = result as any
+        // Only go to forced setup when backend explicitly flags it
+        if (step1.requires_2fa_setup && step1.temp_token) {
+          setTempToken(step1.temp_token)
+          setRequiresForced2FASetup(true)
+          toast.success('Please set up Two-Factor Authentication')
+        } else {
+          // Regular 2FA verification
+          setRequires2FA(true)
+          toast.success('Please enter your 2FA code')
+        }
       } else {
-        // Normal login success - authService already saved to localStorage
-        toast.success('Login successful!')
-        
-        // Force page reload to trigger AuthContext to read from localStorage
-        window.location.href = '/'
+  // Normal login success - tokens saved; notify context and SPA navigate
+  toast.success('Login successful!')
+  window.dispatchEvent(new Event('auth:updated'))
+  navigate('/', { replace: true })
       }
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Login failed'
-      toast.error(errorMessage)
+      console.error('=== LOGIN PAGE: Error caught ===', error)
+      console.error('Error response:', error.response)
+      console.error('Error message:', error.message)
+      
+      // Handle different error formats
+      let errorMessage = 'Login failed'
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+      
+      console.log('=== LOGIN PAGE: Showing error ===', errorMessage)
+      
+      // Set error state to display in UI
+      setLoginError(errorMessage)
     } finally {
       setIsLoading(false)
+      console.log('=== LOGIN PAGE: Submit completed ===')
     }
   }
 
@@ -68,8 +102,9 @@ const Login: React.FC = () => {
       
       toast.success('Login successful!')
       
-      // Force page reload to trigger AuthContext
-      window.location.href = '/'
+  // Notify context and SPA navigate
+  window.dispatchEvent(new Event('auth:updated'))
+  navigate('/', { replace: true })
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || '2FA verification failed'
       setTwoFAError(errorMessage)
@@ -81,12 +116,37 @@ const Login: React.FC = () => {
 
   const handleBack2FA = () => {
     setRequires2FA(false)
+    setRequiresForced2FASetup(false)
+    setTempToken('')
     setTwoFAError('')
+  }
+
+  const handleForced2FAComplete = () => {
+    toast.success('2FA setup complete! Logging you in...')
+    window.dispatchEvent(new Event('auth:updated'))
+    navigate('/', { replace: true })
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  // Show Forced 2FA Setup if required
+  if (requiresForced2FASetup) {
+    return (
+      <Forced2FASetup
+        tempToken={tempToken}
+        username={formData.username}
+        onComplete={handleForced2FAComplete}
+        onBack={handleBack2FA}
+        // If setup-temp fails (e.g., 400 invalid/expired), fall back to regular 2FA verification
+        onSetupFallback={() => {
+          setRequiresForced2FASetup(false)
+          setRequires2FA(true)
+        }}
+      />
+    )
   }
 
   // Show 2FA verification page if required
@@ -107,50 +167,25 @@ const Login: React.FC = () => {
     <div className="min-h-screen flex">
       {/* Left Side - Login Form */}
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <motion.div 
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="w-full max-w-md"
-        >
+        <div className="w-full max-w-md">
           {/* Logo and Header */}
           <div className="text-center mb-8">
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl flex items-center justify-center shadow-2xl mb-6 relative overflow-hidden"
-            >
+            <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl flex items-center justify-center shadow-2xl mb-6 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 opacity-20"></div>
               <svg className="w-10 h-10 text-white relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
-            </motion.div>
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-3xl font-bold text-gray-900 mb-2"
-            >
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Welcome Back
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-gray-600"
-            >
+            </h1>
+            <p className="text-gray-600">
               Please sign in to your account
-            </motion.p>
+            </p>
           </div>
           
           {/* Form Card */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 relative overflow-hidden"
-          >
+          <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-blue-800"></div>
             
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -240,9 +275,7 @@ const Login: React.FC = () => {
               </div>
 
               {/* Submit */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 type="submit"
                 disabled={isLoading}
                 className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-sm font-semibold rounded-2xl hover:from-blue-700 hover:to-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl relative overflow-hidden"
@@ -259,21 +292,42 @@ const Login: React.FC = () => {
                 ) : (
                   <span className="relative z-10">Sign In</span>
                 )}
-              </motion.button>
+              </button>
 
+              {/* Error Message Display */}
+              {loginError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-red-50 border border-red-200 rounded-xl"
+                >
+                  <div className="flex items-start">
+                    <svg className="h-5 w-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-red-800">{loginError}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setLoginError('')}
+                      className="ml-3 flex-shrink-0 text-red-600 hover:text-red-800 transition-colors"
+                    >
+                      <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
 
             </form>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
 
       {/* Right Side - Information Panel */}
-      <motion.div 
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="hidden lg:flex lg:flex-1 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 relative overflow-hidden"
-      >
+      <div className="hidden lg:flex lg:flex-1 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-32 h-32 bg-white rounded-full"></div>
@@ -283,11 +337,7 @@ const Login: React.FC = () => {
         </div>
 
         <div className="flex flex-col justify-center px-12 py-16 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-          >
+          <div>
             <h2 className="text-4xl font-bold text-white mb-6">
               Secure Access Portal
             </h2>
@@ -295,14 +345,9 @@ const Login: React.FC = () => {
               Your gateway to a comprehensive user management system with 
               advanced security features and intuitive controls.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="space-y-8"
-          >
+          <div className="space-y-8">
             {/* Features */}
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
@@ -352,9 +397,9 @@ const Login: React.FC = () => {
                 <p className="text-blue-200 text-sm">Real-time insights and comprehensive reporting</p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }

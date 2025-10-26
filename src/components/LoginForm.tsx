@@ -13,24 +13,55 @@ const LoginForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    console.log('=== LOGIN FORM: Submit started ===')
+    
     if (!username || !password) {
       toast.error('Please fill in all fields')
       return
     }
 
     setIsLoading(true)
+    console.log('=== LOGIN FORM: Calling login function ===')
     
     try {
       const success = await login(username, password)
-      if (success) {
+      console.log('=== LOGIN FORM: Login result ===', success)
+      
+      if (success === true) {
         toast.success('Login successful!')
-      } else {
-        toast.error('Invalid credentials')
+      } else if (success === 'requires_2fa') {
+        toast('Two-factor authentication required', {
+          icon: '🔐',
+          duration: 4000,
+        })
       }
-    } catch (error) {
-      toast.error('Login failed')
+    } catch (error: any) {
+      console.error('=== LOGIN FORM: Error caught ===', error)
+      console.error('Error message:', error?.message)
+      console.error('Error object:', error)
+      
+      // Display the specific error message from the server
+      const errorMessage = error?.message || 'Invalid username or password'
+      console.log('=== LOGIN FORM: Showing toast with message ===', errorMessage)
+      
+      toast.error(errorMessage, {
+        duration: 4000,
+        style: {
+          background: '#FEE2E2',
+          color: '#991B1B',
+          border: '1px solid #FCA5A5',
+        },
+        iconTheme: {
+          primary: '#DC2626',
+          secondary: '#FFFFFF',
+        },
+      })
+      
+      // Also show alert as fallback
+      alert('Login Error: ' + errorMessage)
     } finally {
       setIsLoading(false)
+      console.log('=== LOGIN FORM: Submit completed ===')
     }
   }
 
