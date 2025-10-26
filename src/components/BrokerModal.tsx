@@ -925,7 +925,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                           : 'border-transparent text-gray-500 hover:text-gray-700'
                       }`}
                     >
-                      Assign Profile
+                      Rights & Groups
                     </button>
                   </nav>
                 </div>
