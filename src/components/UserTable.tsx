@@ -51,144 +51,246 @@ const UserTable: React.FC<UserTableProps> = ({
 
   if (users.length === 0) {
     return (
-      <div className="p-8 text-center">
-        <UserGroupIcon className="mx-auto h-8 w-8 text-gray-300" />
-        <h3 className="mt-2 text-xs font-semibold text-gray-900">No users found</h3>
-        <p className="mt-1 text-[10px] text-gray-500">
-          Try adjusting your search or filters
-        </p>
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+        <div className="p-16 text-center">
+          <div className="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <UserGroupIcon className="w-10 h-10 text-slate-400" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900 mb-2">No users found</h3>
+          <p className="text-slate-600 mb-6">
+            {isLoading 
+              ? 'Loading users...' 
+              : 'Try adjusting your search or filters to find what you\'re looking for.'}
+          </p>
+          <div className="flex flex-col items-center space-y-2 text-sm text-slate-500">
+            <p className="font-medium">Try:</p>
+            <ul className="space-y-1">
+              <li>• Checking your spelling</li>
+              <li>• Using different keywords</li>
+              <li>• Removing some filters</li>
+            </ul>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead className="bg-gray-50 border-b border-gray-200">
-          <tr>
-            <th className="px-3 py-2 text-left">
-              <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">User</span>
-            </th>
-            <th className="px-3 py-2 text-left">
-              <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Email</span>
-            </th>
-            <th className="px-3 py-2 text-left">
-              <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Role</span>
-            </th>
-            <th className="px-3 py-2 text-left">
-              <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Security</span>
-            </th>
-            <th className="px-3 py-2 text-left">
-              <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Status</span>
-            </th>
-            <th className="px-3 py-2 text-left">
-              <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Joined</span>
-            </th>
-            <th className="px-3 py-2 text-right">
-              <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Actions</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {users.map((user) => (
-            <tr key={user.id} className="hover:bg-gray-50/50 transition-colors">
-              <td className="px-3 py-2">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#5B5FED] to-[#7B7FFF] text-[10px] font-semibold text-white flex-shrink-0">
-                    {user.username.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-medium text-gray-900 truncate">{user.username}</div>
-                    <div className="text-[10px] text-gray-500">ID: {user.id}</div>
-                  </div>
-                </div>
-              </td>
-              <td className="px-3 py-2">
-                <div className="text-xs text-gray-700">{user.email}</div>
-              </td>
-              <td className="px-3 py-2">
-                <div className="flex flex-wrap gap-1">
-                  {user.roles && user.roles.length > 0 ? (
-                    <>
-                      {user.roles.slice(0, 2).map((role) => (
-                        <span
-                          key={role.id}
-                          className="inline-flex items-center rounded-md bg-[#5B5FED] px-1.5 py-0.5 text-[10px] font-semibold text-white"
-                        >
-                          {role.name}
-                        </span>
-                      ))}
-                      {user.roles.length > 2 && (
-                        <span className="inline-flex items-center rounded-md bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600">
-                          +{user.roles.length - 2}
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    <span className="inline-flex items-center rounded-md bg-red-50 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">
-                      No Role
-                    </span>
+    <>
+      {/* Table Content */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-slate-50">
+            <tr>
+              <th 
+                onDoubleClick={() => onSort?.('username')}
+                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
+                title={onSort ? 'Double-click to sort' : ''}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>User</span>
+                  {currentSort?.field === 'username' && (
+                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                   )}
                 </div>
-              </td>
-              <td className="px-3 py-2">
-                {user.force_two_factor ? (
-                  <span className="inline-flex items-center gap-1 rounded-md bg-orange-50 px-1.5 py-0.5 text-[10px] font-medium text-orange-700">
-                    🔥 Force
-                  </span>
-                ) : user.two_factor_enabled ? (
-                  <span className="inline-flex items-center gap-1 rounded-md bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700">
-                    🔐 2FA
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 rounded-md bg-gray-50 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
-                    🔓 None
-                  </span>
-                )}
-              </td>
-              <td className="px-3 py-2">
-                <button
-                  onClick={() => onToggleStatus(user.id)}
-                  className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
-                    user.is_active
-                      ? 'bg-green-50 text-green-700 hover:bg-green-100'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  <span className={`h-1 w-1 rounded-full ${user.is_active ? 'bg-green-600' : 'bg-gray-400'}`} />
-                  {user.is_active ? 'Active' : 'Inactive'}
-                </button>
-              </td>
-              <td className="px-3 py-2 text-xs text-gray-500">
-                {formatDate(user.created_at)}
-              </td>
-              <td className="px-3 py-2">
-                <div className="flex items-center justify-end gap-1">
-                  <button
-                    onClick={() => onEdit(user)}
-                    className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-gray-200 bg-white hover:bg-gray-50 hover:border-[#5B5FED] hover:text-[#5B5FED] transition-colors"
-                    title="Edit"
-                  >
-                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => onDelete(user.id)}
-                    className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-gray-200 bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors"
-                    title="Delete"
-                  >
-                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
+              </th>
+              <th 
+                onDoubleClick={() => onSort?.('email')}
+                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
+                title={onSort ? 'Double-click to sort' : ''}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Email</span>
+                  {currentSort?.field === 'email' && (
+                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                  )}
                 </div>
-              </td>
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Roles</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Security</th>
+              <th 
+                onDoubleClick={() => onSort?.('is_active')}
+                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
+                title={onSort ? 'Double-click to sort' : ''}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Status</span>
+                  {currentSort?.field === 'is_active' && (
+                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th 
+                onDoubleClick={() => onSort?.('created_at')}
+                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
+                title={onSort ? 'Double-click to sort' : ''}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Created</span>
+                  {currentSort?.field === 'created_at' && (
+                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th className="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="bg-white divide-y divide-slate-200">
+            {users.map((user, index) => (
+              <tr key={user.id} className="hover:bg-slate-50 transition-colors duration-200">
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <div className="flex items-center space-x-3">
+                    <img 
+                      src={`https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-${(index % 5) + 1}.jpg`} 
+                      alt="Avatar" 
+                      className="w-8 h-8 rounded-full border border-slate-200"
+                    />
+                    <div>
+                      <div className="text-sm font-medium text-slate-800">{user.username}</div>
+                      <div className="text-xs text-slate-500">@{user.username.toLowerCase().replace(' ', '')}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-700">{user.email}</td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <div className="flex space-x-1">
+                    {user.roles.slice(0, 2).map((role) => (
+                      <span
+                        key={role.id}
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                          role.name.toLowerCase() === 'admin' 
+                            ? 'bg-blue-100 text-blue-700'
+                            : role.name.toLowerCase() === 'editor'
+                            ? 'bg-green-100 text-green-700'
+                            : role.name.toLowerCase() === 'viewer'
+                            ? 'bg-slate-100 text-slate-700'
+                            : 'bg-purple-100 text-purple-700'
+                        }`}
+                      >
+                        {role.name}
+                      </span>
+                    ))}
+                    {user.roles.length > 2 && (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
+                        +{user.roles.length - 2}
+                      </span>
+                    )}
+                    {user.roles.length === 0 && (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                        No Role
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <div className="flex flex-wrap gap-1">
+                    {user.force_two_factor && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-700 border border-orange-200" title="2FA Required on first login">
+                        🔥 Force 2FA
+                      </span>
+                    )}
+                    {user.two_factor_enabled && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700 border border-green-200" title="2FA Enabled">
+                        🔐 2FA
+                      </span>
+                    )}
+                    {!user.two_factor_enabled && !user.force_two_factor && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200" title="No 2FA">
+                        🔓 No 2FA
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <label className="inline-flex relative items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer" 
+                      checked={user.is_active}
+                      onChange={() => onToggleStatus(user.id)}
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-500">{formatDate(user.created_at)}</td>
+                <td className="px-4 py-3 whitespace-nowrap text-right">
+                  <div className="flex items-center justify-end space-x-1">
+                    <button 
+                      onClick={() => onEdit(user)}
+                      className="group relative p-2.5 text-gray-400 hover:text-white rounded-xl hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-200 hover:shadow-lg hover:scale-105"
+                      title="Edit user"
+                    >
+                      <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={() => onDelete(user.id)}
+                      className="group relative p-2.5 text-gray-400 hover:text-white rounded-xl hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-lg hover:scale-105"
+                      title="Delete user"
+                    >
+                      <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      {/* Pagination */}
+      {pagination && pagination.pages > 1 && (
+        <div className="px-4 py-3 border-t border-slate-200">
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-slate-600">
+              Showing <span className="font-medium">{((currentPage - 1) * pagination.limit) + 1}</span> to{' '}
+              <span className="font-medium">{Math.min(currentPage * pagination.limit, pagination.total)}</span> of{' '}
+              <span className="font-medium">{pagination.total}</span> results
+            </div>
+            <div className="flex items-center space-x-1">
+              <button
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 font-medium text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              
+              {/* Page Numbers */}
+              {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
+                const page = i + 1
+                return (
+                  <button
+                    key={page}
+                    onClick={() => onPageChange(page)}
+                    className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-all duration-200 ${
+                      currentPage === page
+                        ? 'bg-blue-600 text-white'
+                        : 'border border-slate-300 hover:bg-slate-50 text-slate-600'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              })}
+              
+              <button
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={currentPage === pagination.pages}
+                className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 font-medium text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 

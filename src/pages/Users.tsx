@@ -15,6 +15,7 @@ import { userService, User, CreateUserData, UpdateUserData } from '../services/u
 import UserTable from '../components/UserTable'
 import UserModal from '../components/UserModal'
 import ConfirmationDialog from '../components/ui/ConfirmationDialog'
+import StatCard from '../components/ui/StatCard'
 import toast from 'react-hot-toast'
 
 const Users: React.FC = () => {
@@ -293,156 +294,171 @@ const Users: React.FC = () => {
   
 
   return (
-    <div className="min-h-screen bg-[#F8F9FC]">
-      <div className="p-4 space-y-4">
-        {/* Compact Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">Users</h1>
-            <p className="text-xs text-gray-500 mt-0.5">
-              {statistics.totalUsers} total users · {statistics.activeUsers} active
-            </p>
-          </div>
-          <button
-            onClick={handleCreateUser}
-            className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5B5FED] px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-[#4B4FDD] transition-colors"
-          >
-            <PlusIcon className="h-3.5 w-3.5" />
-            Add User
-          </button>
-        </div>
-
-        {/* Compact Stats Grid */}
-        <div className="grid gap-3 grid-cols-4">
-          <div className="rounded-lg bg-white border border-gray-200 p-3 shadow-sm">
+    <div className="bg-gray-50 font-sans">
+      {/* Header */}
+      <div className="px-6 pt-6">
+        <header className="bg-white border border-gray-200 rounded-xl sticky top-0 z-40">
+          <div className="px-6 py-4">
             <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">Total Users</p>
-                <p className="text-xl font-bold text-gray-900 mt-1">{statistics.totalUsers}</p>
-                <p className="text-[10px] text-gray-400 mt-0.5">
-                  {statistics.activeUsers} active
-                </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <UserGroupIcon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">User Management</h1>
+                  <p className="text-sm text-gray-500">Manage users and their roles efficiently</p>
+                </div>
               </div>
-              <div className="rounded-lg bg-blue-50 p-2">
-                <UserGroupIcon className="h-4 w-4 text-blue-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-lg bg-white border border-gray-200 p-3 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">Active Rate</p>
-                <p className="text-xl font-bold text-gray-900 mt-1">{statistics.activePercentage}%</p>
-                <p className="text-[10px] text-green-600 mt-0.5 font-medium">
-                  {statistics.activeUsers}/{statistics.totalUsers}
-                </p>
-              </div>
-              <div className="rounded-lg bg-green-50 p-2">
-                <CheckCircleIcon className="h-4 w-4 text-green-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-lg bg-white border border-gray-200 p-3 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">New (30d)</p>
-                <p className="text-xl font-bold text-gray-900 mt-1">{statistics.newUsers}</p>
-                <p className="text-[10px] text-gray-400 mt-0.5">This month</p>
-              </div>
-              <div className="rounded-lg bg-purple-50 p-2">
-                <UserPlusIcon className="h-4 w-4 text-purple-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-lg bg-white border border-gray-200 p-3 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">2FA Enabled</p>
-                <p className="text-xl font-bold text-gray-900 mt-1">{statistics.twoFAPercentage}%</p>
-                <p className="text-[10px] text-gray-400 mt-0.5">
-                  {statistics.users2FA} users
-                </p>
-              </div>
-              <div className="rounded-lg bg-amber-50 p-2">
-                <ShieldCheckIcon className="h-4 w-4 text-amber-600" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Compact Filters */}
-        <div className="rounded-lg bg-white border border-gray-200 shadow-sm">
-          <div className="flex items-center gap-2 p-2.5">
-            <div className="relative flex-1 max-w-xs">
-              <MagnifyingGlassIcon className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="h-7 w-full rounded-md border border-gray-200 bg-gray-50 pl-8 pr-7 text-xs transition-colors placeholder:text-gray-400 focus:border-[#5B5FED] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#5B5FED]"
-              />
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              <div className="flex items-center space-x-3">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search users..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-80 pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  />
+                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <XMarkIcon className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm"
                 >
-                  <XMarkIcon className="h-3.5 w-3.5" />
+                  <option value="all">All Status</option>
+                  <option value="active">Active Only</option>
+                  <option value="inactive">Inactive Only</option>
+                </select>
+                <select
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm"
+                >
+                  <option value="all">All Roles</option>
+                  {rolesList.map(role => (
+                    <option key={role.id} value={role.name}>{role.name}</option>
+                  ))}
+                </select>
+                <button
+                  onClick={handleCreateUser}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-sm"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                  <span>Create User</span>
                 </button>
-              )}
-            </div>
-            
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="h-7 rounded-md border border-gray-200 bg-gray-50 px-2 text-xs font-medium transition-colors hover:bg-white focus:border-[#5B5FED] focus:outline-none focus:ring-1 focus:ring-[#5B5FED]"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-
-            <select
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-              className="h-7 rounded-md border border-gray-200 bg-gray-50 px-2 text-xs font-medium transition-colors hover:bg-white focus:border-[#5B5FED] focus:outline-none focus:ring-1 focus:ring-[#5B5FED]"
-            >
-              <option value="all">All Roles</option>
-              {rolesList.map(role => (
-                <option key={role.id} value={role.name}>{role.name}</option>
-              ))}
-            </select>
-
-            {(searchTerm || selectedStatus !== 'all' || selectedRole !== 'all') && (
-              <button
-                onClick={() => {
-                  setSearchTerm('')
-                  setSelectedStatus('all')
-                  setSelectedRole('all')
-                }}
-                className="h-7 px-2.5 rounded-md bg-gray-100 text-xs font-medium text-gray-600 hover:bg-gray-200 transition-colors"
-              >
-                Clear
-              </button>
-            )}
-            
-            <div className="ml-auto text-[10px] text-gray-500 font-medium">
-              {filteredUsers.length} results
+              </div>
             </div>
           </div>
+        </header>
+
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          <StatCard
+            title="Total Users"
+            value={statistics.totalUsers}
+            subtitle={`${statistics.activeUsers} active, ${statistics.inactiveUsers} inactive`}
+            icon={<UserGroupIcon className="w-6 h-6" />}
+            color="blue"
+          />
+          <StatCard
+            title="Active Users"
+            value={`${statistics.activePercentage}%`}
+            subtitle={`${statistics.activeUsers} of ${statistics.totalUsers} users`}
+            icon={<CheckCircleIcon className="w-6 h-6" />}
+            color="green"
+            trend={
+              statistics.activePercentage >= 80
+                ? { value: 'Healthy', isPositive: true }
+                : statistics.activePercentage >= 50
+                ? { value: 'Good', isPositive: true }
+                : { value: 'Low', isPositive: false }
+            }
+          />
+          <StatCard
+            title="New Users"
+            value={statistics.newUsers}
+            subtitle="Last 30 days"
+            icon={<UserPlusIcon className="w-6 h-6" />}
+            color="purple"
+          />
+          <StatCard
+            title="2FA Enabled"
+            value={`${statistics.twoFAPercentage}%`}
+            subtitle={`${statistics.users2FA} users • ${statistics.usersForced2FA} forced`}
+            icon={<ShieldCheckIcon className="w-6 h-6" />}
+            color="amber"
+          />
         </div>
+      </div>
 
-        {/* Compact Table */}
-        {isLoading ? (
-          <div className="rounded-lg bg-white border border-gray-200 p-8 text-center shadow-sm">
-            <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-gray-200 border-t-[#5B5FED]"></div>
-            <p className="mt-2 text-xs text-gray-500">Loading...</p>
+      {/* Main Content */}
+      <main className="px-6 pb-6">
+        <div>
+          {/* Pagination dropdown */}
+          <div className="mt-4 mb-3 flex items-center justify-between">
+            <div className="flex items-center space-x-1.5">
+              <span className="text-xs text-gray-600">Show</span>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value))
+                  setCurrentPage(1)
+                }}
+                className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white text-xs"
+              >
+                <option value={9999}>All</option>
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span className="text-xs text-gray-600">entries</span>
+            </div>
+            <div className="text-xs text-gray-700">
+              Showing {totalItems === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} results
+            </div>
+            {totalPages > 1 && (
+              <div className="flex items-center space-x-1.5">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <span className="text-xs text-gray-700">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="rounded-lg bg-white border border-gray-200 shadow-sm overflow-hidden">
+
+          {/* Users Table */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
             <UserTable
               users={paginatedUsers}
               isLoading={isLoading}
@@ -455,9 +471,9 @@ const Users: React.FC = () => {
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />
-          </div>
-        )}
-      </div>
+          </motion.div>
+        </div>
+      </main>
 
       {/* User Modal */}
       {isModalOpen && (
