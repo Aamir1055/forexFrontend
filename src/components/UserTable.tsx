@@ -57,19 +57,7 @@ const UserTable: React.FC<UserTableProps> = ({
             <UserGroupIcon className="w-10 h-10 text-slate-400" />
           </div>
           <h3 className="text-lg font-bold text-slate-900 mb-2">No users found</h3>
-          <p className="text-slate-600 mb-6">
-            {isLoading 
-              ? 'Loading users...' 
-              : 'Try adjusting your search or filters to find what you\'re looking for.'}
-          </p>
-          <div className="flex flex-col items-center space-y-2 text-sm text-slate-500">
-            <p className="font-medium">Try:</p>
-            <ul className="space-y-1">
-              <li>• Checking your spelling</li>
-              <li>• Using different keywords</li>
-              <li>• Removing some filters</li>
-            </ul>
-          </div>
+          <p className="text-slate-600 font-medium">Get started by creating your first user.</p>
         </div>
       </div>
     )
@@ -108,7 +96,6 @@ const UserTable: React.FC<UserTableProps> = ({
                 </div>
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Roles</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Security</th>
               <th 
                 onDoubleClick={() => onSort?.('is_active')}
                 className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
@@ -174,30 +161,6 @@ const UserTable: React.FC<UserTableProps> = ({
                     {user.roles.length > 2 && (
                       <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
                         +{user.roles.length - 2}
-                      </span>
-                    )}
-                    {user.roles.length === 0 && (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
-                        No Role
-                      </span>
-                    )}
-                  </div>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <div className="flex flex-wrap gap-1">
-                    {user.force_two_factor && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-700 border border-orange-200" title="2FA Required on first login">
-                        🔥 Force 2FA
-                      </span>
-                    )}
-                    {user.two_factor_enabled && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700 border border-green-200" title="2FA Enabled">
-                        🔐 2FA
-                      </span>
-                    )}
-                    {!user.two_factor_enabled && !user.force_two_factor && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200" title="No 2FA">
-                        🔓 No 2FA
                       </span>
                     )}
                   </div>
