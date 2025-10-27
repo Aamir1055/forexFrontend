@@ -77,219 +77,228 @@ const UserTable: React.FC<UserTableProps> = ({
 
   return (
     <>
-      {/* Table Content */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-slate-50">
-            <tr>
-              <th 
-                onDoubleClick={() => onSort?.('username')}
-                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
-                title={onSort ? 'Double-click to sort' : ''}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>User</span>
-                  {currentSort?.field === 'username' && (
-                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
-                  )}
-                </div>
-              </th>
-              <th 
-                onDoubleClick={() => onSort?.('email')}
-                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
-                title={onSort ? 'Double-click to sort' : ''}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Email</span>
-                  {currentSort?.field === 'email' && (
-                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
-                  )}
-                </div>
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Roles</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Security</th>
-              <th 
-                onDoubleClick={() => onSort?.('is_active')}
-                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
-                title={onSort ? 'Double-click to sort' : ''}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Status</span>
-                  {currentSort?.field === 'is_active' && (
-                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
-                  )}
-                </div>
-              </th>
-              <th 
-                onDoubleClick={() => onSort?.('created_at')}
-                className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''}`}
-                title={onSort ? 'Double-click to sort' : ''}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Created</span>
-                  {currentSort?.field === 'created_at' && (
-                    <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
-                  )}
-                </div>
-              </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-slate-200">
-            {users.map((user, index) => (
-              <tr key={user.id} className="hover:bg-slate-50 transition-colors duration-200">
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <div className="flex items-center space-x-3">
-                    <img 
-                      src={`https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-${(index % 5) + 1}.jpg`} 
-                      alt="Avatar" 
-                      className="w-8 h-8 rounded-full border border-slate-200"
-                    />
-                    <div>
-                      <div className="text-sm font-medium text-slate-800">{user.username}</div>
-                      <div className="text-xs text-slate-500">@{user.username.toLowerCase().replace(' ', '')}</div>
+      {/* Modern Table with Grid Cards on Mobile */}
+      <div className="overflow-hidden">
+        {/* Desktop Table View */}
+        <div className="hidden lg:block">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th className="px-6 py-4 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">User</span>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Email</span>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Roles</span>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Security</span>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Status</span>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Created</span>
+                </th>
+                <th className="px-6 py-4 text-right">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {users.map((user, index) => (
+                <tr key={user.id} className="group hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 transition-all duration-200">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                          {user.username.charAt(0).toUpperCase()}
+                        </div>
+                        {user.is_active && (
+                          <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></div>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold text-slate-900 truncate">{user.username}</div>
+                        <div className="text-xs text-slate-500">ID: {user.id}</div>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-700">{user.email}</td>
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <div className="flex space-x-1">
-                    {user.roles.slice(0, 2).map((role) => (
-                      <span
-                        key={role.id}
-                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                          role.name.toLowerCase() === 'admin' 
-                            ? 'bg-blue-100 text-blue-700'
-                            : role.name.toLowerCase() === 'editor'
-                            ? 'bg-green-100 text-green-700'
-                            : role.name.toLowerCase() === 'viewer'
-                            ? 'bg-slate-100 text-slate-700'
-                            : 'bg-purple-100 text-purple-700'
-                        }`}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-slate-700">{user.email}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-wrap gap-1.5">
+                      {user.roles && user.roles.length > 0 ? (
+                        user.roles.slice(0, 2).map((role) => (
+                          <span
+                            key={role.id}
+                            className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-sm"
+                          >
+                            {role.name}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-700">
+                          No Role
+                        </span>
+                      )}
+                      {user.roles && user.roles.length > 2 && (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
+                          +{user.roles.length - 2}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-1">
+                      {user.force_two_factor ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-orange-100 text-orange-700 w-fit">
+                          🔥 Force 2FA
+                        </span>
+                      ) : user.two_factor_enabled ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-700 w-fit">
+                          🔐 2FA Enabled
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 w-fit">
+                          🔓 No 2FA
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => onToggleStatus(user.id)}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${
+                        user.is_active
+                          ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${user.is_active ? 'bg-green-600' : 'bg-slate-400'}`}></span>
+                      {user.is_active ? 'Active' : 'Inactive'}
+                    </button>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-slate-600">{formatDate(user.created_at)}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => onEdit(user)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit user"
                       >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => onDelete(user.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete user"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="lg:hidden divide-y divide-slate-200">
+          {users.map((user, index) => (
+            <div key={user.id} className="p-4 hover:bg-slate-50 transition-colors">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-md">
+                      {user.username.charAt(0).toUpperCase()}
+                    </div>
+                    {user.is_active && (
+                      <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></div>
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-slate-900">{user.username}</div>
+                    <div className="text-xs text-slate-500">{user.email}</div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => onToggleStatus(user.id)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
+                    user.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'
+                  }`}
+                >
+                  {user.is_active ? 'Active' : 'Inactive'}
+                </button>
+              </div>
+              
+              <div className="space-y-2 mb-3">
+                <div className="flex flex-wrap gap-1.5">
+                  {user.roles && user.roles.length > 0 ? (
+                    user.roles.map((role) => (
+                      <span key={role.id} className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-gradient-to-r from-blue-500 to-purple-600 text-white">
                         {role.name}
                       </span>
-                    ))}
-                    {user.roles.length > 2 && (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
-                        +{user.roles.length - 2}
-                      </span>
-                    )}
-                    {user.roles.length === 0 && (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
-                        No Role
-                      </span>
-                    )}
-                  </div>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <div className="flex flex-wrap gap-1">
-                    {user.force_two_factor && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-700 border border-orange-200" title="2FA Required on first login">
-                        🔥 Force 2FA
-                      </span>
-                    )}
-                    {user.two_factor_enabled && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700 border border-green-200" title="2FA Enabled">
-                        🔐 2FA
-                      </span>
-                    )}
-                    {!user.two_factor_enabled && !user.force_two_factor && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200" title="No 2FA">
-                        🔓 No 2FA
-                      </span>
-                    )}
-                  </div>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <label className="inline-flex relative items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="sr-only peer" 
-                      checked={user.is_active}
-                      onChange={() => onToggleStatus(user.id)}
-                    />
-                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
-                  </label>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-500">{formatDate(user.created_at)}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-right">
-                  <div className="flex items-center justify-end space-x-1">
-                    <button 
-                      onClick={() => onEdit(user)}
-                      className="group relative p-2.5 text-gray-400 hover:text-white rounded-xl hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-200 hover:shadow-lg hover:scale-105"
-                      title="Edit user"
-                    >
-                      <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button 
-                      onClick={() => onDelete(user.id)}
-                      className="group relative p-2.5 text-gray-400 hover:text-white rounded-xl hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-lg hover:scale-105"
-                      title="Delete user"
-                    >
-                      <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    ))
+                  ) : (
+                    <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-700">
+                      No Role
+                    </span>
+                  )}
+                </div>
+                
+                {user.force_two_factor ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-orange-100 text-orange-700">
+                    🔥 Force 2FA
+                  </span>
+                ) : user.two_factor_enabled ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-700">
+                    🔐 2FA Enabled
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600">
+                    🔓 No 2FA
+                  </span>
+                )}
+              </div>
+              
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                <div className="text-xs text-slate-500">
+                  Created {formatDate(user.created_at)}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => onEdit(user)}
+                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => onDelete(user.id)}
+                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-
-      {/* Pagination */}
-      {pagination && pagination.pages > 1 && (
-        <div className="px-4 py-3 border-t border-slate-200">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-slate-600">
-              Showing <span className="font-medium">{((currentPage - 1) * pagination.limit) + 1}</span> to{' '}
-              <span className="font-medium">{Math.min(currentPage * pagination.limit, pagination.total)}</span> of{' '}
-              <span className="font-medium">{pagination.total}</span> results
-            </div>
-            <div className="flex items-center space-x-1">
-              <button
-                onClick={() => onPageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 font-medium text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Previous
-              </button>
-              
-              {/* Page Numbers */}
-              {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
-                const page = i + 1
-                return (
-                  <button
-                    key={page}
-                    onClick={() => onPageChange(page)}
-                    className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-all duration-200 ${
-                      currentPage === page
-                        ? 'bg-blue-600 text-white'
-                        : 'border border-slate-300 hover:bg-slate-50 text-slate-600'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                )
-              })}
-              
-              <button
-                onClick={() => onPageChange(currentPage + 1)}
-                disabled={currentPage === pagination.pages}
-                className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 font-medium text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   )
 }

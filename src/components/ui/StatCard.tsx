@@ -61,35 +61,38 @@ const StatCard: React.FC<StatCardProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`bg-white rounded-lg border ${colors.border} shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden`}
+      className={`bg-white rounded-xl border ${colors.border} shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden group`}
     >
-      <div className="p-3">
-        <div className="flex items-center justify-between mb-1.5">
-          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${colors.bg} flex items-center justify-center shadow-md`}>
-            <div className="text-white">
-              {icon}
+      <div className={`h-1 bg-gradient-to-r ${colors.bg}`}></div>
+      <div className="p-4">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <div className={`p-2 rounded-lg ${colors.light} group-hover:scale-110 transition-transform duration-200`}>
+                <div className={colors.text}>
+                  {icon}
+                </div>
+              </div>
+              {trend && (
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                  trend.isPositive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                }`}>
+                  {trend.isPositive ? '↑' : '↓'} {trend.value}
+                </span>
+              )}
             </div>
-          </div>
-          {trend && (
-            <div className={`flex items-center space-x-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${
-              trend.isPositive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-            }`}>
-              {trend.isPositive ? '↑' : '↓'} {trend.value}
-            </div>
-          )}
-        </div>
-        <div>
-          <p className="text-[9px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
-            {title}
-          </p>
-          <p className="text-lg font-bold text-gray-900 mb-0.5 leading-tight">
-            {value}
-          </p>
-          {subtitle && (
-            <p className="text-[10px] text-gray-600 leading-tight">
-              {subtitle}
+            <h3 className="text-2xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+              {value}
+            </h3>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+              {title}
             </p>
-          )}
+            {subtitle && (
+              <p className="text-xs text-gray-600 mt-1">
+                {subtitle}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>
