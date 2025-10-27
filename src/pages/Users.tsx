@@ -299,7 +299,7 @@ const Users: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Users</h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-zinc-500 mt-1">
               Manage your team members and their account permissions
             </p>
           </div>
@@ -317,9 +317,9 @@ const Users: React.FC = () => {
           <div className="rounded-lg border bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between space-x-4">
               <div className="flex-1">
-                <p className="text-sm font-medium text-muted-foreground">Total Users</p>
+                <p className="text-sm font-medium text-zinc-500">Total Users</p>
                 <p className="text-2xl font-bold">{statistics.totalUsers}</p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-zinc-500 mt-1">
                   {statistics.activeUsers} active, {statistics.inactiveUsers} inactive
                 </p>
               </div>
@@ -332,7 +332,7 @@ const Users: React.FC = () => {
           <div className="rounded-lg border bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between space-x-4">
               <div className="flex-1">
-                <p className="text-sm font-medium text-muted-foreground">Active Rate</p>
+                <p className="text-sm font-medium text-zinc-500">Active Rate</p>
                 <p className="text-2xl font-bold">{statistics.activePercentage}%</p>
                 <p className="text-xs text-green-600 mt-1 font-medium">
                   {statistics.activeUsers} of {statistics.totalUsers} users
@@ -347,9 +347,9 @@ const Users: React.FC = () => {
           <div className="rounded-lg border bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between space-x-4">
               <div className="flex-1">
-                <p className="text-sm font-medium text-muted-foreground">New This Month</p>
+                <p className="text-sm font-medium text-zinc-500">New This Month</p>
                 <p className="text-2xl font-bold">{statistics.newUsers}</p>
-                <p className="text-xs text-muted-foreground mt-1">Last 30 days</p>
+                <p className="text-xs text-zinc-500 mt-1">Last 30 days</p>
               </div>
               <div className="rounded-full bg-blue-100 p-3">
                 <UserPlusIcon className="h-5 w-5 text-blue-600" />
@@ -360,9 +360,9 @@ const Users: React.FC = () => {
           <div className="rounded-lg border bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between space-x-4">
               <div className="flex-1">
-                <p className="text-sm font-medium text-muted-foreground">2FA Enabled</p>
+                <p className="text-sm font-medium text-zinc-500">2FA Enabled</p>
                 <p className="text-2xl font-bold">{statistics.twoFAPercentage}%</p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-zinc-500 mt-1">
                   {statistics.users2FA} users · {statistics.usersForced2FA} forced
                 </p>
               </div>
@@ -377,13 +377,13 @@ const Users: React.FC = () => {
         <div className="rounded-lg border bg-white shadow-sm">
           <div className="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
             <div className="relative flex-1 max-w-sm">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
               <input
                 type="text"
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="flex h-9 w-full rounded-md border border-input bg-transparent pl-9 pr-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="flex h-9 w-full rounded-md border border-zinc-300 bg-transparent pl-9 pr-3 py-1 text-sm shadow-sm transition-colors placeholder:text-zinc-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-900"
               />
               {searchTerm && (
                 <button
@@ -399,7 +399,7 @@ const Users: React.FC = () => {
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="flex h-9 rounded-md border border-zinc-300 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-900"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -409,7 +409,7 @@ const Users: React.FC = () => {
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
-                className="flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="flex h-9 rounded-md border border-zinc-300 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-900"
               >
                 <option value="all">All Roles</option>
                 {rolesList.map(role => (
@@ -437,7 +437,7 @@ const Users: React.FC = () => {
         {isLoading ? (
           <div className="rounded-lg border bg-white p-12 text-center shadow-sm">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-zinc-900"></div>
-            <p className="mt-4 text-sm text-muted-foreground">Loading users...</p>
+            <p className="mt-4 text-sm text-zinc-500">Loading users...</p>
           </div>
         ) : (
           <div className="rounded-lg border bg-white shadow-sm">

@@ -66,25 +66,25 @@ const UserTable: React.FC<UserTableProps> = ({
       <table className="w-full">
         <thead>
           <tr className="border-b">
-            <th className="h-12 px-6 text-left align-middle font-medium text-muted-foreground">
+            <th className="h-12 px-6 text-left align-middle font-medium text-zinc-500">
               User
             </th>
-            <th className="h-12 px-6 text-left align-middle font-medium text-muted-foreground">
+            <th className="h-12 px-6 text-left align-middle font-medium text-zinc-500">
               Email
             </th>
-            <th className="h-12 px-6 text-left align-middle font-medium text-muted-foreground">
+            <th className="h-12 px-6 text-left align-middle font-medium text-zinc-500">
               Role
             </th>
-            <th className="h-12 px-6 text-left align-middle font-medium text-muted-foreground">
+            <th className="h-12 px-6 text-left align-middle font-medium text-zinc-500">
               Security
             </th>
-            <th className="h-12 px-6 text-left align-middle font-medium text-muted-foreground">
+            <th className="h-12 px-6 text-left align-middle font-medium text-zinc-500">
               Status
             </th>
-            <th className="h-12 px-6 text-left align-middle font-medium text-muted-foreground">
+            <th className="h-12 px-6 text-left align-middle font-medium text-zinc-500">
               Joined
             </th>
-            <th className="h-12 px-6 text-right align-middle font-medium text-muted-foreground">
+            <th className="h-12 px-6 text-right align-middle font-medium text-zinc-500">
               Actions
             </th>
           </tr>
@@ -99,7 +99,7 @@ const UserTable: React.FC<UserTableProps> = ({
                   </div>
                   <div>
                     <div className="font-medium">{user.username}</div>
-                    <div className="text-sm text-muted-foreground">ID: {user.id}</div>
+                    <div className="text-sm text-zinc-500">ID: {user.id}</div>
                   </div>
                 </div>
               </td>
@@ -159,14 +159,14 @@ const UserTable: React.FC<UserTableProps> = ({
                   {user.is_active ? 'Active' : 'Inactive'}
                 </button>
               </td>
-              <td className="p-6 text-sm text-muted-foreground">
+              <td className="p-6 text-sm text-zinc-500">
                 {formatDate(user.created_at)}
               </td>
               <td className="p-6">
                 <div className="flex items-center justify-end gap-2">
                   <button
                     onClick={() => onEdit(user)}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border bg-background hover:bg-zinc-100 transition-colors"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border bg-white hover:bg-zinc-100 transition-colors"
                     title="Edit"
                   >
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,7 +175,7 @@ const UserTable: React.FC<UserTableProps> = ({
                   </button>
                   <button
                     onClick={() => onDelete(user.id)}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border bg-background hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors"
                     title="Delete"
                   >
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
