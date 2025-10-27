@@ -63,15 +63,15 @@ const StatCard: React.FC<StatCardProps> = ({
       transition={{ duration: 0.3 }}
       className={`bg-white rounded-lg border ${colors.border} shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden`}
     >
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-2">
-          <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${colors.bg} flex items-center justify-center shadow-md`}>
+      <div className="p-3">
+        <div className="flex items-center justify-between mb-1.5">
+          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${colors.bg} flex items-center justify-center shadow-md`}>
             <div className="text-white">
               {icon}
             </div>
           </div>
           {trend && (
-            <div className={`flex items-center space-x-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
+            <div className={`flex items-center space-x-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${
               trend.isPositive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
             }`}>
               {trend.isPositive ? '↑' : '↓'} {trend.value}
@@ -79,14 +79,14 @@ const StatCard: React.FC<StatCardProps> = ({
           )}
         </div>
         <div>
-          <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
+          <p className="text-[9px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
             {title}
           </p>
-          <p className="text-xl font-bold text-gray-900 mb-0.5">
+          <p className="text-lg font-bold text-gray-900 mb-0.5 leading-tight">
             {value}
           </p>
           {subtitle && (
-            <p className="text-[11px] text-gray-600">
+            <p className="text-[10px] text-gray-600 leading-tight">
               {subtitle}
             </p>
           )}

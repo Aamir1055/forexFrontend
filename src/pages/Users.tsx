@@ -360,19 +360,19 @@ const Users: React.FC = () => {
         </header>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5 mt-3">
           <StatCard
             title="Total Users"
             value={statistics.totalUsers}
             subtitle={`${statistics.activeUsers} active, ${statistics.inactiveUsers} inactive`}
-            icon={<UserGroupIcon className="w-5 h-5" />}
+            icon={<UserGroupIcon className="w-4 h-4" />}
             color="blue"
           />
           <StatCard
             title="Active Users"
             value={`${statistics.activePercentage}%`}
             subtitle={`${statistics.activeUsers} of ${statistics.totalUsers} users`}
-            icon={<CheckCircleIcon className="w-5 h-5" />}
+            icon={<CheckCircleIcon className="w-4 h-4" />}
             color="green"
             trend={
               statistics.activePercentage >= 80
@@ -386,14 +386,14 @@ const Users: React.FC = () => {
             title="New Users"
             value={statistics.newUsers}
             subtitle="Last 30 days"
-            icon={<UserPlusIcon className="w-5 h-5" />}
+            icon={<UserPlusIcon className="w-4 h-4" />}
             color="purple"
           />
           <StatCard
             title="2FA Enabled"
             value={`${statistics.twoFAPercentage}%`}
             subtitle={`${statistics.users2FA} users • ${statistics.usersForced2FA} forced`}
-            icon={<ShieldCheckIcon className="w-5 h-5" />}
+            icon={<ShieldCheckIcon className="w-4 h-4" />}
             color="amber"
           />
         </div>
