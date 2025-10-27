@@ -4,13 +4,18 @@ import {
   XCircleIcon,
   PlusIcon,
   MagnifyingGlassIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  CheckCircleIcon,
+  UserPlusIcon,
+  ShieldCheckIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 import { motion } from 'framer-motion'
 import { userService, User, CreateUserData, UpdateUserData } from '../services/userService'
 import UserTable from '../components/UserTable'
 import UserModal from '../components/UserModal'
 import ConfirmationDialog from '../components/ui/ConfirmationDialog'
+import StatCard from '../components/ui/StatCard'
 import toast from 'react-hot-toast'
 
 const Users: React.FC = () => {
@@ -19,6 +24,7 @@ const Users: React.FC = () => {
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedRole, setSelectedRole] = useState('all')
+  const [selectedStatus, setSelectedStatus] = useState('all') // New: status filter
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [sortField, setSortField] = useState<string>('created_at')
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('DESC')
@@ -53,6 +59,35 @@ const Users: React.FC = () => {
   const users = usersResponse?.data?.users || []
   // const pagination = usersResponse?.data?.pagination
 
+  // Calculate statistics
+  const statistics = useMemo(() => {
+    const totalUsers = users.length
+    const activeUsers = users.filter(u => u.is_active).length
+    const inactiveUsers = totalUsers - activeUsers
+    const users2FA = users.filter(u => u.two_factor_enabled).length
+    const usersForced2FA = users.filter(u => u.force_two_factor).length
+    
+    // Calculate new users (created in last 30 days)
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    const newUsers = users.filter(u => new Date(u.created_at) > thirtyDaysAgo).length
+    
+    // Calculate percentage
+    const activePercentage = totalUsers > 0 ? Math.round((activeUsers / totalUsers) * 100) : 0
+    const twoFAPercentage = totalUsers > 0 ? Math.round((users2FA / totalUsers) * 100) : 0
+    
+    return {
+      totalUsers,
+      activeUsers,
+      inactiveUsers,
+      activePercentage,
+      newUsers,
+      users2FA,
+      usersForced2FA,
+      twoFAPercentage
+    }
+  }, [users])
+
   // Filter users based on search term and role
   const filteredUsers = useMemo(() => {
     let filtered = users
@@ -67,6 +102,13 @@ const Users: React.FC = () => {
       )
     }
     
+    // Filter by status
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter(user => 
+        selectedStatus === 'active' ? user.is_active : !user.is_active
+      )
+    }
+    
     // Filter by role
     if (selectedRole !== 'all') {
       filtered = filtered.filter(user => 
@@ -75,12 +117,12 @@ const Users: React.FC = () => {
     }
     
     return filtered
-  }, [users, searchTerm, selectedRole])
+  }, [users, searchTerm, selectedRole, selectedStatus])
 
   // Reset to page 1 when filters change (must be before any conditional returns to keep hooks order stable)
   React.useEffect(() => {
     setCurrentPage(1)
-  }, [searchTerm, selectedRole])
+  }, [searchTerm, selectedRole, selectedStatus])
 
 
 
@@ -267,17 +309,34 @@ const Users: React.FC = () => {
                   <p className="text-sm text-gray-500">Manage users and their roles efficiently</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3">
                 <div className="relative">
                   <input
                     type="text"
                     placeholder="Search users..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-80 pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />
                   <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <XMarkIcon className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm"
+                >
+                  <option value="all">All Status</option>
+                  <option value="active">Active Only</option>
+                  <option value="inactive">Inactive Only</option>
+                </select>
                 <select
                   value={selectedRole}
                   onChange={(e) => setSelectedRole(e.target.value)}
@@ -299,6 +358,45 @@ const Users: React.FC = () => {
             </div>
           </div>
         </header>
+
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          <StatCard
+            title="Total Users"
+            value={statistics.totalUsers}
+            subtitle={`${statistics.activeUsers} active, ${statistics.inactiveUsers} inactive`}
+            icon={<UserGroupIcon className="w-6 h-6" />}
+            color="blue"
+          />
+          <StatCard
+            title="Active Users"
+            value={`${statistics.activePercentage}%`}
+            subtitle={`${statistics.activeUsers} of ${statistics.totalUsers} users`}
+            icon={<CheckCircleIcon className="w-6 h-6" />}
+            color="green"
+            trend={
+              statistics.activePercentage >= 80
+                ? { value: 'Healthy', isPositive: true }
+                : statistics.activePercentage >= 50
+                ? { value: 'Good', isPositive: true }
+                : { value: 'Low', isPositive: false }
+            }
+          />
+          <StatCard
+            title="New Users"
+            value={statistics.newUsers}
+            subtitle="Last 30 days"
+            icon={<UserPlusIcon className="w-6 h-6" />}
+            color="purple"
+          />
+          <StatCard
+            title="2FA Enabled"
+            value={`${statistics.twoFAPercentage}%`}
+            subtitle={`${statistics.users2FA} users • ${statistics.usersForced2FA} forced`}
+            icon={<ShieldCheckIcon className="w-6 h-6" />}
+            color="amber"
+          />
+        </div>
       </div>
 
       {/* Main Content */}
