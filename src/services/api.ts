@@ -70,11 +70,15 @@ api.interceptors.response.use(
     if (originalRequest.url?.includes('/api/auth/refresh') || 
         originalRequest.url?.includes('/api/auth/login') ||
         originalRequest.url?.includes('/api/auth/verify-2fa')) {
+      console.log('🔒 Auth endpoint failed, not retrying:', originalRequest.url)
       return Promise.reject(error)
     }
     
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log('🔄 401 detected, attempting token refresh...')
+      
       if (isRefreshing) {
+        console.log('⏳ Refresh already in progress, queuing request...')
         // If we're already refreshing, queue this request
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
@@ -92,9 +96,11 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem('refreshToken')
         if (!refreshToken) {
+          console.error('❌ No refresh token available')
           throw new Error('No refresh token available')
         }
 
+        console.log('🔄 Calling refresh token API...')
         // Use separate axios instance to avoid interceptor loop
         const response = await refreshApi.post('/api/auth/refresh', { 
           refresh_token: refreshToken 
@@ -102,6 +108,7 @@ api.interceptors.response.use(
         
         const newToken = response.data.data.access_token
         localStorage.setItem('authToken', newToken)
+        console.log('✅ Token refreshed successfully')
         
         // Update the original request with new token
         originalRequest.headers.Authorization = `Bearer ${newToken}`
@@ -111,6 +118,7 @@ api.interceptors.response.use(
         
         return api(originalRequest)
       } catch (refreshError) {
+        console.error('❌ Token refresh failed:', refreshError)
         // Refresh failed, clear tokens and redirect to login
         processQueue(refreshError, null)
         localStorage.removeItem('authToken')
