@@ -104,13 +104,54 @@ export const userService = {
 
   // Create user
   async createUser(userData: CreateUserData): Promise<UserResponse> {
-    const response = await api.post('/api/users', userData)
+    console.log('🌐 userService.createUser - Data received from frontend:', userData)
+    
+    // Transform role_ids to roles for backend compatibility
+    const backendData: any = {
+      username: userData.username,
+      email: userData.email,
+      password: userData.password,
+      is_active: userData.is_active,
+      force_two_factor: userData.force_two_factor,
+    }
+    
+    // Backend expects "roles" not "role_ids"
+    if (userData.role_ids && userData.role_ids.length > 0) {
+      backendData.roles = userData.role_ids
+    }
+    
+    console.log('🌐 userService.createUser - Data being sent to backend:', backendData)
+    const response = await api.post('/api/users', backendData)
+    console.log('🌐 userService.createUser - Response:', response.data)
     return response.data
   },
 
   // Update user
   async updateUser(id: number, userData: UpdateUserData): Promise<UserResponse> {
-    const response = await api.put(`/api/users/${id}`, userData)
+    console.log('🌐 userService.updateUser - ID:', id)
+    console.log('🌐 userService.updateUser - Data received from frontend:', userData)
+    
+    // Transform role_ids to roles for backend compatibility
+    const backendData: any = {
+      username: userData.username,
+      email: userData.email,
+      is_active: userData.is_active,
+      force_two_factor: userData.force_two_factor,
+    }
+    
+    // Add password only if provided
+    if (userData.password) {
+      backendData.password = userData.password
+    }
+    
+    // Backend expects "roles" not "role_ids"
+    if (userData.role_ids && userData.role_ids.length > 0) {
+      backendData.roles = userData.role_ids
+    }
+    
+    console.log('🌐 userService.updateUser - Data being sent to backend:', backendData)
+    const response = await api.put(`/api/users/${id}`, backendData)
+    console.log('🌐 userService.updateUser - Response:', response.data)
     return response.data
   },
 

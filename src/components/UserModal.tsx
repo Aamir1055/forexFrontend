@@ -32,13 +32,21 @@ const UserModal: React.FC<UserModalProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
+    console.log('📝 UserModal - useEffect triggered')
+    console.log('📝 UserModal - User data:', user)
+    console.log('📝 UserModal - Is open:', isOpen)
+    
     if (user) {
+      const roleIds = user.roles.map(role => role.id)
+      console.log('📝 UserModal - Extracted role IDs:', roleIds)
+      console.log('📝 UserModal - User roles:', user.roles)
+      
       setFormData({
         username: user.username,
         email: user.email,
         password: '',
         is_active: user.is_active,
-        role_ids: user.roles.map(role => role.id),
+        role_ids: roleIds,
         force_two_factor: user.force_two_factor || false
       })
     } else {
@@ -119,11 +127,19 @@ const UserModal: React.FC<UserModalProps> = ({
           username: formData.username,
           email: formData.email,
           is_active: formData.is_active,
-          role_ids: formData.role_ids,
+          roles: formData.role_ids,  // Backend expects "roles" not "role_ids"
+          force_two_factor: formData.force_two_factor,
           ...(formData.password && { password: formData.password })
         }
-      : formData
+      : {
+          ...formData,
+          roles: formData.role_ids  // Backend expects "roles" not "role_ids"
+        }
 
+    console.log('🔧 UserModal - Submitting data:', submitData)
+    console.log('🔧 UserModal - Role IDs:', formData.role_ids)
+    console.log('🔧 UserModal - Is editing:', !!user)
+    
     onSubmit(submitData)
   }
 
@@ -246,13 +262,19 @@ const UserModal: React.FC<UserModalProps> = ({
                   {/* Roles & Permissions Section */}
                   <div>
                     <h4 className="text-sm font-semibold text-slate-800 mb-3 pb-1 border-b border-slate-200">
-                      Roles & Permissions
+                      Roles & Permissions <span className="text-red-500">*</span>
                     </h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    <div className={`grid grid-cols-2 md:grid-cols-3 gap-2 p-3 rounded-lg ${
+                      errors.role_ids ? 'border-2 border-red-300 bg-red-50' : 'border border-slate-100 bg-slate-50'
+                    }`}>
                       {roles.map((role) => (
                         <label
                           key={role.id}
-                          className="flex items-center cursor-pointer p-2 border border-slate-200 rounded hover:bg-slate-50 hover:border-blue-300 transition-all duration-200"
+                          className={`flex items-center cursor-pointer p-2 border rounded hover:bg-white transition-all duration-200 ${
+                            formData.role_ids.includes(role.id) 
+                              ? 'border-blue-400 bg-blue-50' 
+                              : 'border-slate-200 bg-white hover:border-blue-300'
+                          }`}
                         >
                           <input
                             type="checkbox"
@@ -265,7 +287,14 @@ const UserModal: React.FC<UserModalProps> = ({
                       ))}
                     </div>
                     {errors.role_ids && (
-                      <p className="mt-1 text-xs text-red-600">{errors.role_ids}</p>
+                      <p className="mt-2 text-xs text-red-600 font-medium flex items-center gap-1">
+                        <span>⚠️</span> {errors.role_ids}
+                      </p>
+                    )}
+                    {formData.role_ids.length === 0 && !errors.role_ids && (
+                      <p className="mt-2 text-xs text-amber-600 flex items-center gap-1">
+                        <span>💡</span> Select at least one role for the user
+                      </p>
                     )}
                   </div>
 

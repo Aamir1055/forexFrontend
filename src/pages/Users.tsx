@@ -86,14 +86,19 @@ const Users: React.FC = () => {
 
   // Create user mutation
   const createUserMutation = useMutation(
-    (userData: CreateUserData) => userService.createUser(userData),
+    (userData: CreateUserData) => {
+      console.log('🆕 Users.tsx - createUserMutation called with:', userData)
+      return userService.createUser(userData)
+    },
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        console.log('✅ Users.tsx - Create successful, response:', data)
         queryClient.invalidateQueries(['users'])
         setIsModalOpen(false)
         toast.success('User created successfully!')
       },
       onError: (error: any) => {
+        console.error('❌ Users.tsx - Create failed:', error)
         toast.error(error.response?.data?.message || 'Failed to create user')
       }
     }
@@ -101,16 +106,22 @@ const Users: React.FC = () => {
 
   // Update user mutation
   const updateUserMutation = useMutation(
-    ({ id, userData }: { id: number; userData: UpdateUserData }) =>
-      userService.updateUser(id, userData),
+    ({ id, userData }: { id: number; userData: UpdateUserData }) => {
+      console.log('🚀 Users.tsx - updateUserMutation called with:', { id, userData })
+      return userService.updateUser(id, userData)
+    },
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        console.log('✅ Users.tsx - Update successful, response:', data)
         queryClient.invalidateQueries(['users'])
         setIsModalOpen(false)
         setEditingUser(null)
         toast.success('User updated successfully!')
       },
       onError: (error: any) => {
+        console.error('❌ Users.tsx - Update failed:', error)
+        console.error('❌ Error response:', error.response)
+        console.error('❌ Error message:', error.message)
         toast.error(error.response?.data?.message || 'Failed to update user')
       }
     }
@@ -179,9 +190,15 @@ const Users: React.FC = () => {
   }
 
   const handleSubmit = (data: CreateUserData | UpdateUserData) => {
+    console.log('📤 Users.tsx - handleSubmit called')
+    console.log('📤 Data received:', data)
+    console.log('📤 Editing user:', editingUser)
+    
     if (editingUser) {
+      console.log('📤 Calling updateUserMutation with:', { id: editingUser.id, userData: data })
       updateUserMutation.mutate({ id: editingUser.id, userData: data as UpdateUserData })
     } else {
+      console.log('📤 Calling createUserMutation with:', data)
       createUserMutation.mutate(data as CreateUserData)
     }
   }
