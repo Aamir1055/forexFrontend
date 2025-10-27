@@ -117,8 +117,21 @@ api.interceptors.response.use(
         processQueue(null, newToken)
         
         return api(originalRequest)
-      } catch (refreshError) {
+      } catch (refreshError: any) {
         console.error('❌ Token refresh failed:', refreshError)
+        
+        // Check if refresh token is expired or invalid
+        const isRefreshTokenExpired = 
+          refreshError?.response?.status === 401 || 
+          refreshError?.response?.status === 403 ||
+          refreshError?.response?.data?.message?.toLowerCase().includes('expired') ||
+          refreshError?.response?.data?.message?.toLowerCase().includes('invalid') ||
+          refreshError?.message === 'No refresh token available'
+        
+        if (isRefreshTokenExpired) {
+          console.log('🔒 Refresh token expired or invalid - redirecting to login')
+        }
+        
         // Refresh failed, clear tokens and redirect to login
         processQueue(refreshError, null)
         localStorage.removeItem('authToken')
