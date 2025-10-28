@@ -15,6 +15,7 @@ interface UserTableProps {
   pagination?: PaginationInfo
   currentPage: number
   onPageChange: (page: number) => void
+  isDarkMode?: boolean
 }
 
 const UserTable: React.FC<UserTableProps> = ({
@@ -27,7 +28,8 @@ const UserTable: React.FC<UserTableProps> = ({
   currentSort,
   pagination,
   currentPage,
-  onPageChange
+  onPageChange,
+  isDarkMode = false
 }) => {
   // Format date
   const formatDate = (dateString: string) => {
@@ -40,16 +42,24 @@ const UserTable: React.FC<UserTableProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white/80 backdrop-blur-xl rounded-xl border border-white/60 shadow-xl shadow-blue-500/5">
+      <div className={`backdrop-blur-xl rounded-xl border shadow-xl ${
+        isDarkMode 
+          ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
+          : 'bg-white/80 border-white/60 shadow-blue-500/5'
+      }`}>
         <div className="p-12 text-center">
           <div className="relative inline-flex">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-600"></div>
+            <div className={`animate-spin rounded-full h-12 w-12 border-4 ${
+              isDarkMode 
+                ? 'border-slate-700 border-t-blue-500' 
+                : 'border-slate-200 border-t-blue-600'
+            }`}></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="h-6 w-6 rounded-full bg-blue-600/10"></div>
+              <div className={`h-6 w-6 rounded-full ${isDarkMode ? 'bg-blue-500/10' : 'bg-blue-600/10'}`}></div>
             </div>
           </div>
-          <p className="text-slate-600 font-semibold mt-4 text-sm">Loading users...</p>
-          <p className="text-slate-400 text-xs mt-1">Please wait while we fetch the data</p>
+          <p className={`font-semibold mt-4 text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>Loading users...</p>
+          <p className={`text-xs mt-1 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Please wait while we fetch the data</p>
         </div>
       </div>
     )
@@ -57,13 +67,21 @@ const UserTable: React.FC<UserTableProps> = ({
 
   if (users.length === 0) {
     return (
-      <div className="bg-white/80 backdrop-blur-xl rounded-xl border border-white/60 shadow-xl shadow-blue-500/5">
+      <div className={`backdrop-blur-xl rounded-xl border shadow-xl ${
+        isDarkMode 
+          ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
+          : 'bg-white/80 border-white/60 shadow-blue-500/5'
+      }`}>
         <div className="p-16 text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100">
-            <UserGroupIcon className="w-8 h-8 text-slate-400" />
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border ${
+            isDarkMode 
+              ? 'bg-gradient-to-br from-blue-900/30 to-purple-900/30 border-blue-800' 
+              : 'bg-gradient-to-br from-blue-50 to-purple-50 border-blue-100'
+          }`}>
+            <UserGroupIcon className={`w-8 h-8 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`} />
           </div>
-          <h3 className="text-base font-bold text-slate-900 mb-2">No users found</h3>
-          <p className="text-slate-500 text-sm font-medium">Get started by creating your first user or adjust your filters.</p>
+          <h3 className={`text-base font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No users found</h3>
+          <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Get started by creating your first user or adjust your filters.</p>
         </div>
       </div>
     )
@@ -72,66 +90,94 @@ const UserTable: React.FC<UserTableProps> = ({
   return (
     <>
       {/* Compact Table with Glass Effect */}
-      <div className="bg-white/80 backdrop-blur-xl rounded-xl border border-white/60 shadow-xl shadow-blue-500/5 overflow-hidden">
+      <div className={`backdrop-blur-xl rounded-xl border shadow-xl overflow-hidden ${
+        isDarkMode 
+          ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
+          : 'bg-white/80 border-white/60 shadow-blue-500/5'
+      }`}>
         <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-gradient-to-r from-slate-50 to-blue-50/30 border-b border-slate-200">
+            <tr className={`border-b ${
+              isDarkMode 
+                ? 'bg-gradient-to-r from-slate-900/50 to-blue-900/20 border-slate-700' 
+                : 'bg-gradient-to-r from-slate-50 to-blue-50/30 border-slate-200'
+            }`}>
               <th 
                 onDoubleClick={() => onSort?.('username')}
-                className={`px-3 py-2 text-left text-[10px] font-bold text-slate-700 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-blue-50/50 transition-colors' : ''}`}
+                className={`px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                  isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                } ${onSort ? 'cursor-pointer hover:bg-opacity-50 transition-colors' : ''}`}
                 title={onSort ? 'Double-click to sort' : ''}
               >
                 <div className="flex items-center gap-1">
                   <span>User</span>
                   {currentSort?.field === 'username' && (
-                    <span className="text-blue-600 text-xs">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    <span className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                   )}
                 </div>
               </th>
               <th 
                 onDoubleClick={() => onSort?.('email')}
-                className={`px-3 py-2 text-left text-[10px] font-bold text-slate-700 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-blue-50/50 transition-colors' : ''}`}
+                className={`px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                  isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                } ${onSort ? 'cursor-pointer hover:bg-opacity-50 transition-colors' : ''}`}
                 title={onSort ? 'Double-click to sort' : ''}
               >
                 <div className="flex items-center gap-1">
                   <span>Email</span>
                   {currentSort?.field === 'email' && (
-                    <span className="text-blue-600 text-xs">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    <span className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                   )}
                 </div>
               </th>
-              <th className="px-3 py-2 text-left text-[10px] font-bold text-slate-700 uppercase tracking-wider">Roles</th>
+              <th className={`px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider ${
+                isDarkMode ? 'text-slate-300' : 'text-slate-700'
+              }`}>Roles</th>
               <th 
                 onDoubleClick={() => onSort?.('is_active')}
-                className={`px-3 py-2 text-left text-[10px] font-bold text-slate-700 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-blue-50/50 transition-colors' : ''}`}
+                className={`px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                  isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                } ${onSort ? 'cursor-pointer hover:bg-opacity-50 transition-colors' : ''}`}
                 title={onSort ? 'Double-click to sort' : ''}
               >
                 <div className="flex items-center gap-1">
                   <span>Status</span>
                   {currentSort?.field === 'is_active' && (
-                    <span className="text-blue-600 text-xs">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    <span className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                   )}
                 </div>
               </th>
               <th 
                 onDoubleClick={() => onSort?.('created_at')}
-                className={`px-3 py-2 text-left text-[10px] font-bold text-slate-700 uppercase tracking-wider ${onSort ? 'cursor-pointer hover:bg-blue-50/50 transition-colors' : ''}`}
+                className={`px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                  isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                } ${onSort ? 'cursor-pointer hover:bg-opacity-50 transition-colors' : ''}`}
                 title={onSort ? 'Double-click to sort' : ''}
               >
                 <div className="flex items-center gap-1">
                   <span>Created</span>
                   {currentSort?.field === 'created_at' && (
-                    <span className="text-blue-600 text-xs">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    <span className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                   )}
                 </div>
               </th>
-              <th className="px-3 py-2 text-right text-[10px] font-bold text-slate-700 uppercase tracking-wider">Actions</th>
+              <th className={`px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider ${
+                isDarkMode ? 'text-slate-300' : 'text-slate-700'
+              }`}>Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-slate-100">
+          <tbody className={`divide-y ${
+            isDarkMode 
+              ? 'bg-slate-800/50 divide-slate-700/50' 
+              : 'bg-white divide-slate-100'
+          }`}>
             {users.map((user, index) => (
-              <tr key={user.id} className="hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-purple-50/20 transition-all duration-200 group">
+              <tr key={user.id} className={`transition-all duration-200 group ${
+                isDarkMode 
+                  ? 'hover:bg-gradient-to-r hover:from-blue-900/20 hover:to-purple-900/20' 
+                  : 'hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-purple-50/20'
+              }`}>
                 <td className="px-3 py-2 whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <div className="relative">
@@ -145,13 +191,13 @@ const UserTable: React.FC<UserTableProps> = ({
                       )}
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-slate-800">{user.username}</div>
-                      <div className="text-[10px] text-slate-500">@{user.username.toLowerCase().replace(/\s+/g, '')}</div>
+                      <div className={`text-xs font-semibold ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>{user.username}</div>
+                      <div className={`text-[10px] ${isDarkMode ? 'text-slate-500' : 'text-slate-500'}`}>@{user.username.toLowerCase().replace(/\s+/g, '')}</div>
                     </div>
                   </div>
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap">
-                  <div className="text-xs text-slate-700 font-medium">{user.email}</div>
+                  <div className={`text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>{user.email}</div>
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap">
                   <div className="flex gap-1 flex-wrap max-w-xs">

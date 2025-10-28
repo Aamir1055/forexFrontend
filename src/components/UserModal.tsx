@@ -337,20 +337,7 @@ const UserModal: React.FC<UserModalProps> = ({
               </form>
 
               {/* Actions */}
-              <div className="px-5 py-3 bg-gradient-to-r from-slate-50 via-blue-50/30 to-purple-50/20 border-t border-slate-200 flex justify-between items-center">
-                <div className="text-[10px] text-slate-600 font-medium flex items-center gap-1.5">
-                  {user ? (
-                    <>
-                      <span className="text-sm">✨</span>
-                      <span>Changes will be saved immediately</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm">📧</span>
-                      <span>User will receive login credentials</span>
-                    </>
-                  )}
-                </div>
+              <div className="px-5 py-3 bg-gradient-to-r from-slate-50 via-blue-50/30 to-purple-50/20 border-t border-slate-200 flex justify-end items-center">
                 <div className="flex gap-2">
                   <button
                     type="button"
