@@ -252,69 +252,101 @@ const Users: React.FC = () => {
   
 
   return (
-    <div className="bg-gray-50 font-sans">
-      {/* Header */}
-      <div className="px-6 pt-6">
-        <header className="bg-white border border-gray-200 rounded-xl sticky top-0 z-40">
-          <div className="px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <UserGroupIcon className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-gray-900">User Management</h1>
-                  <p className="text-sm text-gray-500">Manage users and their roles efficiently</p>
-                </div>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
+      {/* Modern Header with Glass Effect */}
+      <div className="px-8 pt-8 pb-4">
+        <header className="bg-white/80 backdrop-blur-xl border border-white/60 rounded-2xl shadow-lg shadow-blue-500/5">
+          <div className="px-8 py-6">
+            {/* Title Section */}
+            <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-4">
                 <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search users..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <UserGroupIcon className="w-7 h-7 text-white" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></div>
                 </div>
-                <select
-                  value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm"
-                >
-                  <option value="all">All Roles</option>
-                  {rolesList.map(role => (
-                    <option key={role.id} value={role.name}>{role.name}</option>
-                  ))}
-                </select>
-                <button
-                  onClick={handleCreateUser}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-sm"
-                >
-                  <PlusIcon className="w-4 h-4" />
-                  <span>Create User</span>
-                </button>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                    User Management
+                  </h1>
+                  <p className="text-sm text-slate-500 font-medium mt-1">
+                    {totalItems} {totalItems === 1 ? 'user' : 'users'} • Manage roles and permissions
+                  </p>
+                </div>
               </div>
+              
+              {/* Quick Stats */}
+              <div className="flex items-center gap-6">
+                <div className="text-center px-4 py-2 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl border border-blue-200/50">
+                  <div className="text-2xl font-bold text-blue-600">{users.filter(u => u.is_active).length}</div>
+                  <div className="text-xs text-blue-600/70 font-medium">Active</div>
+                </div>
+                <div className="text-center px-4 py-2 bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl border border-purple-200/50">
+                  <div className="text-2xl font-bold text-purple-600">{users.filter(u => !u.is_active).length}</div>
+                  <div className="text-xs text-purple-600/70 font-medium">Inactive</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Search and Filters */}
+            <div className="flex items-center gap-3">
+              <div className="flex-1 relative group">
+                <input
+                  type="text"
+                  placeholder="Search users by name, email or role..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-200 text-sm placeholder:text-slate-400 shadow-sm"
+                />
+                <MagnifyingGlassIcon className="w-5 h-5 absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                {searchTerm && (
+                  <button 
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    <XCircleIcon className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+              
+              <select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className="px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 bg-white text-sm font-medium text-slate-700 shadow-sm cursor-pointer hover:border-slate-300 transition-all"
+              >
+                <option value="all">All Roles</option>
+                {rolesList.map(role => (
+                  <option key={role.id} value={role.name}>{role.name}</option>
+                ))}
+              </select>
+              
+              <button
+                onClick={handleCreateUser}
+                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 flex items-center gap-2 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 font-semibold text-sm group"
+              >
+                <PlusIcon className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                <span>Add User</span>
+              </button>
             </div>
           </div>
         </header>
       </div>
 
       {/* Main Content */}
-      <main className="px-6 pb-6">
-        <div>
-          {/* Pagination dropdown */}
-          <div className="mt-4 mb-3 flex items-center justify-between">
-            <div className="flex items-center space-x-1.5">
-              <span className="text-xs text-gray-600">Show</span>
+      <main className="px-8 pb-8">
+        <div className="space-y-4">
+          {/* Pagination and Info Bar */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-slate-600 font-medium">Show</span>
               <select
                 value={itemsPerPage}
                 onChange={(e) => {
                   setItemsPerPage(Number(e.target.value))
                   setCurrentPage(1)
                 }}
-                className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white text-xs"
+                className="px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 bg-white text-sm font-medium text-slate-700 shadow-sm cursor-pointer hover:border-slate-300 transition-all"
               >
                 <option value={9999}>All</option>
                 <option value={5}>5</option>
@@ -323,36 +355,42 @@ const Users: React.FC = () => {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-xs text-gray-600">entries</span>
+              <span className="text-sm text-slate-600 font-medium">entries</span>
             </div>
-            <div className="text-xs text-gray-700">
-              Showing {totalItems === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} results
-            </div>
-            {totalPages > 1 && (
-              <div className="flex items-center space-x-1.5">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <span className="text-xs text-gray-700">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+            
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-slate-600 font-medium">
+                Showing <span className="text-blue-600 font-semibold">{totalItems === 0 ? 0 : startIndex + 1}</span> to <span className="text-blue-600 font-semibold">{Math.min(endIndex, totalItems)}</span> of <span className="text-blue-600 font-semibold">{totalItems}</span> results
               </div>
-            )}
+              
+              {totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="p-2 border border-slate-200 rounded-lg hover:bg-white hover:border-blue-300 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-slate-200 shadow-sm"
+                  >
+                    <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  
+                  <div className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm">
+                    Page {currentPage} of {totalPages}
+                  </div>
+                  
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="p-2 border border-slate-200 rounded-lg hover:bg-white hover:border-blue-300 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-slate-200 shadow-sm"
+                  >
+                    <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Users Table */}
