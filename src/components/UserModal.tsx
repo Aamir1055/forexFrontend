@@ -194,15 +194,11 @@ const UserModal: React.FC<UserModalProps> = ({
                 </div>
               </div>
 
-              {/* Form */}
+              {/* Compact Form */}
               <form onSubmit={handleSubmit} className="px-5 py-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {/* Basic Information Section */}
                   <div>
-                    <h4 className="text-xs font-bold text-slate-700 mb-2 pb-1.5 border-b border-blue-100 uppercase tracking-wide flex items-center gap-1.5">
-                      <span className="w-5 h-5 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center text-[10px] font-bold shadow-sm shadow-blue-500/30">1</span>
-                      Basic Information
-                    </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                       {/* Username */}
                       <div>
@@ -276,10 +272,9 @@ const UserModal: React.FC<UserModalProps> = ({
 
                   {/* Roles & Permissions Section */}
                   <div>
-                    <h4 className="text-xs font-bold text-slate-700 mb-2 pb-1.5 border-b border-purple-100 uppercase tracking-wide flex items-center gap-1.5">
-                      <span className="w-5 h-5 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center text-[10px] font-bold shadow-sm shadow-purple-500/30">2</span>
-                      Roles & Permissions <span className="text-red-500 ml-0.5">*</span>
-                    </h4>
+                    <label className="block text-[11px] font-semibold text-slate-700 mb-1.5">
+                      Roles <span className="text-red-500">*</span>
+                    </label>
                     <div className={`grid grid-cols-2 md:grid-cols-3 gap-2 p-2.5 rounded-lg ${
                       errors.role_ids ? 'border border-red-300 bg-red-50/50' : 'border border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50/30'
                     }`}>
@@ -315,42 +310,28 @@ const UserModal: React.FC<UserModalProps> = ({
                   </div>
 
                   {/* Status Section */}
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-700 mb-2 pb-1.5 border-b border-green-100 uppercase tracking-wide flex items-center gap-1.5">
-                      <span className="w-5 h-5 rounded-lg bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center text-[10px] font-bold shadow-sm shadow-green-500/30">3</span>
-                      Account Settings
-                    </h4>
-                    <div className="space-y-2">
-                      <label className="flex items-start cursor-pointer p-2 border border-slate-200 rounded-lg hover:bg-gradient-to-br hover:from-green-50 hover:to-green-100/30 hover:border-green-300 transition-all group">
-                        <input
-                          type="checkbox"
-                          name="is_active"
-                          checked={formData.is_active}
-                          onChange={handleInputChange}
-                          className="w-3.5 h-3.5 mt-0.5 rounded border-slate-300 text-green-600 focus:ring-green-500 focus:ring-1 transition-colors duration-200"
-                        />
-                        <div className="ml-2">
-                          <span className="text-[11px] font-bold text-slate-700 group-hover:text-green-700">User is active</span>
-                          <p className="text-[10px] text-slate-500 mt-0.5">Active users can log in and access the system</p>
-                        </div>
-                      </label>
-                      
-                      <label className="flex items-start cursor-pointer p-4 border-2 border-slate-200 rounded-xl hover:bg-gradient-to-br hover:from-orange-50 hover:to-orange-100/30 hover:border-orange-300 transition-all group">
-                        <input
-                          type="checkbox"
-                          name="force_two_factor"
-                          checked={formData.force_two_factor}
-                          onChange={handleInputChange}
-                          className="w-5 h-5 mt-0.5 rounded-lg border-slate-300 text-orange-600 focus:ring-orange-500 focus:ring-2 transition-colors duration-200"
-                        />
-                        <div className="ml-3">
-                          <span className="text-sm font-bold text-slate-700 group-hover:text-orange-700 flex items-center gap-2">
-                            Force Two-Factor Authentication <span className="text-base">�</span>
-                          </span>
-                          <p className="text-xs text-slate-500 mt-1">User must set up 2FA on first login for enhanced security</p>
-                        </div>
-                      </label>
-                    </div>
+                  <div className="space-y-1.5">
+                    <label className="flex items-center cursor-pointer px-2 py-1.5 border border-slate-200 rounded-lg hover:bg-gradient-to-br hover:from-green-50 hover:to-green-100/30 hover:border-green-300 transition-all group">
+                      <input
+                        type="checkbox"
+                        name="is_active"
+                        checked={formData.is_active}
+                        onChange={handleInputChange}
+                        className="w-3.5 h-3.5 rounded border-slate-300 text-green-600 focus:ring-green-500 focus:ring-1 transition-colors duration-200"
+                      />
+                      <span className="ml-2 text-[11px] font-semibold text-slate-700 group-hover:text-green-700">User is active</span>
+                    </label>
+                    
+                    <label className="flex items-center cursor-pointer px-2 py-1.5 border border-slate-200 rounded-lg hover:bg-gradient-to-br hover:from-orange-50 hover:to-orange-100/30 hover:border-orange-300 transition-all group">
+                      <input
+                        type="checkbox"
+                        name="force_two_factor"
+                        checked={formData.force_two_factor}
+                        onChange={handleInputChange}
+                        className="w-3.5 h-3.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500 focus:ring-1 transition-colors duration-200"
+                      />
+                      <span className="ml-2 text-[11px] font-semibold text-slate-700 group-hover:text-orange-700">Force 2FA 🔐</span>
+                    </label>
                   </div>
                 </div>
               </form>
