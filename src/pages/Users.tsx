@@ -504,6 +504,7 @@ const Users: React.FC = () => {
           }}
           onSubmit={handleSubmit}
           isLoading={createUserMutation.isLoading || updateUserMutation.isLoading}
+          isDarkMode={isDarkMode}
         />
       )}
 

@@ -10,6 +10,7 @@ interface UserModalProps {
   onClose: () => void
   onSubmit: (data: CreateUserData | UpdateUserData) => void
   isLoading: boolean
+  isDarkMode?: boolean
 }
 
 const UserModal: React.FC<UserModalProps> = ({
@@ -18,7 +19,8 @@ const UserModal: React.FC<UserModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
-  isLoading
+  isLoading,
+  isDarkMode = false
 }) => {
   const [formData, setFormData] = useState<CreateUserData>({
     username: '',
@@ -164,7 +166,11 @@ const UserModal: React.FC<UserModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 30 }}
             transition={{ duration: 0.25, type: "spring", damping: 25, stiffness: 300 }}
-            className="relative bg-white rounded-2xl shadow-2xl transform w-full max-w-xl mx-4 overflow-hidden border border-white/20"
+            className={`relative rounded-2xl shadow-2xl transform w-full max-w-xl mx-4 overflow-hidden border transition-colors duration-300 ${
+              isDarkMode 
+                ? 'bg-slate-800 border-slate-700/50' 
+                : 'bg-white border-white/20'
+            }`}
           >
               {/* Compact Header with Gradient */}
               <div className="px-5 py-3.5 bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 relative overflow-hidden">
@@ -195,14 +201,18 @@ const UserModal: React.FC<UserModalProps> = ({
               </div>
 
               {/* Compact Form */}
-              <form onSubmit={handleSubmit} className="px-5 py-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+              <form onSubmit={handleSubmit} className={`px-5 py-4 max-h-[calc(100vh-200px)] overflow-y-auto transition-colors duration-300 ${
+                isDarkMode ? 'bg-slate-800' : 'bg-white'
+              }`}>
                 <div className="space-y-3">
                   {/* Basic Information Section */}
                   <div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                       {/* Username */}
                       <div>
-                        <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                        <label className={`block text-[11px] font-semibold mb-1 transition-colors ${
+                          isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                        }`}>
                           Username <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -211,7 +221,11 @@ const UserModal: React.FC<UserModalProps> = ({
                           value={formData.username}
                           onChange={handleInputChange}
                           className={`w-full px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 ${
-                            errors.username ? 'border-red-300 bg-red-50/50' : 'border-slate-200 hover:border-slate-300'
+                            errors.username 
+                              ? 'border-red-300 bg-red-50/50' 
+                              : isDarkMode 
+                                ? 'border-slate-600 bg-slate-700/50 text-white placeholder:text-slate-400 hover:border-slate-500' 
+                                : 'border-slate-200 bg-white text-slate-900 hover:border-slate-300'
                           }`}
                           placeholder="Enter username"
                         />
@@ -224,7 +238,9 @@ const UserModal: React.FC<UserModalProps> = ({
 
                       {/* Email */}
                       <div>
-                        <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                        <label className={`block text-[11px] font-semibold mb-1 transition-colors ${
+                          isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                        }`}>
                           Email Address <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -233,7 +249,11 @@ const UserModal: React.FC<UserModalProps> = ({
                           value={formData.email}
                           onChange={handleInputChange}
                           className={`w-full px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 ${
-                            errors.email ? 'border-red-300 bg-red-50/50' : 'border-slate-200 hover:border-slate-300'
+                            errors.email 
+                              ? 'border-red-300 bg-red-50/50' 
+                              : isDarkMode 
+                                ? 'border-slate-600 bg-slate-700/50 text-white placeholder:text-slate-400 hover:border-slate-500' 
+                                : 'border-slate-200 bg-white text-slate-900 hover:border-slate-300'
                           }`}
                           placeholder="Enter email address"
                         />
@@ -247,8 +267,10 @@ const UserModal: React.FC<UserModalProps> = ({
 
                     {/* Password */}
                     <div className="mt-2.5">
-                      <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                        Password {user ? <span className="text-slate-500 font-normal text-[10px]">(leave blank to keep current)</span> : <span className="text-red-500">*</span>}
+                      <label className={`block text-[11px] font-semibold mb-1 transition-colors ${
+                        isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                      }`}>
+                        Password {user ? <span className={`font-normal text-[10px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>(leave blank to keep current)</span> : <span className="text-red-500">*</span>}
                       </label>
                       <div>
                         <input
@@ -257,7 +279,11 @@ const UserModal: React.FC<UserModalProps> = ({
                           value={formData.password}
                           onChange={handleInputChange}
                           className={`w-full px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 ${
-                            errors.password ? 'border-red-300 bg-red-50/50' : 'border-slate-200 hover:border-slate-300'
+                            errors.password 
+                              ? 'border-red-300 bg-red-50/50' 
+                              : isDarkMode 
+                                ? 'border-slate-600 bg-slate-700/50 text-white placeholder:text-slate-400 hover:border-slate-500' 
+                                : 'border-slate-200 bg-white text-slate-900 hover:border-slate-300'
                           }`}
                           placeholder={user ? 'Leave blank to keep current' : 'Enter password'}
                         />
@@ -272,19 +298,29 @@ const UserModal: React.FC<UserModalProps> = ({
 
                   {/* Roles & Permissions Section */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-700 mb-1.5">
+                    <label className={`block text-[11px] font-semibold mb-1.5 transition-colors ${
+                      isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                    }`}>
                       Roles <span className="text-red-500">*</span>
                     </label>
-                    <div className={`grid grid-cols-2 md:grid-cols-3 gap-2 p-2.5 rounded-lg ${
-                      errors.role_ids ? 'border border-red-300 bg-red-50/50' : 'border border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50/30'
+                    <div className={`grid grid-cols-2 md:grid-cols-3 gap-2 p-2.5 rounded-lg border ${
+                      errors.role_ids 
+                        ? 'border-red-300 bg-red-50/50' 
+                        : isDarkMode 
+                          ? 'border-slate-600 bg-gradient-to-br from-slate-700/50 to-blue-900/20' 
+                          : 'border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50/30'
                     }`}>
                       {roles.map((role) => (
                         <label
                           key={role.id}
-                          className={`flex items-center cursor-pointer px-2 py-1.5 border rounded-lg hover:bg-white transition-all duration-200 ${
+                          className={`flex items-center cursor-pointer px-2 py-1.5 border rounded-lg transition-all duration-200 ${
                             formData.role_ids.includes(role.id) 
-                              ? 'border-blue-500 bg-blue-50 shadow-sm shadow-blue-500/20 scale-105' 
-                              : 'border-slate-200 bg-white hover:border-blue-300 hover:shadow-sm'
+                              ? isDarkMode
+                                ? 'border-blue-500 bg-blue-900/30 shadow-sm shadow-blue-500/20 scale-105' 
+                                : 'border-blue-500 bg-blue-50 shadow-sm shadow-blue-500/20 scale-105'
+                              : isDarkMode
+                                ? 'border-slate-600 bg-slate-700/30 hover:border-blue-400 hover:shadow-sm'
+                                : 'border-slate-200 bg-white hover:border-blue-300 hover:shadow-sm'
                           }`}
                         >
                           <input
@@ -293,17 +329,27 @@ const UserModal: React.FC<UserModalProps> = ({
                             onChange={(e) => handleRoleChange(role.id, e.target.checked)}
                             className="w-3 h-3 rounded border-slate-300 text-blue-600 focus:ring-blue-500 focus:ring-1 transition-colors duration-200"
                           />
-                          <span className="ml-1.5 text-[11px] font-semibold text-slate-700">{role.name}</span>
+                          <span className={`ml-1.5 text-[11px] font-semibold transition-colors ${
+                            isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                          }`}>{role.name}</span>
                         </label>
                       ))}
                     </div>
                     {errors.role_ids && (
-                      <p className="mt-1.5 text-[10px] text-red-600 font-semibold flex items-center gap-1 bg-red-50 px-2 py-1 rounded border border-red-200">
+                      <p className={`mt-1.5 text-[10px] font-semibold flex items-center gap-1 px-2 py-1 rounded border ${
+                        isDarkMode 
+                          ? 'text-red-400 bg-red-900/30 border-red-800' 
+                          : 'text-red-600 bg-red-50 border-red-200'
+                      }`}>
                         <span>⚠️</span> {errors.role_ids}
                       </p>
                     )}
                     {formData.role_ids.length === 0 && !errors.role_ids && (
-                      <p className="mt-1.5 text-[10px] text-amber-600 font-medium flex items-center gap-1 bg-amber-50 px-2 py-1 rounded border border-amber-200">
+                      <p className={`mt-1.5 text-[10px] font-medium flex items-center gap-1 px-2 py-1 rounded border ${
+                        isDarkMode 
+                          ? 'text-amber-400 bg-amber-900/30 border-amber-800' 
+                          : 'text-amber-600 bg-amber-50 border-amber-200'
+                      }`}>
                         <span>💡</span> Select at least one role for the user
                       </p>
                     )}
@@ -311,7 +357,11 @@ const UserModal: React.FC<UserModalProps> = ({
 
                   {/* Status Section */}
                   <div className="space-y-1.5">
-                    <label className="flex items-center cursor-pointer px-2 py-1.5 border border-slate-200 rounded-lg hover:bg-gradient-to-br hover:from-green-50 hover:to-green-100/30 hover:border-green-300 transition-all group">
+                    <label className={`flex items-center cursor-pointer px-2 py-1.5 border rounded-lg transition-all group ${
+                      isDarkMode 
+                        ? 'border-slate-600 hover:bg-gradient-to-br hover:from-green-900/30 hover:to-green-800/20 hover:border-green-600' 
+                        : 'border-slate-200 hover:bg-gradient-to-br hover:from-green-50 hover:to-green-100/30 hover:border-green-300'
+                    }`}>
                       <input
                         type="checkbox"
                         name="is_active"
@@ -319,10 +369,16 @@ const UserModal: React.FC<UserModalProps> = ({
                         onChange={handleInputChange}
                         className="w-3.5 h-3.5 rounded border-slate-300 text-green-600 focus:ring-green-500 focus:ring-1 transition-colors duration-200"
                       />
-                      <span className="ml-2 text-[11px] font-semibold text-slate-700 group-hover:text-green-700">User is active</span>
+                      <span className={`ml-2 text-[11px] font-semibold transition-colors ${
+                        isDarkMode ? 'text-slate-300 group-hover:text-green-400' : 'text-slate-700 group-hover:text-green-700'
+                      }`}>User is active</span>
                     </label>
                     
-                    <label className="flex items-center cursor-pointer px-2 py-1.5 border border-slate-200 rounded-lg hover:bg-gradient-to-br hover:from-orange-50 hover:to-orange-100/30 hover:border-orange-300 transition-all group">
+                    <label className={`flex items-center cursor-pointer px-2 py-1.5 border rounded-lg transition-all group ${
+                      isDarkMode 
+                        ? 'border-slate-600 hover:bg-gradient-to-br hover:from-orange-900/30 hover:to-orange-800/20 hover:border-orange-600' 
+                        : 'border-slate-200 hover:bg-gradient-to-br hover:from-orange-50 hover:to-orange-100/30 hover:border-orange-300'
+                    }`}>
                       <input
                         type="checkbox"
                         name="force_two_factor"
@@ -330,19 +386,29 @@ const UserModal: React.FC<UserModalProps> = ({
                         onChange={handleInputChange}
                         className="w-3.5 h-3.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500 focus:ring-1 transition-colors duration-200"
                       />
-                      <span className="ml-2 text-[11px] font-semibold text-slate-700 group-hover:text-orange-700">Force 2FA 🔐</span>
+                      <span className={`ml-2 text-[11px] font-semibold transition-colors ${
+                        isDarkMode ? 'text-slate-300 group-hover:text-orange-400' : 'text-slate-700 group-hover:text-orange-700'
+                      }`}>Force 2FA 🔐</span>
                     </label>
                   </div>
                 </div>
               </form>
 
               {/* Actions */}
-              <div className="px-5 py-3 bg-gradient-to-r from-slate-50 via-blue-50/30 to-purple-50/20 border-t border-slate-200 flex justify-end items-center">
+              <div className={`px-5 py-3 border-t flex justify-end items-center transition-colors duration-300 ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-slate-900/50 via-blue-900/20 to-purple-900/20 border-slate-700' 
+                  : 'bg-gradient-to-r from-slate-50 via-blue-50/30 to-purple-50/20 border-slate-200'
+              }`}>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-4 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-300/50 transition-all duration-200 shadow-sm"
+                    className={`px-4 py-1.5 text-xs font-semibold border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 shadow-sm ${
+                      isDarkMode 
+                        ? 'text-slate-300 bg-slate-700 border-slate-600 hover:bg-slate-600 hover:border-slate-500 focus:ring-slate-500/50' 
+                        : 'text-slate-700 bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 focus:ring-slate-300/50'
+                    }`}
                     disabled={isLoading}
                   >
                     Cancel
