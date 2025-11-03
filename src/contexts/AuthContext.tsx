@@ -33,40 +33,82 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Check for existing auth on mount
-    const savedToken = localStorage.getItem('authToken')
-    const savedUser = localStorage.getItem('user') || localStorage.getItem('authUser')
+    const checkAndRefreshAuth = async () => {
+      const savedToken = localStorage.getItem('authToken')
+      const savedRefreshToken = localStorage.getItem('refreshToken')
+      const savedUser = localStorage.getItem('user') || localStorage.getItem('authUser')
 
-    if (savedToken && savedToken !== 'undefined' && savedToken !== 'null') {
-      setToken(savedToken)
-      setIsAuthenticated(true)
-    }
-
-    if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
-      try {
-        const userData = JSON.parse(savedUser)
-        setUser(userData)
-      } catch (error) {
-        console.error('Error parsing saved user data:', error)
-        // Clear invalid user data only; keep tokens so user stays logged in
-        localStorage.removeItem('user')
-        localStorage.removeItem('authUser')
+      // If access token exists, use it
+      if (savedToken && savedToken !== 'undefined' && savedToken !== 'null') {
+        setToken(savedToken)
+        setIsAuthenticated(true)
+      } 
+      // If no access token but refresh token exists, STAY AUTHENTICATED
+      // The API interceptor will automatically refresh on the first API call
+      else if ((!savedToken || savedToken === 'undefined' || savedToken === 'null') && 
+          savedRefreshToken && savedRefreshToken !== 'undefined' && savedRefreshToken !== 'null') {
+        console.log('🔄 No access token but refresh token exists - staying authenticated')
+        console.log('🔄 API interceptor will handle token refresh on first API call')
+        setIsAuthenticated(true) // Keep user authenticated
+        // Don't call refresh here - let the API interceptor handle it naturally
       }
+      // If neither token exists, user is not authenticated
+      else {
+        console.log('🔒 No tokens found, user not authenticated')
+        setIsAuthenticated(false)
+      }
+
+      if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
+        try {
+          const userData = JSON.parse(savedUser)
+          setUser(userData)
+        } catch (error) {
+          console.error('Error parsing saved user data:', error)
+          // Clear invalid user data only; keep tokens so user stays logged in
+          localStorage.removeItem('user')
+          localStorage.removeItem('authUser')
+        }
+      }
+      
+      setInitialized(true)
     }
-    setInitialized(true)
+
+    checkAndRefreshAuth()
   }, [])
 
   // Listen for explicit auth updates (after login/2FA) and storage changes
   useEffect(() => {
-    const handler = () => {
+    const handler = async () => {
       const savedToken = localStorage.getItem('authToken')
+      const savedRefreshToken = localStorage.getItem('refreshToken')
       const savedUser = localStorage.getItem('user') || localStorage.getItem('authUser')
 
+      // Only update state if token exists
       if (savedToken && savedToken !== 'undefined' && savedToken !== 'null') {
         setToken(savedToken)
         setIsAuthenticated(true)
-      } else {
+      } else if (savedToken === null && savedRefreshToken === null) {
+        // Only logout if BOTH tokens are removed - this means user logged out or refresh failed
+        console.log('🔒 Both tokens removed, logging out and redirecting')
         setToken(null)
         setIsAuthenticated(false)
+        
+        // Redirect to login page
+        const envBase = (import.meta as any).env?.VITE_ADMIN_BASE_URL as string | undefined
+        const base = envBase && envBase.trim().length > 0
+          ? envBase
+          : `${window.location.protocol}//${window.location.host}/brk-eye-adm`
+        const normalized = base.endsWith('/') ? base : `${base}/`
+        const absoluteUrl = `${normalized}login`
+        
+        // Use replace to prevent back navigation to protected pages
+        window.location.replace(absoluteUrl)
+      } else if ((savedToken === null || savedToken === 'undefined' || savedToken === 'null') && 
+                 savedRefreshToken && savedRefreshToken !== 'null' && savedRefreshToken !== 'undefined') {
+        // Access token missing but refresh token exists - STAY AUTHENTICATED, let API interceptor handle refresh
+        console.log('🔄 Access token missing but refresh token exists - staying authenticated, API interceptor will handle refresh')
+        setIsAuthenticated(true) // Keep user authenticated
+        // Don't set token here - let the API interceptor handle the refresh when the next API call happens
       }
 
       if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
@@ -75,7 +117,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } catch {
           setUser(null)
         }
-      } else {
+      } else if (savedUser === null) {
         setUser(null)
       }
 
@@ -83,6 +125,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     const storageListener = (e: StorageEvent) => {
+      // Only react to storage changes from other tabs/windows
+      // Don't react to programmatic changes in the same tab (the API interceptor handles that)
       if (e.key && ['authToken', 'user', 'authUser', 'refreshToken'].includes(e.key)) {
         handler()
       }
@@ -167,6 +211,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (data.status === 'success' && data.data?.access_token) {
         console.log('Login successful!')
         const token = data.data.access_token
+        const refreshToken = data.data.refresh_token
         const userData = data.data.user
         
         setToken(token)
@@ -174,6 +219,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true)
         
         localStorage.setItem('authToken', token)
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken)
+          console.log('✅ Refresh token stored in AuthContext')
+        } else {
+          console.warn('⚠️ No refresh token in login response')
+        }
         localStorage.setItem('user', JSON.stringify(userData))
         localStorage.setItem('authUser', JSON.stringify({ username: userData.username, email: userData.email }))
         
@@ -209,9 +260,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (data.status === 'success' && data.data?.access_token) {
         const token = data.data.access_token
+        const refreshToken = data.data.refresh_token
         const userData = data.data.user
 
         localStorage.setItem('authToken', token)
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken)
+          console.log('✅ 2FA Refresh token stored')
+        } else {
+          console.warn('⚠️ No refresh token in 2FA response')
+        }
         localStorage.setItem('user', JSON.stringify(userData))
         localStorage.setItem('authUser', JSON.stringify(userData))
         

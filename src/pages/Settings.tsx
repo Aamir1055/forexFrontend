@@ -1,16 +1,24 @@
 import React, { useState } from 'react'
-import { useQuery } from 'react-query'
-import { ShieldCheckIcon } from '@heroicons/react/24/outline'
+import { useQuery, useQueryClient } from 'react-query'
+import { ShieldCheckIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import { authService } from '../services/authService'
 import TwoFactorSettings from '../components/TwoFactorSettings'
+import toast from 'react-hot-toast'
 
 const Settings: React.FC = () => {
   const [is2FAEnabled, setIs2FAEnabled] = useState(false)
+  const queryClient = useQueryClient()
   
   // Get current user
-  const { data: currentUser } = useQuery('currentUser', authService.getCurrentUser, {
+  const { data: currentUser, refetch } = useQuery('currentUser', authService.getCurrentUser, {
     initialData: authService.getCurrentUser()
   })
+
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries('currentUser')
+    await refetch()
+    toast.success('Settings refreshed!')
+  }
 
   return (
     <div className="space-y-6">
@@ -22,6 +30,14 @@ const Settings: React.FC = () => {
             Manage your account settings and security preferences
           </p>
         </div>
+        <button
+          onClick={handleRefresh}
+          className="mt-4 sm:mt-0 px-3 py-2 bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-slate-500/30 hover:shadow-xl hover:shadow-slate-500/40 font-semibold text-xs group"
+          title="Refresh settings"
+        >
+          <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
+          <span>Refresh</span>
+        </button>
       </div>
 
       {/* User Info Card */}

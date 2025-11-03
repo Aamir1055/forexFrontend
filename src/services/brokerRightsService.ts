@@ -1,5 +1,5 @@
 import api from './api'
-import { BrokerRight, BrokerRightsResponse, AssignRightResponse, ApiResponse } from '../types'
+import { BrokerRight, BrokerRightsResponse, AssignRightResponse, SyncRightsResponse, ApiResponse } from '../types'
 
 export const brokerRightsService = {
   // Get all available broker rights
@@ -28,9 +28,10 @@ export const brokerRightsService = {
   },
 
   // Sync broker rights (bulk update)
-  async syncBrokerRights(brokerId: number, rightIds: number[]): Promise<void> {
-    await api.post(`/api/brokers/${brokerId}/rights/sync`, {
+  async syncBrokerRights(brokerId: number, rightIds: number[]): Promise<SyncRightsResponse> {
+    const response = await api.post<ApiResponse<SyncRightsResponse>>(`/api/brokers/${brokerId}/rights/sync`, {
       right_ids: rightIds
     })
+    return response.data.data
   }
 }

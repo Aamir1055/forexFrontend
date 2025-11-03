@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
+import { useDarkMode } from '../contexts/DarkModeContext'
 import { brokerRightsService } from '../services/brokerRightsService'
 import { brokerService } from '../services/brokerService'
 import { accountMappingService } from '../services/accountMappingService'
@@ -27,6 +28,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   onSubmit,
   isLoading
 }) => {
+  const { isDarkMode } = useDarkMode()
   const [activeTab, setActiveTab] = useState<'basic' | 'permissions' | 'profiles' | 'rights' | 'groups' | 'account-mapping'>('basic')
   const [profileSubTab, setProfileSubTab] = useState<'rights' | 'groups'>('rights')
   const [selectedProfile, setSelectedProfile] = useState<number | null>(null)
@@ -68,6 +70,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   const [accountMappingErrors, setAccountMappingErrors] = useState<Record<string, string>>({})
   const [mt5Suggestions, setMt5Suggestions] = useState<string[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [profileSearchQuery, setProfileSearchQuery] = useState('')
   const queryClient = useQueryClient()
 
   // Fetch existing account mappings when editing a broker
@@ -246,20 +249,28 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   )
 
   // Fetch broker's current rights if editing
-  const { data: brokerRights } = useQuery(
+  const { data: brokerRights, isLoading: rightsLoading } = useQuery(
     ['broker-rights', broker?.id],
     () => brokerRightsService.getBrokerRights(broker!.id),
     {
-      enabled: !!broker?.id
+      enabled: !!broker?.id && isOpen,
+      retry: 2,
+      onError: (error) => {
+        console.error('Failed to fetch broker rights:', error)
+      }
     }
   )
 
   // Fetch broker's current groups if editing
-  const { data: brokerGroups } = useQuery(
+  const { data: brokerGroups, isLoading: groupsMappingLoading } = useQuery(
     ['broker-groups', broker?.id],
     () => brokerGroupMappingService.getBrokerGroupMappings(broker!.id),
     {
-      enabled: !!broker?.id
+      enabled: !!broker?.id && isOpen,
+      retry: 2,
+      onError: (error) => {
+        console.error('Failed to fetch broker groups:', error)
+      }
     }
   )
 
@@ -283,12 +294,29 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     ({ brokerId, groupIds }: { brokerId: number; groupIds: number[] }) =>
       brokerGroupMappingService.syncBrokerGroups(brokerId, groupIds),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['broker-groups'])
-        toast.success('Broker groups updated successfully!')
+      onSuccess: async (result) => {
+        // Force invalidate and refetch to get updated data
+        await queryClient.invalidateQueries(['broker-groups'])
+        await queryClient.invalidateQueries(['brokers'])
+        // Small delay to let backend DB sync, then refetch
+        setTimeout(() => {
+          queryClient.refetchQueries(['broker-groups'])
+          queryClient.refetchQueries(['brokers'])
+        }, 500)
+        
+        if (result.hasConflicts) {
+          toast.success(`Groups updated (${result.added} added, ${result.removed} removed, ${result.skipped} already existed)`, {
+            duration: 4000
+          })
+        } else {
+          toast.success('Broker groups updated successfully!')
+        }
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.message || 'Failed to update groups')
+        // Only show error if it's not a 409 (conflict is handled gracefully in service)
+        if (error.response?.status !== 409) {
+          toast.error(error.response?.data?.message || 'Failed to update groups')
+        }
       }
     }
   )
@@ -308,10 +336,6 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
         default_percentage: broker.default_percentage,
         match_all_condition: broker.match_all_condition
       })
-      // Set selected rights for existing broker
-      setSelectedRights(brokerRights?.map(right => right.id) || [])
-      // Set selected groups for existing broker
-      setSelectedGroups(brokerGroups?.map(group => group.group_id) || [])
     } else {
       setFormData({
         username: '',
@@ -337,7 +361,24 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     // Reset account mapping form
     setAccountMappingData({ field_name: '', operator_type: '=', field_value: '' })
     setAccountMappingErrors({})
-  }, [broker, brokerRights, brokerGroups])
+  }, [broker, isOpen])
+  
+  // Separate effect to handle brokerRights and brokerGroups data
+  useEffect(() => {
+    if (broker && brokerRights) {
+      // Set selected rights for existing broker
+      setSelectedRights(brokerRights.map(right => right.id))
+    }
+  }, [broker, brokerRights])
+  
+  useEffect(() => {
+    if (broker && brokerGroups) {
+      // Set selected groups for existing broker
+      const groupIds = brokerGroups.map(group => group.group_id)
+      console.log('Setting selected groups:', groupIds, 'from brokerGroups:', brokerGroups)
+      setSelectedGroups(groupIds)
+    }
+  }, [broker, brokerGroups])
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
@@ -384,6 +425,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     
     if (!validateForm()) {
       setActiveTab('basic')
@@ -453,13 +495,12 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
           rightIds: selectedRights 
         })
         
-        // Sync groups
-        if (selectedGroups.length > 0) {
-          await syncGroupsMutation.mutateAsync({
-            brokerId: brokerId,
-            groupIds: selectedGroups
-          })
-        }
+        // Sync groups (always sync, even if empty to handle removal)
+        console.log('📤 Submitting groups sync:', { brokerId, selectedGroups })
+        await syncGroupsMutation.mutateAsync({
+          brokerId: brokerId,
+          groupIds: selectedGroups
+        })
       }
     } catch (error) {
       // Error handling is done in the parent component and mutations
@@ -490,6 +531,20 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
         ? prev.filter(id => id !== rightId)
         : [...prev, rightId]
     )
+  }
+
+  // Select all available rights
+  const handleSelectAllRights = () => {
+    if (allBrokerRights) {
+      setSelectedRights(allBrokerRights.map(right => right.id))
+      toast.success(`Selected all ${allBrokerRights.length} rights`)
+    }
+  }
+
+  // Deselect all rights
+  const handleDeselectAllRights = () => {
+    setSelectedRights([])
+    toast.success('Deselected all rights')
   }
 
   // Toggle group in selected groups (for edit mode)
@@ -1128,39 +1183,85 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <div className="flex items-start justify-between mb-4">
-                          <div>
+                        <div className="mb-4">
+                          <div className="mb-3">
                             <h3 className="text-base font-semibold text-gray-900 mb-1">Assign Profile</h3>
                             <p className="text-xs text-gray-600">
                               Select a profile and customize its rights and groups before assigning to this broker.
                             </p>
                           </div>
                           
-                          {/* Profile Dropdown */}
-                          <div className="ml-4" style={{ minWidth: '200px' }}>
-                            <select
-                              value={selectedProfile || ''}
-                              onChange={(e) => {
-                                const profileId = e.target.value ? Number(e.target.value) : null
-                                if (profileId) {
-                                  handleProfileSelectForRoleEditing(profileId)
-                                  handleProfileSelectForGroupEditing(profileId)
-                                } else {
-                                  setSelectedProfile(null)
-                                  setEditableRolePermissions([])
-                                  setEditableProfileGroups([])
-                                }
-                              }}
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white"
-                              disabled={profilesLoading}
-                            >
-                              <option value="">-- Select Profile --</option>
-                              {brokerProfiles?.profiles?.map((profile) => (
-                                <option key={profile.id} value={profile.id}>
-                                  {profile.name}
-                                </option>
-                              ))}
-                            </select>
+                          {/* Profile Search and Dropdown in Same Line */}
+                          <div className="flex gap-2">
+                            {/* Profile Search Box */}
+                            <div className="flex-1">
+                              <div className="relative">
+                                <input
+                                  type="text"
+                                  placeholder="Search rights, groups..."
+                                  value={profileSearchQuery}
+                                  onChange={(e) => setProfileSearchQuery(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault()
+                                    }
+                                  }}
+                                  className="w-full px-2 py-1.5 pl-8 text-xs border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white"
+                                  disabled={profilesLoading}
+                                />
+                                <svg
+                                  className="absolute left-2 top-2 h-3.5 w-3.5 text-gray-400"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                  />
+                                </svg>
+                                {profileSearchQuery && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setProfileSearchQuery('')}
+                                    className="absolute right-2 top-2 text-gray-400 hover:text-gray-600"
+                                  >
+                                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Profile Dropdown */}
+                            <div className="flex-1">
+                              <select
+                                value={selectedProfile || ''}
+                                onChange={(e) => {
+                                  const profileId = e.target.value ? Number(e.target.value) : null
+                                  if (profileId) {
+                                    handleProfileSelectForRoleEditing(profileId)
+                                    handleProfileSelectForGroupEditing(profileId)
+                                  } else {
+                                    setSelectedProfile(null)
+                                    setEditableRolePermissions([])
+                                    setEditableProfileGroups([])
+                                  }
+                                }}
+                                className="w-full px-2 py-1.5 text-xs border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white"
+                                disabled={profilesLoading}
+                              >
+                                <option value="">-- Select Profile --</option>
+                                {brokerProfiles?.profiles?.map((profile) => (
+                                  <option key={profile.id} value={profile.id}>
+                                    {profile.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
                           </div>
                         </div>
 
@@ -1220,51 +1321,68 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                                   </div>
                                 ) : allBrokerRights && allBrokerRights.length > 0 ? (
-                                  <div className="bg-white rounded-lg border border-gray-200 p-3">
-                                    <div className="mb-2 pb-2 border-b border-gray-200">
-                                      <h4 className="text-sm font-semibold text-gray-900">
-                                        Rights ({editableRolePermissions.length} selected)
-                                      </h4>
-                                    </div>
-                                    <div className="space-y-2 overflow-y-auto pr-2" style={{ maxHeight: '400px' }}>
-                                      {Object.entries(
-                                        allBrokerRights.reduce((acc, right) => {
-                                          const category = right.category || 'Other'
-                                          if (!acc[category]) acc[category] = []
-                                          acc[category].push(right)
-                                          return acc
-                                        }, {} as Record<string, typeof allBrokerRights>)
-                                      ).map(([category, categoryRights]) => (
-                                        <div key={category} className="bg-gray-50 rounded-md p-2.5 border border-gray-200">
-                                          <h5 className="font-semibold text-xs text-gray-800 mb-2 uppercase tracking-wide">{category}</h5>
-                                          <div className="space-y-1">
-                                            {categoryRights.map((right) => (
-                                              <label 
-                                                key={right.id} 
-                                                className={`flex items-center cursor-pointer px-2 py-1.5 rounded-md transition-all ${
-                                                  editableRolePermissions.includes(right.id) 
-                                                    ? 'bg-blue-50 border border-blue-200' 
-                                                    : 'bg-white border border-transparent hover:border-gray-300'
-                                                }`}
-                                              >
-                                                <input
-                                                  type="checkbox"
-                                                  checked={editableRolePermissions.includes(right.id)}
-                                                  onChange={() => handleRolePermissionToggle(right.id)}
-                                                  className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                                />
-                                                <span className={`ml-2.5 text-xs ${
-                                                  editableRolePermissions.includes(right.id) ? 'text-blue-900 font-medium' : 'text-gray-700'
-                                                }`}>
-                                                  {right.description || right.name}
-                                                </span>
-                                              </label>
-                                            ))}
-                                          </div>
+                                  (() => {
+                                    // Filter rights based on search query
+                                    const filteredRights = profileSearchQuery 
+                                      ? allBrokerRights.filter(right => 
+                                          (right.description || right.name).toLowerCase().includes(profileSearchQuery.toLowerCase()) ||
+                                          (right.category || '').toLowerCase().includes(profileSearchQuery.toLowerCase())
+                                        )
+                                      : allBrokerRights
+
+                                    return filteredRights.length > 0 ? (
+                                      <div className="bg-white rounded-lg border border-gray-200 p-3">
+                                        <div className="mb-2 pb-2 border-b border-gray-200">
+                                          <h4 className="text-sm font-semibold text-gray-900">
+                                            Rights ({editableRolePermissions.length} selected)
+                                            {profileSearchQuery && ` - ${filteredRights.length} match${filteredRights.length !== 1 ? 'es' : ''}`}
+                                          </h4>
                                         </div>
-                                      ))}
-                                    </div>
-                                  </div>
+                                        <div className="space-y-2 overflow-y-auto pr-2" style={{ maxHeight: '400px' }}>
+                                          {Object.entries(
+                                            filteredRights.reduce((acc, right) => {
+                                              const category = right.category || 'Other'
+                                              if (!acc[category]) acc[category] = []
+                                              acc[category].push(right)
+                                              return acc
+                                            }, {} as Record<string, typeof allBrokerRights>)
+                                          ).map(([category, categoryRights]) => (
+                                            <div key={category} className="bg-gray-50 rounded-md p-2.5 border border-gray-200">
+                                              <h5 className="font-semibold text-xs text-gray-800 mb-2 uppercase tracking-wide">{category}</h5>
+                                              <div className="space-y-1">
+                                                {categoryRights.map((right) => (
+                                                  <label 
+                                                    key={right.id} 
+                                                    className={`flex items-center cursor-pointer px-2 py-1.5 rounded-md transition-all ${
+                                                      editableRolePermissions.includes(right.id) 
+                                                        ? 'bg-blue-50 border border-blue-200' 
+                                                        : 'bg-white border border-transparent hover:border-gray-300'
+                                                    }`}
+                                                  >
+                                                    <input
+                                                      type="checkbox"
+                                                      checked={editableRolePermissions.includes(right.id)}
+                                                      onChange={() => handleRolePermissionToggle(right.id)}
+                                                      className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                                    />
+                                                    <span className={`ml-2.5 text-xs ${
+                                                      editableRolePermissions.includes(right.id) ? 'text-blue-900 font-medium' : 'text-gray-700'
+                                                    }`}>
+                                                      {right.description || right.name}
+                                                    </span>
+                                                  </label>
+                                                ))}
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                                        <p className="text-sm text-gray-500">No rights found matching "{profileSearchQuery}"</p>
+                                      </div>
+                                    )
+                                  })()
                                 ) : (
                                   <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
                                     <p className="text-sm text-gray-500">No rights available.</p>
@@ -1283,22 +1401,32 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                 ) : groupsData?.groups && groupsData.groups.length > 0 ? (
                                   <div className="bg-white rounded-lg border border-gray-200 p-3">
                                     {(() => {
+                                      // Filter out inactive groups and apply search filter
+                                      const activeGroups = groupsData.groups.filter(g => g.is_active)
+                                      const filteredGroups = profileSearchQuery
+                                        ? activeGroups.filter(group =>
+                                            group.broker_view_group.toLowerCase().includes(profileSearchQuery.toLowerCase()) ||
+                                            group.mt5_group.toLowerCase().includes(profileSearchQuery.toLowerCase())
+                                          )
+                                        : activeGroups
+                                      
                                       const startIndex = (groupsPage - 1) * groupsPerPage
                                       const endIndex = startIndex + groupsPerPage
-                                      const paginatedGroups = groupsData.groups.slice(startIndex, endIndex)
-                                      const totalPages = Math.ceil(groupsData.groups.length / groupsPerPage)
+                                      const paginatedGroups = filteredGroups.slice(startIndex, endIndex)
+                                      const totalPages = Math.ceil(filteredGroups.length / groupsPerPage)
 
                                       return (
                                         <>
                                           <div className="mb-3 pb-2 border-b border-gray-200">
                                             <h4 className="text-sm font-semibold text-gray-900">
                                               Groups ({editableProfileGroups.length} selected)
+                                              {profileSearchQuery && ` - ${filteredGroups.length} match${filteredGroups.length !== 1 ? 'es' : ''}`}
                                             </h4>
                                           </div>
 
                                           <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
                                             <div className="text-xs text-gray-600">
-                                              Showing {startIndex + 1}-{Math.min(endIndex, groupsData.groups.length)} of {groupsData.groups.length}
+                                              Showing {startIndex + 1}-{Math.min(endIndex, filteredGroups.length)} of {filteredGroups.length}
                                             </div>
                                             <div className="flex items-center gap-2">
                                               <div className="flex items-center gap-1.5">
@@ -1344,9 +1472,10 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                           </div>
 
                                           <div className="space-y-1.5 overflow-y-auto pr-2" style={{ maxHeight: '400px' }}>
-                                            {paginatedGroups.map((group) => (
+                                            {paginatedGroups.length > 0 ? paginatedGroups.map((group) => (
                                               <details 
                                                 key={group.id}
+                                                open
                                                 className={`group border rounded-md transition-all ${
                                                   editableProfileGroups.includes(group.id) 
                                                     ? 'bg-blue-50 border-blue-200' 
@@ -1398,7 +1527,11 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                                   </div>
                                                 </div>
                                               </details>
-                                            ))}
+                                            )) : (
+                                              <div className="text-center py-8 text-gray-500 text-sm">
+                                                No groups found matching "{profileSearchQuery}"
+                                              </div>
+                                            )}
                                           </div>
                                         </>
                                       )
@@ -1437,8 +1570,36 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         transition={{ duration: 0.2 }}
                       >
                         <div className="mb-4">
-                          <h3 className="text-base font-semibold text-gray-900 mb-1">Broker Rights</h3>
-                          <p className="text-xs text-gray-600">Select the rights assigned to this broker.</p>
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <h3 className="text-base font-semibold text-gray-900 mb-1">Broker Rights</h3>
+                              <p className="text-xs text-gray-600">Select the rights assigned to this broker.</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={handleSelectAllRights}
+                                disabled={!allBrokerRights || allBrokerRights.length === 0}
+                                className="px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Select All Rights
+                              </button>
+                              <button
+                                type="button"
+                                onClick={handleDeselectAllRights}
+                                disabled={selectedRights.length === 0}
+                                className="px-4 py-2 text-xs font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Clear All
+                              </button>
+                            </div>
+                          </div>
                         </div>
 
                         {allRightsLoading ? (
@@ -1521,10 +1682,12 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         ) : groupsData?.groups && groupsData.groups.length > 0 ? (
                           <div className="bg-white rounded-lg border border-gray-200 p-3">
                             {(() => {
+                              // Filter out inactive groups
+                              const activeGroups = groupsData.groups.filter(g => g.is_active)
                               const startIndex = (groupsPage - 1) * groupsPerPage
                               const endIndex = startIndex + groupsPerPage
-                              const paginatedGroups = groupsData.groups.slice(startIndex, endIndex)
-                              const totalPages = Math.ceil(groupsData.groups.length / groupsPerPage)
+                              const paginatedGroups = activeGroups.slice(startIndex, endIndex)
+                              const totalPages = Math.ceil(activeGroups.length / groupsPerPage)
 
                               return (
                                 <>
@@ -1538,7 +1701,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                   {/* Pagination Controls at Top */}
                                   <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
                                     <div className="text-xs text-gray-600">
-                                      Showing {startIndex + 1}-{Math.min(endIndex, groupsData.groups.length)} of {groupsData.groups.length}
+                                      Showing {startIndex + 1}-{Math.min(endIndex, activeGroups.length)} of {activeGroups.length}
                                     </div>
                                     <div className="flex items-center gap-2">
                                       {/* Items Per Page Dropdown */}
@@ -1586,61 +1749,65 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
 
                                   {/* Groups as Dropdown/Accordion Style */}
                                   <div className="space-y-1.5 overflow-y-auto pr-2" style={{ maxHeight: '400px' }}>
-                                    {paginatedGroups.map((group) => (
-                                      <details 
-                                        key={group.id}
-                                        className={`group border rounded-md transition-all ${
-                                          selectedGroups.includes(group.id) 
-                                            ? 'bg-blue-50 border-blue-200' 
-                                            : 'bg-white border-gray-200 hover:border-blue-300'
-                                        }`}
-                                      >
-                                        <summary className="flex items-center cursor-pointer px-2.5 py-2 list-none">
-                                          <input
-                                            type="checkbox"
-                                            checked={selectedGroups.includes(group.id)}
-                                            onChange={(e) => {
-                                              e.stopPropagation()
-                                              handleGroupToggle(group.id)
-                                            }}
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                          />
-                                          <div className="ml-2.5 flex-1">
-                                            <div className={`text-xs font-semibold ${
-                                              selectedGroups.includes(group.id) ? 'text-blue-900' : 'text-gray-900'
+                                    {paginatedGroups.map((group) => {
+                                      const isSelected = selectedGroups.includes(group.id)
+                                      return (
+                                        <details
+                                          key={group.id}
+                                          open
+                                          className={`group border rounded-md transition-all ${
+                                            isSelected
+                                              ? 'bg-blue-50 border-blue-200' 
+                                              : 'bg-white border-gray-200 hover:border-blue-300'
+                                          }`}
+                                        >
+                                          <summary className="flex items-center cursor-pointer px-2.5 py-2 list-none">
+                                            <input
+                                              type="checkbox"
+                                              checked={isSelected}
+                                              onChange={(e) => {
+                                                e.stopPropagation()
+                                                handleGroupToggle(group.id)
+                                              }}
+                                              onClick={(e) => e.stopPropagation()}
+                                              className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                            />
+                                            <div className="ml-2.5 flex-1">
+                                              <div className={`text-xs font-semibold ${
+                                                isSelected ? 'text-blue-900' : 'text-gray-900'
+                                              }`}>
+                                                {group.broker_view_group}
+                                              </div>
+                                            </div>
+                                            <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                                              group.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                             }`}>
-                                              {group.broker_view_group}
+                                              {group.is_active ? 'Active' : 'Inactive'}
+                                            </span>
+                                            <svg 
+                                              className="ml-2 w-4 h-4 text-gray-500 transition-transform group-open:rotate-180" 
+                                              fill="none" 
+                                              stroke="currentColor" 
+                                              viewBox="0 0 24 24"
+                                            >
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                          </summary>
+                                          <div className="px-2.5 pb-2 pt-1 border-t border-gray-200 bg-gray-50/50">
+                                            <div className="text-[11px] text-gray-600">
+                                              <div className="flex items-center justify-between py-1">
+                                                <span className="font-medium text-gray-700">MT5 Group:</span>
+                                                <span className="text-gray-900 font-mono">{group.mt5_group}</span>
+                                              </div>
+                                              <div className="flex items-center justify-between py-1">
+                                                <span className="font-medium text-gray-700">Group ID:</span>
+                                                <span className="text-gray-900">#{group.id}</span>
+                                              </div>
                                             </div>
                                           </div>
-                                          <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                                            group.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                          }`}>
-                                            {group.is_active ? 'Active' : 'Inactive'}
-                                          </span>
-                                          <svg 
-                                            className="ml-2 w-4 h-4 text-gray-500 transition-transform group-open:rotate-180" 
-                                            fill="none" 
-                                            stroke="currentColor" 
-                                            viewBox="0 0 24 24"
-                                          >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                          </svg>
-                                        </summary>
-                                        <div className="px-2.5 pb-2 pt-1 border-t border-gray-200 bg-gray-50/50">
-                                          <div className="text-[11px] text-gray-600">
-                                            <div className="flex items-center justify-between py-1">
-                                              <span className="font-medium text-gray-700">MT5 Group:</span>
-                                              <span className="text-gray-900 font-mono">{group.mt5_group}</span>
-                                            </div>
-                                            <div className="flex items-center justify-between py-1">
-                                              <span className="font-medium text-gray-700">Group ID:</span>
-                                              <span className="text-gray-900">#{group.id}</span>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </details>
-                                    ))}
+                                        </details>
+                                      )
+                                    })}
                                   </div>
                                 </>
                               )
@@ -1884,12 +2051,12 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                 {/* Text field operators (including Group) */}
                                 {accountMappingData.field_name && accountMappingData.field_name !== 'Account' && (
                                   <>
+                                    <option value="=">=</option>
                                     <option value="LIKE">LIKE</option>
                                     <option value="STARTS_WITH">STARTS_WITH</option>
                                     <option value="CONTAINS">CONTAINS</option>
                                     <option value="ENDS_WITH">ENDS_WITH</option>
                                     <option value="NOT_CONTAINS">NOT_CONTAINS</option>
-                                    <option value="=">=</option>
                                   </>
                                 )}
                                 {/* Default when no field selected */}

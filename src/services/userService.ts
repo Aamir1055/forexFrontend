@@ -28,11 +28,12 @@ export interface Role {
 }
 
 export interface Permission {
-  category: string
+  id: number
+  name: string
   description: string
-  permission: string
-  permission_id: number
-  rp_id: number
+  category: string
+  created_at: string
+  updated_at: string
 }
 
 export interface CreateUserData {
@@ -106,7 +107,7 @@ export const userService = {
   async createUser(userData: CreateUserData): Promise<UserResponse> {
     console.log('🌐 userService.createUser - Data received from frontend:', userData)
     
-    // Transform role_ids to roles for backend compatibility
+    // Transform data for backend
     const backendData: any = {
       username: userData.username,
       email: userData.email,
@@ -115,9 +116,9 @@ export const userService = {
       force_two_factor: userData.force_two_factor,
     }
     
-    // Backend expects "roles" not "role_ids"
+    // Backend expects "role_ids" array
     if (userData.role_ids && userData.role_ids.length > 0) {
-      backendData.roles = userData.role_ids
+      backendData.role_ids = userData.role_ids
     }
     
     console.log('🌐 userService.createUser - Data being sent to backend:', backendData)
@@ -131,7 +132,7 @@ export const userService = {
     console.log('🌐 userService.updateUser - ID:', id)
     console.log('🌐 userService.updateUser - Data received from frontend:', userData)
     
-    // Transform role_ids to roles for backend compatibility
+    // Transform data for backend
     const backendData: any = {
       username: userData.username,
       email: userData.email,
@@ -144,9 +145,9 @@ export const userService = {
       backendData.password = userData.password
     }
     
-    // Backend expects "roles" not "role_ids"
+    // Backend expects "role_ids" array
     if (userData.role_ids && userData.role_ids.length > 0) {
-      backendData.roles = userData.role_ids
+      backendData.role_ids = userData.role_ids
     }
     
     console.log('🌐 userService.updateUser - Data being sent to backend:', backendData)
@@ -177,5 +178,11 @@ export const userService = {
     ]
     const roles = candidates.find((c: any) => Array.isArray(c))
     return Array.isArray(roles) ? roles as Role[] : []
+  },
+
+  // Get current authenticated user with permissions
+  async getCurrentUser(): Promise<UserResponse> {
+    const response = await api.get('/api/users/me')
+    return response.data
   }
 }

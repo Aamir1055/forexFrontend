@@ -15,7 +15,7 @@ const redirectToLogin = () => {
 
 const api = axios.create({
   baseURL: getApiBaseUrl(),
-  timeout: 10000,
+  timeout: 30000, // Increased to 30 seconds
   headers: {
     'Content-Type': 'application/json',
   },
@@ -24,7 +24,7 @@ const api = axios.create({
 // Create a separate instance for refresh calls to avoid interceptor loops
 const refreshApi = axios.create({
   baseURL: getApiBaseUrl(),
-  timeout: 10000,
+  timeout: 30000, // Increased to 30 seconds
   headers: {
     'Content-Type': 'application/json',
   },
@@ -102,42 +102,66 @@ api.interceptors.response.use(
 
         console.log('🔄 Calling refresh token API...')
         // Use separate axios instance to avoid interceptor loop
-        const response = await refreshApi.post('/api/auth/refresh', { 
-          refresh_token: refreshToken 
+        // Send refresh token in Authorization header as Bearer token
+        const response = await refreshApi.post('/api/auth/refresh', {}, {
+          headers: {
+            'Authorization': `Bearer ${refreshToken}`
+          }
         })
         
-        const newToken = response.data.data.access_token
-        localStorage.setItem('authToken', newToken)
-        console.log('✅ Token refreshed successfully')
+        console.log('✅ Refresh API response:', response.data)
+        const responseData = response.data.data
+        const newAccessToken = responseData.access_token
+        const newRefreshToken = responseData.refresh_token
+        
+        if (!newAccessToken) {
+          console.error('❌ No access token in refresh response')
+          throw new Error('No access token received')
+        }
+        
+        // Store the new access token
+        localStorage.setItem('authToken', newAccessToken)
+        
+        // Update refresh token if provided
+        if (newRefreshToken) {
+          localStorage.setItem('refreshToken', newRefreshToken)
+          console.log('✅ Both tokens refreshed successfully')
+        } else {
+
+
+          console.log('✅ Access token refreshed (refresh token unchanged)')
+        }
         
         // Update the original request with new token
-        originalRequest.headers.Authorization = `Bearer ${newToken}`
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
         
         // Process any queued requests
-        processQueue(null, newToken)
+        processQueue(null, newAccessToken)
         
         return api(originalRequest)
       } catch (refreshError: any) {
         console.error('❌ Token refresh failed:', refreshError)
-        
-        // Check if refresh token is expired or invalid
-        const isRefreshTokenExpired = 
-          refreshError?.response?.status === 401 || 
-          refreshError?.response?.status === 403 ||
-          refreshError?.response?.data?.message?.toLowerCase().includes('expired') ||
-          refreshError?.response?.data?.message?.toLowerCase().includes('invalid') ||
-          refreshError?.message === 'No refresh token available'
-        
-        if (isRefreshTokenExpired) {
-          console.log('🔒 Refresh token expired or invalid - redirecting to login')
-        }
-        
-        // Refresh failed, clear tokens and redirect to login
         processQueue(refreshError, null)
+        
+        // Always clear tokens when refresh fails
         localStorage.removeItem('authToken')
         localStorage.removeItem('refreshToken')
         localStorage.removeItem('user')
-        redirectToLogin()
+        localStorage.removeItem('authUser')
+        
+        console.log('🔒 Refresh token failed - redirecting to login')
+        
+        // Immediately redirect to login without any delay
+        const envBase = (import.meta as any).env?.VITE_ADMIN_BASE_URL as string | undefined
+        const base = envBase && envBase.trim().length > 0
+          ? envBase
+          : `${window.location.protocol}//${window.location.host}/brk-eye-adm`
+        const normalized = base.endsWith('/') ? base : `${base}/`
+        const absoluteUrl = `${normalized}login`
+        
+        // Use replace to prevent back navigation to protected pages
+        window.location.replace(absoluteUrl)
+        
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false

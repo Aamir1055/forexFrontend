@@ -19,7 +19,13 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename={import.meta.env.DEV ? '' : '/brk-eye-adm'}>
+      <BrowserRouter 
+        basename={import.meta.env.DEV ? '' : '/brk-eye-adm'}
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AuthProvider>
           <App />
           <Toaster position="top-right" />

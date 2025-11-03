@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { AuditLog } from '../types'
 import Badge from './ui/Badge'
 import { format } from 'date-fns'
+import { useDarkMode } from '../contexts/DarkModeContext'
 
 interface AuditLogTableProps {
   logs: AuditLog[]
@@ -12,6 +13,7 @@ interface AuditLogTableProps {
 }
 
 const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, currentSort }) => {
+  const { isDarkMode } = useDarkMode()
   const getActionBadgeColor = (action: string): 'success' | 'warning' | 'danger' | 'info' => {
     if (action.includes('CREATE')) return 'success'
     if (action.includes('UPDATE')) return 'info'
@@ -38,7 +40,11 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+      <div className={`backdrop-blur-xl rounded-xl border shadow-lg p-8 transition-colors ${
+        isDarkMode 
+          ? 'bg-slate-800/80 border-slate-700/60' 
+          : 'bg-white/80 border-white/60'
+      }`}>
         <div className="flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -48,22 +54,38 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
 
   if (logs.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-        <p className="text-gray-500">No audit logs found</p>
+      <div className={`backdrop-blur-xl rounded-xl border shadow-lg p-12 text-center transition-colors ${
+        isDarkMode 
+          ? 'bg-slate-800/80 border-slate-700/60' 
+          : 'bg-white/80 border-white/60'
+      }`}>
+        <p className={isDarkMode ? 'text-slate-400' : 'text-gray-500'}>No audit logs found</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div className={`backdrop-blur-xl rounded-xl border shadow-lg overflow-hidden transition-colors ${
+      isDarkMode 
+        ? 'bg-slate-800/80 border-slate-700/60' 
+        : 'bg-white/80 border-white/60'
+    }`}>
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className={`border-b transition-colors ${
+            isDarkMode 
+              ? 'bg-slate-700/50 border-slate-600' 
+              : 'bg-slate-50 border-slate-200'
+          }`}>
             <tr>
               <th 
-                onDoubleClick={() => onSort?.('id')}
-                className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
-                title="Double-click to sort"
+                onClick={() => onSort?.('id')}
+                className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
+                  isDarkMode 
+                    ? 'text-slate-300 hover:bg-slate-600/50' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+                title="Click to sort"
               >
                 <div className="flex items-center space-x-1">
                   <span>ID</span>
@@ -73,9 +95,9 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
                 </div>
               </th>
               <th 
-                onDoubleClick={() => onSort?.('username')}
+                onClick={() => onSort?.('username')}
                 className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
-                title="Double-click to sort"
+                title="Click to sort"
               >
                 <div className="flex items-center space-x-1">
                   <span>User</span>
@@ -85,9 +107,9 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
                 </div>
               </th>
               <th 
-                onDoubleClick={() => onSort?.('action')}
+                onClick={() => onSort?.('action')}
                 className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
-                title="Double-click to sort"
+                title="Click to sort"
               >
                 <div className="flex items-center space-x-1">
                   <span>Action</span>
@@ -97,9 +119,9 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
                 </div>
               </th>
               <th 
-                onDoubleClick={() => onSort?.('table_name')}
+                onClick={() => onSort?.('table_name')}
                 className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
-                title="Double-click to sort"
+                title="Click to sort"
               >
                 <div className="flex items-center space-x-1">
                   <span>Table</span>
@@ -109,9 +131,9 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
                 </div>
               </th>
               <th 
-                onDoubleClick={() => onSort?.('record_id')}
+                onClick={() => onSort?.('record_id')}
                 className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
-                title="Double-click to sort"
+                title="Click to sort"
               >
                 <div className="flex items-center space-x-1">
                   <span>Record ID</span>
@@ -121,9 +143,9 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
                 </div>
               </th>
               <th 
-                onDoubleClick={() => onSort?.('ip_address')}
+                onClick={() => onSort?.('ip_address')}
                 className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
-                title="Double-click to sort"
+                title="Click to sort"
               >
                 <div className="flex items-center space-x-1">
                   <span>IP Address</span>
@@ -133,9 +155,9 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
                 </div>
               </th>
               <th 
-                onDoubleClick={() => onSort?.('created_at')}
+                onClick={() => onSort?.('created_at')}
                 className="px-2 py-1.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
-                title="Double-click to sort"
+                title="Click to sort"
               >
                 <div className="flex items-center space-x-1">
                   <span>Timestamp</span>

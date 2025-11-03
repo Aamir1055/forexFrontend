@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { 
   PlusIcon, 
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  ArrowPathIcon
 } from '@heroicons/react/24/outline'
 import { groupService } from '../services/groupService'
 import { Group, CreateGroupData, UpdateGroupData, GroupFilters } from '../types'
@@ -11,8 +12,12 @@ import GroupTable from '../components/GroupTable'
 import GroupModal from '../components/GroupModal'
 import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import toast from 'react-hot-toast'
+import { useDarkMode } from '../contexts/DarkModeContext'
+import { PermissionGate } from '../components/PermissionGate'
+import { MODULES } from '../utils/permissions'
 
 const Groups: React.FC = () => {
+  const { isDarkMode } = useDarkMode()
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -34,12 +39,16 @@ const Groups: React.FC = () => {
   const queryClient = useQueryClient()
 
   // Fetch groups with filters
-  const { data: groupsData, isLoading, error } = useQuery(
+  const { data: groupsData, isLoading, error, refetch } = useQuery(
     ['groups', currentPage, pageSize, searchTerm, filters],
-    () => groupService.getGroups(currentPage, pageSize, { 
-      ...filters, 
-      search: searchTerm || undefined 
-    }),
+    () => {
+      // For "All" option or large numbers, fetch a large batch
+      const fetchSize = pageSize > 100 ? 1000 : pageSize
+      return groupService.getGroups(currentPage, fetchSize, { 
+        ...filters, 
+        search: searchTerm || undefined 
+      })
+    },
     {
       keepPreviousData: true,
       staleTime: 30000,
@@ -121,6 +130,12 @@ const Groups: React.FC = () => {
     setIsModalOpen(true)
   }
 
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries(['groups'])
+    await refetch()
+    toast.success('Groups list refreshed!')
+  }
+
   const handleEditGroup = (group: Group) => {
     setSelectedGroup(group)
     setIsModalOpen(true)
@@ -172,42 +187,110 @@ const Groups: React.FC = () => {
   const groups = groupsData?.groups || []
   const pagination = groupsData?.pagination
 
+  // Generate dynamic pagination options based on total items
+  const totalItems = pagination?.total || 0
+  const paginationOptions = useMemo(() => {
+    const options = []
+    const baseOptions = [10, 20, 50, 100]
+    
+    for (const option of baseOptions) {
+      if (option < totalItems) {
+        options.push(option)
+      }
+    }
+    
+    // Always add "All" option at the end if we have items
+    if (totalItems > 0) {
+      options.push(totalItems) // Show exact total
+    }
+    
+    // If no options were added (totalItems is very small), add at least one option
+    if (options.length === 0 && totalItems > 0) {
+      options.push(totalItems)
+    }
+    
+    return options
+  }, [totalItems])
+
+  // Reset to page 1 when pageSize changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [pageSize])
+
   return (
-    <div className="bg-gray-50 font-sans">
-      {/* Header */}
-      <div className="px-6 pt-6">
-        <header className="bg-white border border-gray-200 rounded-xl sticky top-0 z-40">
-          <div className="px-6 py-4">
+    <div className={`min-h-screen transition-colors duration-300 ${
+      isDarkMode 
+        ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
+        : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
+    }`}>
+      {/* Compact Header with Glass Effect */}
+      <div className="px-4 pt-3 pb-2">
+        <header className={`backdrop-blur-xl border rounded-xl shadow-lg transition-colors duration-300 ${
+          isDarkMode 
+            ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
+            : 'bg-white/80 border-white/60 shadow-blue-500/5'
+        }`}>
+          <div className="px-4 py-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                  </svg>
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                    </svg>
+                  </div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Groups</h1>
-                  <p className="text-sm text-gray-500">Manage trading groups</p>
+                  <h1 className={`text-lg font-bold transition-colors duration-300 ${
+                    isDarkMode 
+                      ? 'bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent' 
+                      : 'bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent'
+                  }`}>
+                    Groups
+                  </h1>
+                  <p className={`text-xs font-medium transition-colors duration-300 ${
+                    isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                  }`}>
+                    Manage trading groups
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
+              
+              <div className="flex items-center gap-3">
                 <div className="relative">
                   <input
                     type="text"
                     placeholder="Search groups..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={`w-72 pl-9 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-colors ${
+                      isDarkMode 
+                        ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
+                        : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
+                    }`}
                   />
-                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
                 </div>
+                
                 <button
-                  onClick={handleCreateGroup}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-sm"
+                  onClick={handleRefresh}
+                  className="px-3 py-2 bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-slate-500/30 hover:shadow-xl hover:shadow-slate-500/40 font-semibold text-xs group"
+                  title="Refresh groups list"
                 >
-                  <PlusIcon className="w-4 h-4" />
-                  <span>Create Group</span>
+                  <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
+                  <span>Refresh</span>
                 </button>
+                
+                <PermissionGate module={MODULES.GROUPS} action="create">
+                  <button
+                    onClick={handleCreateGroup}
+                    className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 font-semibold text-xs group"
+                  >
+                    <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                    <span>Create Group</span>
+                  </button>
+                </PermissionGate>
               </div>
             </div>
           </div>
@@ -215,49 +298,67 @@ const Groups: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <main className="px-6 pb-6">
+      <main className="px-4 pb-4">
         <div>
           {/* Pagination Controls */}
           {!isLoading && pagination && (
-            <div className="mt-4 mb-3 flex items-center justify-between">
-              <div className="flex items-center space-x-1.5">
-                <span className="text-xs text-gray-600">Show</span>
+            <div className="mt-3 mb-2 flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className={`text-xs transition-colors ${
+                  isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                }`}>Show</span>
                 <select
                   value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value))
-                    setCurrentPage(1)
-                  }}
-                  className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white text-xs"
+                  onChange={(e) => setPageSize(Number(e.target.value))}
+                  className={`px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs transition-colors ${
+                    isDarkMode 
+                      ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
+                      : 'bg-white border-slate-300 text-slate-900'
+                  }`}
                 >
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
+                  {paginationOptions.map(option => (
+                    <option key={option} value={option}>
+                      {option === totalItems ? `All (${option})` : option}
+                    </option>
+                  ))}
                 </select>
-                <span className="text-xs text-gray-600">entries</span>
+                <span className={`text-xs transition-colors ${
+                  isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                }`}>entries</span>
               </div>
-              <div className="text-xs text-gray-700">
+              <div className={`text-xs transition-colors ${
+                isDarkMode ? 'text-slate-300' : 'text-slate-700'
+              }`}>
                 Showing {pagination.total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, pagination.total)} of {pagination.total} results
               </div>
               {pagination.total_pages > 1 && (
-                <div className="flex items-center space-x-1.5">
+                <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                     disabled={currentPage === 1}
-                    className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      isDarkMode 
+                        ? 'border-slate-600 hover:bg-slate-700/50' 
+                        : 'border-slate-300 hover:bg-slate-50'
+                    }`}
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
-                  <span className="text-xs text-gray-700">
+                  <span className={`text-xs transition-colors ${
+                    isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                  }`}>
                     Page {currentPage} of {pagination.total_pages}
                   </span>
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(pagination.total_pages, prev + 1))}
                     disabled={currentPage === pagination.total_pages}
-                    className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      isDarkMode 
+                        ? 'border-slate-600 hover:bg-slate-700/50' 
+                        : 'border-slate-300 hover:bg-slate-50'
+                    }`}
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

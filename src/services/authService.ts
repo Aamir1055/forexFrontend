@@ -16,8 +16,9 @@ export interface LoginStep1Response {
 }
 
 export interface TwoFAVerifyRequest {
-  username: string
-  password: string
+  username?: string  // Optional, use temp_token instead if available
+  password?: string  // Optional, use temp_token instead if available
+  temp_token?: string  // Preferred method for 2FA verification
   code: string
 }
 
@@ -72,15 +73,30 @@ export const authService = {
   _saveAuth(loginData: any) {
     const at = loginData?.access_token
     const rt = loginData?.refresh_token
-    if (!at || !rt) {
-      throw new Error('Missing tokens in response')
+    
+    console.log('🔒 Storing auth tokens:', { hasAccessToken: !!at, hasRefreshToken: !!rt })
+    
+    if (!at) {
+      throw new Error('Missing access token in response')
     }
+    
     localStorage.setItem('authToken', at)
-    localStorage.setItem('refreshToken', rt)
+    
+    // Store refresh token if available, but don't require it for initial compatibility
+    if (rt) {
+      localStorage.setItem('refreshToken', rt)
+      console.log('✅ Refresh token stored successfully')
+    } else {
+      console.warn('⚠️ No refresh token in response - auto-refresh will not work')
+    }
+    
     if (loginData?.user) {
       try {
         localStorage.setItem('user', JSON.stringify(loginData.user))
-      } catch {}
+        localStorage.setItem('authUser', JSON.stringify(loginData.user))
+      } catch (error) {
+        console.error('Error saving user data:', error)
+      }
     }
   },
   // Login (Step 1 - may require 2FA)
@@ -99,10 +115,13 @@ export const authService = {
           requires_2fa: true,
           message: d?.message || 'Two-factor authentication required',
         }
-        // Only mark as setup flow (and include temp_token) if backend explicitly says so
-        if (requires2FASetup && d?.temp_token) {
-          result.requires_2fa_setup = true
+        // Include temp_token if provided (needed for 2FA verification)
+        if (d?.temp_token) {
           result.temp_token = d.temp_token
+        }
+        // Mark as setup flow if backend explicitly says so
+        if (requires2FASetup) {
+          result.requires_2fa_setup = true
         }
         return result
       }
@@ -123,12 +142,12 @@ export const authService = {
         if (temp) {
           const result: LoginStep1Response = {
             requires_2fa: true,
-            message: errorData.message || 'Two-factor authentication setup required',
+            message: errorData.message || 'Two-factor authentication required',
+            temp_token: temp,
           }
-          // Mark setup only when backend indicates setup explicitly, else treat as regular 2FA
+          // Mark setup only when backend explicitly flags it
           if (setup) {
             result.requires_2fa_setup = true
-            result.temp_token = temp
           }
           return result
         }
@@ -168,35 +187,64 @@ export const authService = {
 
   // Verify 2FA (Step 2)
   async verify2FA(credentials: TwoFAVerifyRequest): Promise<LoginResponse> {
+    console.log('🔐 verify2FA called with:', { 
+      hasTempToken: !!credentials.temp_token, 
+      hasUsername: !!credentials.username, 
+      hasPassword: !!credentials.password, 
+      hasCode: !!credentials.code 
+    })
+    
     // Try multiple endpoint/payload combinations to match backend
-    const attempts: Array<{ url: string; body: Record<string, any> }> = [
-      { url: '/api/auth/verify-2fa', body: { username: credentials.username, password: credentials.password, totp_code: credentials.code } },
-      { url: '/api/auth/verify-2fa', body: { username: credentials.username, password: credentials.password, code: credentials.code } },
-      { url: '/api/auth/login', body: { username: credentials.username, password: credentials.password, code: credentials.code } },
-      { url: '/api/auth/login', body: { username: credentials.username, password: credentials.password, totp_code: credentials.code } },
-    ]
+    const attempts: Array<{ url: string; body: Record<string, any> }> = []
+    
+    // Prefer temp_token method (modern API)
+    if (credentials.temp_token) {
+      attempts.push(
+        { url: '/api/auth/verify-2fa', body: { temp_token: credentials.temp_token, totp_code: credentials.code } },
+        { url: '/api/auth/verify-2fa', body: { temp_token: credentials.temp_token, code: credentials.code } },
+      )
+    }
+    
+    // Fallback to username/password method (legacy API)
+    if (credentials.username && credentials.password) {
+      attempts.push(
+        { url: '/api/auth/verify-2fa', body: { username: credentials.username, password: credentials.password, totp_code: credentials.code } },
+        { url: '/api/auth/verify-2fa', body: { username: credentials.username, password: credentials.password, code: credentials.code } },
+        { url: '/api/auth/login', body: { username: credentials.username, password: credentials.password, code: credentials.code } },
+        { url: '/api/auth/login', body: { username: credentials.username, password: credentials.password, totp_code: credentials.code } },
+      )
+    }
 
     let lastError: any
+    let attemptNumber = 0
     for (const attempt of attempts) {
+      attemptNumber++
       try {
+        console.log(`🔄 Attempt ${attemptNumber}/${attempts.length}: ${attempt.url}`, { bodyKeys: Object.keys(attempt.body) })
         const resp = await api.post<ApiResponse<LoginResponse>>(attempt.url, attempt.body)
         const data = resp?.data?.data
         if (data?.access_token && data?.refresh_token) {
+          console.log(`✅ Attempt ${attemptNumber} succeeded!`)
           authService._saveAuth(data)
           return data
         }
         // If no tokens were returned, remember error and continue
+        console.log(`⚠️ Attempt ${attemptNumber} returned no tokens`)
         lastError = new Error('2FA verify response missing tokens')
       } catch (err: any) {
         lastError = err
-        // Continue to the next attempt on client or validation errors
         const status = err?.response?.status
+        const message = err?.response?.data?.message || err.message
+        console.log(`❌ Attempt ${attemptNumber} failed with status ${status}: ${message}`)
+        // Continue to the next attempt on client or validation errors
         if (status && ![400, 404, 405, 422].includes(status)) {
           // For unexpected statuses, break early
+          console.log(`🛑 Breaking early due to unexpected status: ${status}`)
           break
         }
       }
     }
+    console.error('❌ All 2FA verification attempts failed')
     throw lastError || new Error('2FA verification failed')
   },
 
@@ -218,7 +266,29 @@ export const authService = {
     }
   },
 
-  // Note: Token refresh is handled automatically by the API interceptor
+  // Refresh access token using stored refresh token
+  async refreshToken(): Promise<{ access_token: string; expires_in: number }> {
+    const refreshToken = localStorage.getItem('refreshToken')
+    if (!refreshToken) {
+      throw new Error('No refresh token available')
+    }
+
+    const response = await api.post<ApiResponse<{ access_token: string; expires_in: number; token_type: string }>>('/api/auth/refresh', {}, {
+      headers: {
+        'Authorization': `Bearer ${refreshToken}`
+      }
+    })
+    
+    const data = response.data.data
+    if (data.access_token) {
+      localStorage.setItem('authToken', data.access_token)
+      console.log('✅ Token refreshed manually')
+    }
+    
+    return data
+  },
+
+  // Note: Token refresh is also handled automatically by the API interceptor
 
   // 2FA Setup
   async setup2FA(): Promise<TwoFASetupResponse> {
@@ -283,5 +353,29 @@ export const authService = {
   // Get token
   getToken(): string | null {
     return localStorage.getItem('authToken')
+  },
+
+  // Get refresh token
+  getRefreshToken(): string | null {
+    return localStorage.getItem('refreshToken')
+  },
+
+  // Check if token is expired or about to expire (within 5 minutes)
+  isTokenExpired(): boolean {
+    const token = this.getToken()
+    if (!token) return true
+
+    try {
+      // Decode JWT token to check expiration
+      const base64Payload = token.split('.')[1]
+      const payload = JSON.parse(atob(base64Payload))
+      const currentTime = Math.floor(Date.now() / 1000)
+      const bufferTime = 5 * 60 // 5 minutes buffer
+      
+      return payload.exp < (currentTime + bufferTime)
+    } catch (error) {
+      console.error('Error decoding token:', error)
+      return true // Assume expired if we can't decode
+    }
   }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { motion } from 'framer-motion'
-import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import { DocumentTextIcon } from '@heroicons/react/24/solid'
 import { brokerProfileService, BrokerProfile, CreateBrokerProfileData, UpdateBrokerProfileData } from '../services/brokerProfileService'
 import BrokerProfileModal from '../components/BrokerProfileModal'
@@ -29,7 +29,7 @@ const BrokerProfiles: React.FC = () => {
   const queryClient = useQueryClient()
 
   // Fetch profiles
-  const { data: profilesData, isLoading, error } = useQuery(
+  const { data: profilesData, isLoading, error, refetch } = useQuery(
     ['broker-profiles'],
     () => brokerProfileService.getAllProfiles(),
     {
@@ -88,6 +88,12 @@ const BrokerProfiles: React.FC = () => {
   const handleCreateProfile = () => {
     setEditingProfile(null)
     setIsModalOpen(true)
+  }
+
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries(['broker-profiles'])
+    await refetch()
+    toast.success('Profiles list refreshed!')
   }
 
   const handleEditProfile = (profile: BrokerProfile) => {
@@ -149,10 +155,34 @@ const BrokerProfiles: React.FC = () => {
   const endIndex = startIndex + itemsPerPage
   const paginatedProfiles = sortedProfiles.slice(startIndex, endIndex)
 
-  // Reset to page 1 when search changes
+  // Generate dynamic pagination options based on total items
+  const paginationOptions = useMemo(() => {
+    const options = []
+    const baseOptions = [5, 10, 25, 50, 100]
+    
+    for (const option of baseOptions) {
+      if (option < totalItems) {
+        options.push(option)
+      }
+    }
+    
+    // Always add "All" option at the end if we have items
+    if (totalItems > 0) {
+      options.push(totalItems) // Show exact total
+    }
+    
+    // If no options were added (totalItems is very small), add at least one option
+    if (options.length === 0 && totalItems > 0) {
+      options.push(totalItems)
+    }
+    
+    return options
+  }, [totalItems])
+
+  // Reset to page 1 when search or itemsPerPage changes
   React.useEffect(() => {
     setCurrentPage(1)
-  }, [searchTerm])
+  }, [searchTerm, itemsPerPage])
 
   const handleSubmit = async (data: CreateBrokerProfileData | UpdateBrokerProfileData): Promise<void> => {
     if (editingProfile) {
@@ -198,6 +228,14 @@ const BrokerProfiles: React.FC = () => {
                   <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 </div>
                 <button
+                  onClick={handleRefresh}
+                  className="px-3 py-2 bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-slate-500/30 hover:shadow-xl hover:shadow-slate-500/40 font-semibold text-xs group"
+                  title="Refresh profiles list"
+                >
+                  <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
+                  <span>Refresh</span>
+                </button>
+                <button
                   onClick={handleCreateProfile}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-sm"
                 >
@@ -219,18 +257,14 @@ const BrokerProfiles: React.FC = () => {
               <span className="text-xs text-gray-600">Show</span>
               <select
                 value={itemsPerPage}
-                onChange={(e) => {
-                  setItemsPerPage(Number(e.target.value))
-                  setCurrentPage(1)
-                }}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
                 className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white text-xs"
               >
-                <option value={9999}>All</option>
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
+                {paginationOptions.map(option => (
+                  <option key={option} value={option}>
+                    {option === totalItems ? `All (${option})` : option}
+                  </option>
+                ))}
               </select>
               <span className="text-xs text-gray-600">entries</span>
             </div>
@@ -281,9 +315,9 @@ const BrokerProfiles: React.FC = () => {
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
                         <th 
-                          onDoubleClick={() => handleSort('name')}
+                          onClick={() => handleSort('name')}
                           className="px-3 py-2 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          title="Double-click to sort"
+                          title="Click to sort"
                         >
                           <div className="flex items-center space-x-1">
                             <span>Profile Name</span>
@@ -296,9 +330,9 @@ const BrokerProfiles: React.FC = () => {
                           Description
                         </th>
                         <th 
-                          onDoubleClick={() => handleSort('rightsCount')}
+                          onClick={() => handleSort('rightsCount')}
                           className="px-3 py-2 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          title="Double-click to sort"
+                          title="Click to sort"
                         >
                           <div className="flex items-center space-x-1">
                             <span>Rights</span>
@@ -308,9 +342,9 @@ const BrokerProfiles: React.FC = () => {
                           </div>
                         </th>
                         <th 
-                          onDoubleClick={() => handleSort('groupsCount')}
+                          onClick={() => handleSort('groupsCount')}
                           className="px-3 py-2 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          title="Double-click to sort"
+                          title="Click to sort"
                         >
                           <div className="flex items-center space-x-1">
                             <span>Groups</span>
@@ -320,9 +354,9 @@ const BrokerProfiles: React.FC = () => {
                           </div>
                         </th>
                         <th 
-                          onDoubleClick={() => handleSort('createdAt')}
+                          onClick={() => handleSort('createdAt')}
                           className="px-3 py-2 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          title="Double-click to sort"
+                          title="Click to sort"
                         >
                           <div className="flex items-center space-x-1">
                             <span>Created At</span>

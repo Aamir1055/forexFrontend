@@ -12,7 +12,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   
   useEffect(() => {
     if (initialized && !isAuthenticated) {
-      navigate('/login', { replace: true })
+      // Check if refresh token exists before redirecting
+      const refreshToken = localStorage.getItem('refreshToken')
+      
+      if (!refreshToken) {
+        // No refresh token, must login
+        console.log('🔒 No authentication tokens found, redirecting to login')
+        navigate('/login', { replace: true })
+      } else {
+        // Refresh token exists, stay on page and let API interceptor handle refresh
+        console.log('🔄 Access token missing but refresh token exists, waiting for API call to refresh')
+      }
     }
   }, [initialized, isAuthenticated, navigate])
   
@@ -22,7 +32,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     </div>
   }
 
-  if (!isAuthenticated) {
+  // Allow access if authenticated OR if refresh token exists (API will handle refresh)
+  const refreshToken = localStorage.getItem('refreshToken')
+  if (!isAuthenticated && !refreshToken) {
     return null
   }
   

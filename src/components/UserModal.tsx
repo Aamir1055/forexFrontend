@@ -124,18 +124,18 @@ const UserModal: React.FC<UserModalProps> = ({
       return
     }
 
-    const submitData = user 
+    const submitData = user
       ? {
           username: formData.username,
           email: formData.email,
           is_active: formData.is_active,
-          roles: formData.role_ids,  // Backend expects "roles" not "role_ids"
+          role_ids: formData.role_ids,  // Backend expects "role_ids"
           force_two_factor: formData.force_two_factor,
           ...(formData.password && { password: formData.password })
         }
       : {
           ...formData,
-          roles: formData.role_ids  // Backend expects "roles" not "role_ids"
+          role_ids: formData.role_ids  // Backend expects "role_ids"
         }
 
     console.log('🔧 UserModal - Submitting data:', submitData)

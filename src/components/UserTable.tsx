@@ -3,6 +3,8 @@ import {
   UserGroupIcon
 } from '@heroicons/react/24/outline'
 import { User, PaginationInfo } from '../services/userService'
+import { PermissionGate } from './PermissionGate'
+import { MODULES } from '../utils/permissions'
 
 interface UserTableProps {
   users: User[]
@@ -104,11 +106,11 @@ const UserTable: React.FC<UserTableProps> = ({
                 : 'bg-gradient-to-r from-slate-50 to-blue-50/30 border-slate-200'
             }`}>
               <th 
-                onDoubleClick={() => onSort?.('username')}
+                onClick={() => onSort?.('username')}
                 className={`px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider transition-colors ${
                   isDarkMode ? 'text-slate-300' : 'text-slate-700'
                 } ${onSort ? 'cursor-pointer hover:bg-opacity-50 transition-colors' : ''}`}
-                title={onSort ? 'Double-click to sort' : ''}
+                title={onSort ? 'Click to sort' : ''}
               >
                 <div className="flex items-center gap-1">
                   <span>User</span>
@@ -118,11 +120,11 @@ const UserTable: React.FC<UserTableProps> = ({
                 </div>
               </th>
               <th 
-                onDoubleClick={() => onSort?.('email')}
+                onClick={() => onSort?.('email')}
                 className={`px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider transition-colors ${
                   isDarkMode ? 'text-slate-300' : 'text-slate-700'
                 } ${onSort ? 'cursor-pointer hover:bg-opacity-50 transition-colors' : ''}`}
-                title={onSort ? 'Double-click to sort' : ''}
+                title={onSort ? 'Click to sort' : ''}
               >
                 <div className="flex items-center gap-1">
                   <span>Email</span>
@@ -135,11 +137,11 @@ const UserTable: React.FC<UserTableProps> = ({
                 isDarkMode ? 'text-slate-300' : 'text-slate-700'
               }`}>Roles</th>
               <th 
-                onDoubleClick={() => onSort?.('is_active')}
+                onClick={() => onSort?.('is_active')}
                 className={`px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider transition-colors ${
                   isDarkMode ? 'text-slate-300' : 'text-slate-700'
                 } ${onSort ? 'cursor-pointer hover:bg-opacity-50 transition-colors' : ''}`}
-                title={onSort ? 'Double-click to sort' : ''}
+                title={onSort ? 'Click to sort' : ''}
               >
                 <div className="flex items-center gap-1">
                   <span>Status</span>
@@ -149,11 +151,11 @@ const UserTable: React.FC<UserTableProps> = ({
                 </div>
               </th>
               <th 
-                onDoubleClick={() => onSort?.('created_at')}
+                onClick={() => onSort?.('created_at')}
                 className={`px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider transition-colors ${
                   isDarkMode ? 'text-slate-300' : 'text-slate-700'
                 } ${onSort ? 'cursor-pointer hover:bg-opacity-50 transition-colors' : ''}`}
-                title={onSort ? 'Double-click to sort' : ''}
+                title={onSort ? 'Click to sort' : ''}
               >
                 <div className="flex items-center gap-1">
                   <span>Created</span>
@@ -225,15 +227,29 @@ const UserTable: React.FC<UserTableProps> = ({
                   </div>
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap">
-                  <label className="relative inline-flex items-center cursor-pointer group/toggle">
-                    <input 
-                      type="checkbox" 
-                      className="sr-only peer" 
-                      checked={user.is_active}
-                      onChange={() => onToggleStatus(user.id)}
-                    />
-                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all after:shadow-sm peer-checked:bg-gradient-to-r peer-checked:from-green-500 peer-checked:to-green-600"></div>
-                  </label>
+                  <PermissionGate 
+                    module={MODULES.USERS} 
+                    action="edit"
+                    fallback={
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        user.is_active 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {user.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                    }
+                  >
+                    <label className="relative inline-flex items-center cursor-pointer group/toggle">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={user.is_active}
+                        onChange={() => onToggleStatus(user.id)}
+                      />
+                      <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all after:shadow-sm peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-blue-600"></div>
+                    </label>
+                  </PermissionGate>
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap">
                   <div className="flex items-center gap-1">
@@ -245,24 +261,28 @@ const UserTable: React.FC<UserTableProps> = ({
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap text-right">
                   <div className="flex items-center justify-end gap-1">
-                    <button 
-                      onClick={() => onEdit(user)}
-                      className="group/btn relative p-1.5 text-slate-400 hover:text-white rounded-lg bg-slate-100 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/50 hover:scale-110"
-                      title="Edit user"
-                    >
-                      <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button 
-                      onClick={() => onDelete(user.id)}
-                      className="group/btn relative p-1.5 text-slate-400 hover:text-white rounded-lg bg-slate-100 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:shadow-red-500/50 hover:scale-110"
-                      title="Delete user"
-                    >
-                      <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-      </svg>
-                    </button>
+                    <PermissionGate module={MODULES.USERS} action="edit">
+                      <button 
+                        onClick={() => onEdit(user)}
+                        className="group/btn relative p-1.5 text-slate-400 hover:text-white rounded-lg bg-slate-100 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/50 hover:scale-110"
+                        title="Edit user"
+                      >
+                        <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                    </PermissionGate>
+                    <PermissionGate module={MODULES.USERS} action="delete">
+                      <button 
+                        onClick={() => onDelete(user.id)}
+                        className="group/btn relative p-1.5 text-slate-400 hover:text-white rounded-lg bg-slate-100 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:shadow-red-500/50 hover:scale-110"
+                        title="Delete user"
+                      >
+                        <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </PermissionGate>
                   </div>
                 </td>
               </tr>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-
+import { useDarkMode } from '../contexts/DarkModeContext'
 import { Role, Permission, CreateRoleData, UpdateRoleData } from '../types'
 
 interface RoleModalProps {
@@ -21,6 +21,7 @@ const RoleModal: React.FC<RoleModalProps> = ({
   onSubmit,
   isLoading
 }) => {
+  const { isDarkMode } = useDarkMode()
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -112,7 +113,9 @@ const RoleModal: React.FC<RoleModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2 }}
-            className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl"
+            className={`rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl ${
+              isDarkMode ? 'bg-slate-800' : 'bg-white'
+            }`}
           >
             {/* Header */}
             <div className="relative flex items-center justify-between px-6 py-3.5 bg-gradient-to-r from-blue-600 to-purple-600">
@@ -129,17 +132,21 @@ const RoleModal: React.FC<RoleModalProps> = ({
             </div>
 
             {/* Content */}
-            <div className="overflow-y-auto max-h-[calc(90vh-200px)] bg-gray-50">
+            <div className={`overflow-y-auto max-h-[calc(90vh-200px)] ${
+              isDarkMode ? 'bg-slate-900/50' : 'bg-gray-50'
+            }`}>
               <form id="role-form" onSubmit={handleSubmit}>
                 {/* Basic Info Section */}
-                <div className="px-6 py-4 bg-white">
+                <div className={`px-6 py-4 ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
                   <div className="flex items-center mb-3">
                     <div className="w-1 h-4 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full mr-2"></div>
-                    <h3 className="text-sm font-semibold text-gray-900">Basic Information</h3>
+                    <h3 className={`text-sm font-semibold ${isDarkMode ? 'text-slate-200' : 'text-gray-900'}`}>Basic Information</h3>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="relative">
-                      <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                      <label className={`block text-xs font-semibold mb-1.5 ${
+                        isDarkMode ? 'text-slate-300' : 'text-gray-700'
+                      }`}>
                         Role Name <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -147,19 +154,29 @@ const RoleModal: React.FC<RoleModalProps> = ({
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 text-sm border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-gray-50 hover:bg-white"
+                        className={`w-full px-3 py-2 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                          isDarkMode 
+                            ? 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600/50' 
+                            : 'border-gray-200 bg-gray-50 hover:bg-white text-gray-900'
+                        }`}
                         placeholder="e.g. Marketing Manager"
                         required
                       />
                     </div>
                     <div className="relative">
-                      <label className="block text-xs font-semibold text-gray-700 mb-1.5">Description</label>
+                      <label className={`block text-xs font-semibold mb-1.5 ${
+                        isDarkMode ? 'text-slate-300' : 'text-gray-700'
+                      }`}>Description</label>
                       <input
                         type="text"
                         name="description"
                         value={formData.description}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 text-sm border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-gray-50 hover:bg-white"
+                        className={`w-full px-3 py-2 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                          isDarkMode 
+                            ? 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600/50' 
+                            : 'border-gray-200 bg-gray-50 hover:bg-white text-gray-900'
+                        }`}
                         placeholder="Brief description of the role"
                       />
                     </div>
@@ -167,23 +184,27 @@ const RoleModal: React.FC<RoleModalProps> = ({
                 </div>
 
                 {/* Permissions Section */}
-                <div className="px-6 py-3 bg-white mt-1">
+                <div className={`px-6 py-3 mt-1 ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center">
                       <div className="w-1 h-4 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full mr-2"></div>
                       <div>
-                        <h3 className="text-sm font-semibold text-gray-900">Permissions</h3>
-                        <p className="text-xs text-gray-500 mt-0.5">Select the permissions for this role</p>
+                        <h3 className={`text-sm font-semibold ${isDarkMode ? 'text-slate-200' : 'text-gray-900'}`}>Permissions</h3>
+                        <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>Select the permissions for this role</p>
                       </div>
                     </div>
-                    <label className="flex items-center cursor-pointer px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
+                    <label className={`flex items-center cursor-pointer px-3 py-1.5 rounded-lg transition-colors border ${
+                      isDarkMode 
+                        ? 'hover:bg-slate-700 border-slate-600' 
+                        : 'hover:bg-gray-50 border-gray-200'
+                    }`}>
                       <input 
                         type="checkbox"
                         checked={permissions.length > 0 && permissions.every(p => p.id && formData.permission_ids.includes(p.id))}
                         onChange={handleSelectAll}
                         className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                       />
-                      <span className="ml-2 text-xs font-medium text-gray-700">Select All</span>
+                      <span className={`ml-2 text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>Select All</span>
                     </label>
                   </div>
                   <div className="space-y-2 mt-3">
@@ -192,12 +213,22 @@ const RoleModal: React.FC<RoleModalProps> = ({
                       const allCategorySelected = categoryIds.length > 0 && categoryIds.every(id => formData.permission_ids.includes(id))
                       
                       return (
-                        <div key={category} className="bg-white rounded-lg p-2.5 border border-gray-200">
+                        <div key={category} className={`rounded-lg p-2.5 border ${
+                          isDarkMode 
+                            ? 'bg-slate-700/50 border-slate-600' 
+                            : 'bg-white border-gray-200'
+                        }`}>
                           <div className="flex items-center mb-2.5">
                             <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mr-1.5"></div>
-                            <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide">{category}</h4>
+                            <h4 className={`text-xs font-bold uppercase tracking-wide ${
+                              isDarkMode ? 'text-slate-300' : 'text-gray-700'
+                            }`}>{category}</h4>
                             <div className="ml-auto flex items-center gap-2">
-                              <div className="text-xs text-gray-500 bg-gray-50 px-2 py-0.5 rounded-full font-medium">
+                              <div className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                isDarkMode 
+                                  ? 'text-slate-400 bg-slate-600' 
+                                  : 'text-gray-500 bg-gray-50'
+                              }`}>
                                 {categoryPermissions.filter(p => p.id !== undefined && formData.permission_ids.includes(p.id)).length}/{categoryPermissions.length}
                               </div>
                               <label className="flex items-center cursor-pointer">
@@ -223,9 +254,13 @@ const RoleModal: React.FC<RoleModalProps> = ({
                               <label 
                                 key={permissionId} 
                                 className={`group flex items-start cursor-pointer px-2 py-1.5 rounded-md transition-all border ${
-                                  isChecked 
-                                    ? 'bg-blue-50 border-blue-200 hover:bg-blue-100' 
-                                    : 'bg-white border-transparent hover:border-gray-200 hover:bg-gray-50'
+                                  isDarkMode 
+                                    ? isChecked 
+                                      ? 'bg-blue-900/50 border-blue-700 hover:bg-blue-900/70' 
+                                      : 'bg-slate-800 border-transparent hover:border-slate-600 hover:bg-slate-700/50'
+                                    : isChecked 
+                                      ? 'bg-blue-50 border-blue-200 hover:bg-blue-100' 
+                                      : 'bg-white border-transparent hover:border-gray-200 hover:bg-gray-50'
                                 }`}
                               >
                                 <input 
@@ -235,7 +270,9 @@ const RoleModal: React.FC<RoleModalProps> = ({
                                   className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 mt-0.5"
                                 />
                                 <span className={`ml-2 text-xs font-medium transition-colors ${
-                                  isChecked ? 'text-blue-900' : 'text-gray-700 group-hover:text-gray-900'
+                                  isDarkMode 
+                                    ? isChecked ? 'text-blue-300' : 'text-slate-300 group-hover:text-slate-200'
+                                    : isChecked ? 'text-blue-900' : 'text-gray-700 group-hover:text-gray-900'
                                 }`}>
                                   {permission.description || permission.name}
                                 </span>
@@ -252,15 +289,23 @@ const RoleModal: React.FC<RoleModalProps> = ({
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-3 bg-white border-t border-gray-200 flex items-center justify-between">
-              <p className="text-xs text-gray-500">
-                <span className="font-semibold text-gray-700">{formData.permission_ids.length}</span> permissions selected
+            <div className={`px-6 py-3 border-t flex items-center justify-between ${
+              isDarkMode 
+                ? 'bg-slate-800 border-slate-700' 
+                : 'bg-white border-gray-200'
+            }`}>
+              <p className={`text-xs ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                <span className={`font-semibold ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>{formData.permission_ids.length}</span> permissions selected
               </p>
               <div className="flex items-center space-x-2.5">
                 <button 
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-1.5 text-sm border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium"
+                  className={`px-4 py-1.5 text-sm border-2 rounded-lg transition-all duration-200 font-medium ${
+                    isDarkMode 
+                      ? 'border-slate-600 text-slate-300 hover:bg-slate-700' 
+                      : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
                   disabled={isLoading}
                 >
                   Cancel

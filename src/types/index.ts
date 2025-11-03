@@ -100,6 +100,11 @@ export interface Broker {
   credit_limit?: number
   default_percentage?: number
   match_all_condition?: boolean
+  clients_count?: number
+  account_mappings_count?: number
+  group_mappings_count?: number
+  rights_count?: number
+  last_login_at?: string | null
   created_at: string
   updated_at: string
 }
@@ -175,6 +180,11 @@ export interface AssignRightRequest {
 
 export interface SyncRightsRequest {
   right_ids: number[]
+}
+
+export interface SyncRightsResponse {
+  assigned_rights: number
+  broker_id: number
 }
 
 export interface AssignRightResponse {
@@ -314,4 +324,38 @@ export interface ExportAuditLogsParams {
   start_date?: string
   end_date?: string
   search?: string
+}
+
+// Rule Definition types
+export interface Rule {
+  id: number
+  rule_code: string
+  rule_name: string
+  description: string
+  mt5_field: string
+  mt5_value_template: string
+  requires_time_parameter: boolean
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface CreateRuleData {
+  rule_code: string
+  rule_name: string
+  description: string
+  mt5_field: string
+  mt5_value_template: string
+  requires_time_parameter: boolean
+  is_active: boolean
+}
+
+export interface UpdateRuleData {
+  rule_code?: string
+  rule_name?: string
+  description?: string
+  mt5_field?: string
+  mt5_value_template?: string
+  requires_time_parameter?: boolean
+  is_active?: boolean
 }

@@ -47,9 +47,12 @@ const Login: React.FC = () => {
       // Check if 2FA is required
       if ('requires_2fa' in result && result.requires_2fa) {
         const step1 = result as any
-        // Only go to forced setup when backend explicitly flags it
-        if (step1.requires_2fa_setup && step1.temp_token) {
+        // Save temp_token if provided (needed for 2FA verification)
+        if (step1.temp_token) {
           setTempToken(step1.temp_token)
+        }
+        // Only go to forced setup when backend explicitly flags it
+        if (step1.requires_2fa_setup) {
           setRequiresForced2FASetup(true)
           toast.success('Please set up Two-Factor Authentication')
         } else {
@@ -93,6 +96,7 @@ const Login: React.FC = () => {
 
     try {
       const verifyData: TwoFAVerifyRequest = {
+        temp_token: tempToken || undefined,
         username: formData.username,
         password: formData.password,
         code: code

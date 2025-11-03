@@ -14,11 +14,14 @@ import {
   LogOut,
   Sparkles,
   ClipboardList,
-  FileSpreadsheet
+  FileSpreadsheet,
+  ScrollText
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { authService } from '../services/authService'
 import { useAuth } from '../contexts/AuthContext'
+import { usePermissions } from '../contexts/PermissionContext'
+import { MODULES } from '../utils/permissions'
 import toast from 'react-hot-toast'
 
 interface SidebarProps {
@@ -26,22 +29,52 @@ interface SidebarProps {
   onClose: () => void
 }
 
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Users', href: '/users', icon: Users },
-  { name: 'Roles', href: '/roles', icon: Shield },
-  { name: 'Brokers', href: '/brokers', icon: Building2 },
-  { name: 'Broker Profiles', href: '/broker-profiles', icon: FileText },
-  { name: 'Groups', href: '/groups', icon: Layers },
-  { name: 'Audit Logs', href: '/audit-logs', icon: ClipboardList },
-  { name: 'Logs', href: '/logs', icon: FileSpreadsheet },
-  { name: 'Settings', href: '/settings', icon: Settings },
+interface NavigationItem {
+  name: string
+  href: string
+  icon: any
+  module?: string  // Module name for permission checking
+}
+
+const allNavigation: NavigationItem[] = [
+  { name: 'Dashboard', href: '/', icon: LayoutDashboard, module: MODULES.DASHBOARD },
+  { name: 'Users', href: '/users', icon: Users, module: MODULES.USERS },
+  { name: 'Roles', href: '/roles', icon: Shield, module: MODULES.ROLES },
+  { name: 'Brokers', href: '/brokers', icon: Building2, module: MODULES.BROKERS },
+  { name: 'Broker Profiles', href: '/broker-profiles', icon: FileText, module: MODULES.BROKER_PROFILES },
+  { name: 'Groups', href: '/groups', icon: Layers, module: MODULES.GROUPS },
+  { name: 'Rules', href: '/rules', icon: ScrollText, module: MODULES.RULES },
+  { name: 'Audit Logs', href: '/audit-logs', icon: ClipboardList, module: MODULES.AUDIT_LOGS },
+  { name: 'Logs', href: '/logs', icon: FileSpreadsheet, module: MODULES.LOGS },
+  { name: 'Settings', href: '/settings', icon: Settings, module: MODULES.PROFILE },
 ]
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const navigate = useNavigate()
+  const { canViewModule, isAdmin, user, permissions } = usePermissions()
+
+  // Filter navigation items based on user permissions
+  const navigation = allNavigation.filter(item => {
+    // If user is admin, show everything
+    if (isAdmin) {
+      return true
+    }
+    
+    // Always show Dashboard
+    if (item.href === '/') {
+      return true
+    }
+    
+    // If no module specified, show the item
+    if (!item.module) {
+      return true
+    }
+    
+    // Check if user has permission to view the module
+    return canViewModule(item.module)
+  })
 
   const { logout } = useAuth()
   const handleLogout = async () => {

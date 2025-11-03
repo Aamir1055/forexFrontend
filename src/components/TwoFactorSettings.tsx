@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
+import { QRCodeSVG } from 'qrcode.react'
 import { 
   ShieldCheckIcon,
   QrCodeIcon,
@@ -238,11 +239,29 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
                 <p className="text-sm text-gray-600 mb-3">
                   Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.):
                 </p>
-                <div className="flex justify-center p-4 bg-gray-50 rounded-lg">
-                  <img src={setupData.qr_code_uri} alt="2FA QR Code" className="w-48 h-48" />
+                <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gray-200">
+                  {setupData.qr_code_uri ? (
+                    <QRCodeSVG 
+                      value={setupData.qr_code_uri}
+                      size={200}
+                      level="H"
+                      includeMargin={true}
+                    />
+                  ) : setupData.secret ? (
+                    <QRCodeSVG 
+                      value={`otpauth://totp/BrokerEye:${setupData.secret}?secret=${setupData.secret}&issuer=BrokerEye`}
+                      size={200}
+                      level="H"
+                      includeMargin={true}
+                    />
+                  ) : (
+                    <div className="w-48 h-48 flex items-center justify-center bg-gray-100 rounded">
+                      <p className="text-sm text-gray-500">QR Code not available</p>
+                    </div>
+                  )}
                 </div>
                 <p className="text-xs text-gray-500 mt-2 text-center">
-                  Can't scan? Manual entry key: <code className="bg-gray-100 px-1 rounded">{setupData.secret}</code>
+                  Can't scan? Manual entry key: <code className="bg-gray-100 px-2 py-1 rounded font-mono text-sm">{setupData.secret}</code>
                 </p>
               </div>
               

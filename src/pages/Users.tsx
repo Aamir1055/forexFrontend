@@ -4,16 +4,21 @@ import {
   XCircleIcon,
   PlusIcon,
   MagnifyingGlassIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  ArrowPathIcon
 } from '@heroicons/react/24/outline'
 import { motion } from 'framer-motion'
 import { userService, User, CreateUserData, UpdateUserData } from '../services/userService'
+import { useDarkMode } from '../contexts/DarkModeContext'
+import { PermissionGate } from '../components/PermissionGate'
+import { MODULES } from '../utils/permissions'
 import UserTable from '../components/UserTable'
 import UserModal from '../components/UserModal'
 import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import toast from 'react-hot-toast'
 
 const Users: React.FC = () => {
+  const { isDarkMode, toggleDarkMode } = useDarkMode()
   const [currentPage, setCurrentPage] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
@@ -22,7 +27,6 @@ const Users: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [sortField, setSortField] = useState<string>('created_at')
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('DESC')
-  const [isDarkMode, setIsDarkMode] = useState(false)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
     userId: number | null
@@ -35,12 +39,24 @@ const Users: React.FC = () => {
   const queryClient = useQueryClient()
 
   // Fetch users
-  const { data: usersResponse, isLoading, error } = useQuery(
-    ['users', currentPage],
-    () => userService.getUsers(currentPage, 20),
+  const { data: usersResponse, isLoading, error, refetch } = useQuery(
+    ['users', currentPage, itemsPerPage],
+    () => {
+      // For "All" option or large numbers, fetch a large batch
+      const fetchSize = itemsPerPage > 100 ? 1000 : itemsPerPage
+      return userService.getUsers(currentPage, fetchSize)
+    },
     {
       keepPreviousData: true,
-      retry: 1,
+      retry: false,
+      onError: (err: any) => {
+        // Silently handle 403 errors - we'll show UI message instead
+        if (err?.response?.status === 403) {
+          console.warn('Access denied to users module')
+        } else if (err?.response?.status === 401) {
+          toast.error('Session expired. Please log in again.')
+        }
+      }
     }
   )
 
@@ -52,7 +68,7 @@ const Users: React.FC = () => {
 
   // Extract users and pagination from response
   const users = usersResponse?.data?.users || []
-  // const pagination = usersResponse?.data?.pagination
+  const pagination = usersResponse?.data?.pagination
 
   // Filter users based on search term and role
   const filteredUsers = useMemo(() => {
@@ -81,9 +97,7 @@ const Users: React.FC = () => {
   // Reset to page 1 when filters change (must be before any conditional returns to keep hooks order stable)
   React.useEffect(() => {
     setCurrentPage(1)
-  }, [searchTerm, selectedRole])
-
-
+  }, [searchTerm, selectedRole, itemsPerPage])
 
   // Create user mutation
   const createUserMutation = useMutation(
@@ -161,6 +175,12 @@ const Users: React.FC = () => {
     setIsModalOpen(true)
   }
 
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries(['users'])
+    await refetch()
+    toast.success('Users list refreshed!')
+  }
+
   const handleEditUser = (user: User) => {
     setEditingUser(user)
     setIsModalOpen(true)
@@ -231,7 +251,86 @@ const Users: React.FC = () => {
     })
   }, [filteredUsers, sortField, sortOrder])
 
+  // Pagination for sorted users
+  // Use client-side pagination only when filters are applied
+  const hasFilters = searchTerm.trim() !== '' || selectedRole !== 'all'
+  
+  let displayUsers = []
+  let totalItems = 0
+  let totalPages = 1
+  let startIndex = 0
+  let endIndex = 0
+
+  if (hasFilters) {
+    // Client-side pagination when filters are active
+    totalItems = sortedUsers.length
+    totalPages = Math.ceil(totalItems / itemsPerPage)
+    startIndex = (currentPage - 1) * itemsPerPage
+    endIndex = startIndex + itemsPerPage
+    displayUsers = sortedUsers.slice(startIndex, endIndex)
+  } else {
+    // Server-side pagination when no filters
+    displayUsers = sortedUsers
+    totalItems = pagination?.total || sortedUsers.length
+    totalPages = pagination?.pages || 1
+    startIndex = pagination?.total === 0 ? 0 : ((currentPage - 1) * itemsPerPage)
+    endIndex = Math.min(startIndex + itemsPerPage, totalItems)
+  }
+
+  // Generate dynamic pagination options based on total items
+  const paginationOptions = useMemo(() => {
+    const options = []
+    const baseOptions = [5, 10, 25, 50, 100]
+    
+    for (const option of baseOptions) {
+      if (option < totalItems) {
+        options.push(option)
+      }
+    }
+    
+    // Always add "All" option at the end if we have items
+    if (totalItems > 0) {
+      options.push(totalItems) // Show exact total
+    }
+    
+    // If no options were added (totalItems is very small), add at least one option
+    if (options.length === 0 && totalItems > 0) {
+      options.push(totalItems)
+    }
+    
+    return options
+  }, [totalItems])
+
+  // Handle error states
   if (error) {
+    const is403 = (error as any)?.response?.status === 403
+    
+    if (is403) {
+      return (
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+          <div className="max-w-md w-full mx-4 p-8 rounded-xl border shadow-xl text-center bg-white border-slate-200">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold mb-2 text-slate-900">
+              Access Denied
+            </h2>
+            <p className="mb-6 text-slate-600">
+              You don't have permission to view users. Please contact your administrator for access.
+            </p>
+            <button
+              onClick={() => window.history.back()}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      )
+    }
+    
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center p-8 bg-white rounded-2xl shadow-lg border border-red-200">
@@ -242,15 +341,6 @@ const Users: React.FC = () => {
       </div>
     )
   }
-
-  // Pagination for sorted users
-  const totalItems = sortedUsers.length
-  const totalPages = Math.ceil(totalItems / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const paginatedUsers = sortedUsers.slice(startIndex, endIndex)
-
-  
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
@@ -295,7 +385,7 @@ const Users: React.FC = () => {
               <div className="flex items-center gap-3">
                 {/* Dark Mode Toggle */}
                 <button
-                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  onClick={toggleDarkMode}
                   className={`relative w-14 h-7 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                     isDarkMode 
                       ? 'bg-gradient-to-r from-blue-600 to-purple-600 focus:ring-purple-500' 
@@ -382,12 +472,23 @@ const Users: React.FC = () => {
               </select>
               
               <button
-                onClick={handleCreateUser}
-                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 font-semibold text-xs group"
+                onClick={handleRefresh}
+                className="px-3 py-2 bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-slate-500/30 hover:shadow-xl hover:shadow-slate-500/40 font-semibold text-xs group"
+                title="Refresh users list"
               >
-                <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                <span>Add User</span>
+                <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
+                <span>Refresh</span>
               </button>
+              
+              <PermissionGate module={MODULES.USERS} action="create">
+                <button
+                  onClick={handleCreateUser}
+                  className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 font-semibold text-xs group"
+                >
+                  <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                  <span>Add User</span>
+                </button>
+              </PermissionGate>
             </div>
           </div>
         </header>
@@ -402,22 +503,18 @@ const Users: React.FC = () => {
               <span className={`text-xs font-medium transition-colors ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Show</span>
               <select
                 value={itemsPerPage}
-                onChange={(e) => {
-                  setItemsPerPage(Number(e.target.value))
-                  setCurrentPage(1)
-                }}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
                 className={`px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-400 text-xs font-medium shadow-sm cursor-pointer transition-all ${
                   isDarkMode 
                     ? 'bg-slate-700/50 border-slate-600 text-slate-200 hover:border-slate-500' 
                     : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
                 }`}
               >
-                <option value={9999}>All</option>
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
+                {paginationOptions.map(option => (
+                  <option key={option} value={option}>
+                    {option === totalItems ? `All (${option})` : option}
+                  </option>
+                ))}
               </select>
               <span className={`text-xs font-medium transition-colors ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>entries</span>
             </div>
@@ -476,7 +573,7 @@ const Users: React.FC = () => {
             transition={{ delay: 0.4 }}
           >
             <UserTable
-              users={paginatedUsers}
+              users={displayUsers}
               isLoading={isLoading}
               onEdit={handleEditUser}
               onDelete={handleDeleteUser}
