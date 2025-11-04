@@ -366,3 +366,4 @@ const BrokerRightsModal: React.FC<BrokerRightsModalProps> = ({
 }
 
 export default BrokerRightsModal
+

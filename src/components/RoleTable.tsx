@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react'
 import { UserGroupIcon } from '@heroicons/react/24/outline'
 import { ShieldCheckIcon, ChartBarIcon } from '@heroicons/react/24/solid'
 import { Role } from '../types'
-import { useDarkMode } from '../contexts/DarkModeContext'
 import { PermissionGate } from './PermissionGate'
 import { MODULES } from '../utils/permissions'
 
@@ -19,8 +18,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
   onEdit,
   onDelete
 }) => {
-  const { isDarkMode } = useDarkMode()
-  const [sortField, setSortField] = useState<string | null>(null)
+    const [sortField, setSortField] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('ASC')
 
   const handleSort = (field: string) => {
@@ -84,11 +82,11 @@ const RoleTable: React.FC<RoleTableProps> = ({
   if (isLoading) {
     return (
       <div className={`rounded-xl shadow-sm overflow-hidden ${
-        isDarkMode ? 'bg-slate-800/80' : 'bg-white'
+        'bg-white'
       }`}>
         <div className="p-8 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-6"></div>
-          <p className={`font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>Loading roles...</p>
+          <p className="font-medium text-slate-600">Loading roles...</p>
         </div>
       </div>
     )
@@ -97,16 +95,16 @@ const RoleTable: React.FC<RoleTableProps> = ({
   if (roles.length === 0) {
     return (
       <div className={`rounded-xl shadow-sm overflow-hidden ${
-        isDarkMode ? 'bg-slate-800/80' : 'bg-white'
+        'bg-white'
       }`}>
         <div className="p-16 text-center">
           <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 ${
-            isDarkMode ? 'bg-slate-700' : 'bg-slate-100'
+            'bg-slate-100'
           }`}>
-            <UserGroupIcon className={`w-10 h-10 ${isDarkMode ? 'text-slate-400' : 'text-slate-400'}`} />
+            <UserGroupIcon className="w-10 h-10 text-slate-400" />
           </div>
-          <h3 className={`text-lg font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No roles found</h3>
-          <p className={`font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Get started by creating your first role.</p>
+          <h3 className="text-lg font-bold mb-2 text-slate-900">No roles found</h3>
+          <p className="font-medium text-slate-600">Get started by creating your first role.</p>
         </div>
       </div>
     )
@@ -114,14 +112,14 @@ const RoleTable: React.FC<RoleTableProps> = ({
 
   return (
     <div className={`rounded-xl border shadow-sm overflow-hidden backdrop-blur-xl ${
-      isDarkMode 
+      false 
         ? 'bg-slate-800/80 border-slate-700/60' 
         : 'bg-white/80 border-white/60'
     }`}>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className={`border-b ${
-            isDarkMode 
+            false 
               ? 'bg-slate-700/50 border-slate-600' 
               : 'bg-slate-50 border-slate-200'
           }`}>
@@ -129,7 +127,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
               <th 
                 onClick={() => handleSort('name')}
                 className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider cursor-pointer transition-colors ${
-                  isDarkMode 
+                  false 
                     ? 'text-slate-300 hover:bg-slate-600/50' 
                     : 'text-slate-500 hover:bg-slate-100'
                 }`}
@@ -145,7 +143,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
               <th 
                 onClick={() => handleSort('description')}
                 className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider cursor-pointer transition-colors ${
-                  isDarkMode 
+                  false 
                     ? 'text-slate-300 hover:bg-slate-600/50' 
                     : 'text-gray-500 hover:bg-gray-100'
                 }`}
@@ -161,7 +159,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
               <th 
                 onClick={() => handleSort('permissions')}
                 className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider cursor-pointer transition-colors ${
-                  isDarkMode 
+                  false 
                     ? 'text-slate-300 hover:bg-slate-600/50' 
                     : 'text-gray-500 hover:bg-gray-100'
                 }`}
@@ -175,28 +173,28 @@ const RoleTable: React.FC<RoleTableProps> = ({
                 </div>
               </th>
               <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
-                isDarkMode ? 'text-slate-300' : 'text-gray-500'
+                'text-gray-500'
               }`}>Status</th>
               <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
-                isDarkMode ? 'text-slate-300' : 'text-gray-500'
+                'text-gray-500'
               }`}>Actions</th>
             </tr>
           </thead>
-          <tbody className={`divide-y ${isDarkMode ? 'divide-slate-700' : 'divide-gray-200'}`}>
+          <tbody className="divide-y divide-gray-200">
             {sortedRoles.map((role) => (
               <tr key={role.id} className={`transition-colors duration-150 ${
-                isDarkMode ? 'hover:bg-slate-700/50' : 'hover:bg-gray-50'
+                false ? 'hover:bg-slate-700/50' : 'hover:bg-gray-50'
               }`}>
                 <td className="px-4 py-3">
                   <div className="flex items-center space-x-3">
                     {getRoleIcon(role.name)}
                     <div>
-                      <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-200' : 'text-gray-900'}`}>{role.name}</p>
+                      <p className="text-sm font-medium text-gray-900">{role.name}</p>
                     </div>
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <p className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>{role.description || 'No description provided'}</p>
+                  <p className="text-sm text-gray-700">{role.description || 'No description provided'}</p>
                 </td>
                 <td className="px-4 py-3">
                   <span className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
@@ -250,3 +248,4 @@ const RoleTable: React.FC<RoleTableProps> = ({
 }
 
 export default RoleTable
+

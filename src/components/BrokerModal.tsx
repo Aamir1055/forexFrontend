@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
-import { useDarkMode } from '../contexts/DarkModeContext'
+
 import { brokerRightsService } from '../services/brokerRightsService'
 import { brokerService } from '../services/brokerService'
 import { accountMappingService } from '../services/accountMappingService'
@@ -28,8 +28,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   onSubmit,
   isLoading
 }) => {
-  const { isDarkMode } = useDarkMode()
-  const [activeTab, setActiveTab] = useState<'basic' | 'permissions' | 'profiles' | 'rights' | 'groups' | 'account-mapping'>('basic')
+    const [activeTab, setActiveTab] = useState<'basic' | 'permissions' | 'profiles' | 'rights' | 'groups' | 'account-mapping'>('basic')
   const [profileSubTab, setProfileSubTab] = useState<'rights' | 'groups'>('rights')
   const [selectedProfile, setSelectedProfile] = useState<number | null>(null)
   const [editableRolePermissions, setEditableRolePermissions] = useState<number[]>([])
@@ -1038,7 +1037,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                               name="full_name"
                               value={formData.full_name}
                               onChange={handleInputChange}
-                              className={`form-input ${errors.full_name ? 'form-input-error' : ''}`}
+                              className="form-input ${errors.full_name ? 'form-input-error' : ''}"
                               placeholder="Enter full name"
                               required
                             />
@@ -1052,7 +1051,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                               name="username"
                               value={formData.username}
                               onChange={handleInputChange}
-                              className={`form-input ${errors.username ? 'form-input-error' : ''}`}
+                              className="form-input ${errors.username ? 'form-input-error' : ''}"
                               placeholder="Enter username"
                               required
                             />
@@ -1066,7 +1065,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                               name="email"
                               value={formData.email}
                               onChange={handleInputChange}
-                              className={`form-input ${errors.email ? 'form-input-error' : ''}`}
+                              className="form-input ${errors.email ? 'form-input-error' : ''}"
                               placeholder="Enter email"
                               required
                             />
@@ -1080,7 +1079,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                               name="phone"
                               value={formData.phone}
                               onChange={handleInputChange}
-                              className={`form-input ${errors.phone ? 'form-input-error' : ''}`}
+                              className="form-input ${errors.phone ? 'form-input-error' : ''}"
                               placeholder="Enter phone"
                               required
                             />
@@ -1095,7 +1094,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                 name="password"
                                 value={formData.password || ''}
                                 onChange={handleInputChange}
-                                className={`form-input ${errors.password ? 'form-input-error' : ''}`}
+                                className="form-input ${errors.password ? 'form-input-error' : ''}"
                                 placeholder="Enter password"
                                 required
                               />
@@ -1110,7 +1109,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                               name="account_range_from"
                               value={formData.account_range_from}
                               onChange={handleInputChange}
-                              className={`form-input ${errors.account_range_from ? 'form-input-error' : ''}`}
+                              className="form-input ${errors.account_range_from ? 'form-input-error' : ''}"
                               placeholder="1000"
                               required
                             />
@@ -1124,7 +1123,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                               name="account_range_to"
                               value={formData.account_range_to}
                               onChange={handleInputChange}
-                              className={`form-input ${errors.account_range_to ? 'form-input-error' : ''}`}
+                              className="form-input ${errors.account_range_to ? 'form-input-error' : ''}"
                               placeholder="2000"
                               required
                             />
@@ -2303,3 +2302,4 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
 }
 
 export default BrokerModal
+

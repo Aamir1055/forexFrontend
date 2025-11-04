@@ -74,3 +74,4 @@ const DiagnosticTest: React.FC = () => {
 }
 
 export default DiagnosticTest
+

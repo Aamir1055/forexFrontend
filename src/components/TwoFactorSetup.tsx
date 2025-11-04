@@ -284,3 +284,4 @@ const TwoFactorSetup: React.FC = () => {
 }
 
 export default TwoFactorSetup
+

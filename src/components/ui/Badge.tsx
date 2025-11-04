@@ -54,3 +54,4 @@ const Badge: React.FC<BadgeProps> = ({
 }
 
 export default Badge
+

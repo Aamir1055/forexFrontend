@@ -9,12 +9,11 @@ import RoleModal from '../components/RoleModal'
 import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import { Role, CreateRoleData, UpdateRoleData } from '../types'
 import toast from 'react-hot-toast'
-import { useDarkMode } from '../contexts/DarkModeContext'
+
 import { PermissionGate } from '../components/PermissionGate'
 import { MODULES } from '../utils/permissions'
 
 const Roles: React.FC = () => {
-  const { isDarkMode, toggleDarkMode } = useDarkMode()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingRole, setEditingRole] = useState<Role | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -189,12 +188,12 @@ const Roles: React.FC = () => {
     if (is403) {
       return (
         <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${
-          isDarkMode 
+          false 
             ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
             : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
         }`}>
           <div className={`max-w-md w-full mx-4 p-8 rounded-xl border shadow-xl text-center ${
-            isDarkMode 
+            false 
               ? 'bg-slate-800/80 border-slate-700' 
               : 'bg-white border-slate-200'
           }`}>
@@ -203,10 +202,10 @@ const Roles: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h2 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+            <h2 className={`text-xl font-bold mb-2 ${false ? 'text-white' : 'text-slate-900'}`}>
               Access Denied
             </h2>
-            <p className={`mb-6 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            <p className={`mb-6 ${false ? 'text-slate-300' : 'text-slate-600'}`}>
               You don't have permission to view roles. Please contact your administrator for access.
             </p>
             <button
@@ -229,14 +228,14 @@ const Roles: React.FC = () => {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
+      false 
         ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
         : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
     }`}>
       {/* Compact Header with Glass Effect */}
       <div className="px-4 pt-3 pb-2">
         <header className={`backdrop-blur-xl border rounded-xl shadow-lg transition-colors duration-300 ${
-          isDarkMode 
+          false 
             ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
             : 'bg-white/80 border-white/60 shadow-blue-500/5'
         }`}>
@@ -251,14 +250,14 @@ const Roles: React.FC = () => {
                 </div>
                 <div>
                   <h1 className={`text-lg font-bold transition-colors duration-300 ${
-                    isDarkMode 
+                    false 
                       ? 'bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent' 
                       : 'bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent'
                   }`}>
                     Role Management
                   </h1>
                   <p className={`text-xs font-medium transition-colors duration-300 ${
-                    isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                    false ? 'text-slate-400' : 'text-slate-500'
                   }`}>
                     Manage roles and permissions efficiently
                   </p>
@@ -273,7 +272,7 @@ const Roles: React.FC = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className={`w-72 pl-9 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-colors ${
-                      isDarkMode 
+                      false 
                         ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
                         : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
                     }`}
@@ -312,13 +311,13 @@ const Roles: React.FC = () => {
           <div className="mt-3 mb-2 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <span className={`text-xs transition-colors ${
-                isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                false ? 'text-slate-400' : 'text-slate-600'
               }`}>Show</span>
               <select
                 value={itemsPerPage}
                 onChange={(e) => setItemsPerPage(Number(e.target.value))}
                 className={`px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs transition-colors ${
-                  isDarkMode 
+                  false 
                     ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                     : 'bg-white border-slate-300 text-slate-900'
                 }`}
@@ -330,11 +329,11 @@ const Roles: React.FC = () => {
                 ))}
               </select>
               <span className={`text-xs transition-colors ${
-                isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                false ? 'text-slate-400' : 'text-slate-600'
               }`}>entries</span>
             </div>
             <div className={`text-xs transition-colors ${
-              isDarkMode ? 'text-slate-300' : 'text-slate-700'
+              false ? 'text-slate-300' : 'text-slate-700'
             }`}>
               Showing {totalItems === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} results
             </div>
@@ -344,7 +343,7 @@ const Roles: React.FC = () => {
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
                   className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                    isDarkMode 
+                    false 
                       ? 'border-slate-600 hover:bg-slate-700/50' 
                       : 'border-slate-300 hover:bg-slate-50'
                   }`}
@@ -354,7 +353,7 @@ const Roles: React.FC = () => {
                   </svg>
                 </button>
                 <span className={`text-xs transition-colors ${
-                  isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                  false ? 'text-slate-300' : 'text-slate-700'
                 }`}>
                   Page {currentPage} of {totalPages}
                 </span>
@@ -362,7 +361,7 @@ const Roles: React.FC = () => {
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
                   className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                    isDarkMode 
+                    false 
                       ? 'border-slate-600 hover:bg-slate-700/50' 
                       : 'border-slate-300 hover:bg-slate-50'
                   }`}
@@ -423,3 +422,4 @@ const Roles: React.FC = () => {
 }
 
 export default Roles
+

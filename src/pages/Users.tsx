@@ -9,7 +9,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { motion } from 'framer-motion'
 import { userService, User, CreateUserData, UpdateUserData } from '../services/userService'
-import { useDarkMode } from '../contexts/DarkModeContext'
+
 import { PermissionGate } from '../components/PermissionGate'
 import { MODULES } from '../utils/permissions'
 import UserTable from '../components/UserTable'
@@ -18,7 +18,6 @@ import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import toast from 'react-hot-toast'
 
 const Users: React.FC = () => {
-  const { isDarkMode, toggleDarkMode } = useDarkMode()
   const [currentPage, setCurrentPage] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
@@ -344,14 +343,14 @@ const Users: React.FC = () => {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
+      false 
         ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
         : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
     }`}>
       {/* Compact Header with Glass Effect */}
       <div className="px-4 pt-3 pb-2">
         <header className={`backdrop-blur-xl border rounded-xl shadow-lg transition-colors duration-300 ${
-          isDarkMode 
+          false 
             ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
             : 'bg-white/80 border-white/60 shadow-blue-500/5'
         }`}>
@@ -367,62 +366,29 @@ const Users: React.FC = () => {
                 </div>
                 <div>
                   <h1 className={`text-lg font-bold transition-colors duration-300 ${
-                    isDarkMode 
+                    false 
                       ? 'bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent' 
                       : 'bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent'
                   }`}>
                     User Management
                   </h1>
                   <p className={`text-xs font-medium transition-colors duration-300 ${
-                    isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                    false ? 'text-slate-400' : 'text-slate-500'
                   }`}>
                     {totalItems} {totalItems === 1 ? 'user' : 'users'} • Manage roles and permissions
                   </p>
                 </div>
               </div>
               
-              {/* Quick Stats and Dark Mode Toggle */}
+              {/* Quick Stats */}
               <div className="flex items-center gap-3">
-                {/* Dark Mode Toggle */}
-                <button
-                  onClick={toggleDarkMode}
-                  className={`relative w-14 h-7 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                    isDarkMode 
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 focus:ring-purple-500' 
-                      : 'bg-slate-300 focus:ring-slate-400'
-                  }`}
-                  title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                >
-                  <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow-lg transform transition-transform duration-300 flex items-center justify-center ${
-                    isDarkMode ? 'translate-x-7' : 'translate-x-0'
-                  }`}>
-                    {isDarkMode ? (
-                      <svg className="w-3.5 h-3.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                      </svg>
-                    ) : (
-                      <svg className="w-3.5 h-3.5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                  </span>
-                </button>
-
-                <div className={`text-center px-3 py-1.5 rounded-lg border transition-colors duration-300 ${
-                  isDarkMode 
-                    ? 'bg-gradient-to-br from-blue-900/50 to-blue-800/30 border-blue-700/50' 
-                    : 'bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-200/50'
-                }`}>
-                  <div className={`text-lg font-bold transition-colors duration-300 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>{users.filter(u => u.is_active).length}</div>
-                  <div className={`text-[10px] font-medium transition-colors duration-300 ${isDarkMode ? 'text-blue-400/70' : 'text-blue-600/70'}`}>Active</div>
+                <div className="text-center px-3 py-1.5 rounded-lg border bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-200/50">
+                  <div className="text-lg font-bold text-blue-600">{users.filter(u => u.is_active).length}</div>
+                  <div className="text-[10px] font-medium text-blue-600/70">Active</div>
                 </div>
-                <div className={`text-center px-3 py-1.5 rounded-lg border transition-colors duration-300 ${
-                  isDarkMode 
-                    ? 'bg-gradient-to-br from-purple-900/50 to-purple-800/30 border-purple-700/50' 
-                    : 'bg-gradient-to-br from-purple-50 to-purple-100/50 border-purple-200/50'
-                }`}>
-                  <div className={`text-lg font-bold transition-colors duration-300 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>{users.filter(u => !u.is_active).length}</div>
-                  <div className={`text-[10px] font-medium transition-colors duration-300 ${isDarkMode ? 'text-purple-400/70' : 'text-purple-600/70'}`}>Inactive</div>
+                <div className="text-center px-3 py-1.5 rounded-lg border bg-gradient-to-br from-purple-50 to-purple-100/50 border-purple-200/50">
+                  <div className="text-lg font-bold text-purple-600">{users.filter(u => !u.is_active).length}</div>
+                  <div className="text-[10px] font-medium text-purple-600/70">Inactive</div>
                 </div>
               </div>
             </div>
@@ -436,19 +402,19 @@ const Users: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className={`w-full pl-9 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 text-xs shadow-sm ${
-                    isDarkMode 
+                    false 
                       ? 'bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-blue-500/50 focus:border-blue-400' 
                       : 'bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-blue-500/50 focus:border-blue-400'
                   }`}
                 />
                 <MagnifyingGlassIcon className={`w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors ${
-                  isDarkMode ? 'text-slate-400 group-focus-within:text-blue-400' : 'text-slate-400 group-focus-within:text-blue-500'
+                  false ? 'text-slate-400 group-focus-within:text-blue-400' : 'text-slate-400 group-focus-within:text-blue-500'
                 }`} />
                 {searchTerm && (
                   <button 
                     onClick={() => setSearchTerm('')}
                     className={`absolute right-2 top-1/2 transform -translate-y-1/2 transition-colors ${
-                      isDarkMode ? 'text-slate-400 hover:text-slate-200' : 'text-slate-400 hover:text-slate-600'
+                      false ? 'text-slate-400 hover:text-slate-200' : 'text-slate-400 hover:text-slate-600'
                     }`}
                   >
                     <XCircleIcon className="w-4 h-4" />
@@ -460,7 +426,7 @@ const Users: React.FC = () => {
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
                 className={`px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 text-xs font-medium shadow-sm cursor-pointer transition-all ${
-                  isDarkMode 
+                  false 
                     ? 'bg-slate-700/50 border-slate-600 text-slate-200 hover:border-slate-500' 
                     : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
                 }`}
@@ -500,12 +466,12 @@ const Users: React.FC = () => {
           {/* Compact Pagination and Info Bar */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
-              <span className={`text-xs font-medium transition-colors ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Show</span>
+              <span className={`text-xs font-medium transition-colors ${false ? 'text-slate-400' : 'text-slate-600'}`}>Show</span>
               <select
                 value={itemsPerPage}
                 onChange={(e) => setItemsPerPage(Number(e.target.value))}
                 className={`px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-400 text-xs font-medium shadow-sm cursor-pointer transition-all ${
-                  isDarkMode 
+                  false 
                     ? 'bg-slate-700/50 border-slate-600 text-slate-200 hover:border-slate-500' 
                     : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
                 }`}
@@ -516,12 +482,12 @@ const Users: React.FC = () => {
                   </option>
                 ))}
               </select>
-              <span className={`text-xs font-medium transition-colors ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>entries</span>
+              <span className={`text-xs font-medium transition-colors ${false ? 'text-slate-400' : 'text-slate-600'}`}>entries</span>
             </div>
             
             <div className="flex items-center gap-3">
-              <div className={`text-xs font-medium transition-colors ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                Showing <span className={`font-semibold ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>{totalItems === 0 ? 0 : startIndex + 1}</span> to <span className={`font-semibold ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>{Math.min(endIndex, totalItems)}</span> of <span className={`font-semibold ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>{totalItems}</span> results
+              <div className={`text-xs font-medium transition-colors ${false ? 'text-slate-400' : 'text-slate-600'}`}>
+                Showing <span className={`font-semibold ${false ? 'text-blue-400' : 'text-blue-600'}`}>{totalItems === 0 ? 0 : startIndex + 1}</span> to <span className={`font-semibold ${false ? 'text-blue-400' : 'text-blue-600'}`}>{Math.min(endIndex, totalItems)}</span> of <span className={`font-semibold ${false ? 'text-blue-400' : 'text-blue-600'}`}>{totalItems}</span> results
               </div>
               
               {totalPages > 1 && (
@@ -530,18 +496,18 @@ const Users: React.FC = () => {
                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                     disabled={currentPage === 1}
                     className={`p-1.5 border rounded-md transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm ${
-                      isDarkMode 
+                      false 
                         ? 'border-slate-600 hover:bg-slate-700/50 hover:border-blue-500 disabled:hover:bg-transparent disabled:hover:border-slate-600' 
                         : 'border-slate-200 hover:bg-white hover:border-blue-300 disabled:hover:bg-transparent disabled:hover:border-slate-200'
                     }`}
                   >
-                    <svg className={`w-3.5 h-3.5 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className={`w-3.5 h-3.5 ${false ? 'text-slate-400' : 'text-slate-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
                   
                   <div className={`px-2 py-1 border rounded-md text-xs font-semibold shadow-sm ${
-                    isDarkMode 
+                    false 
                       ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                       : 'bg-white border-slate-200 text-slate-700'
                   }`}>
@@ -552,12 +518,12 @@ const Users: React.FC = () => {
                     onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                     disabled={currentPage === totalPages}
                     className={`p-1.5 border rounded-md transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm ${
-                      isDarkMode 
+                      false 
                         ? 'border-slate-600 hover:bg-slate-700/50 hover:border-blue-500 disabled:hover:bg-transparent disabled:hover:border-slate-600' 
                         : 'border-slate-200 hover:bg-white hover:border-blue-300 disabled:hover:bg-transparent disabled:hover:border-slate-200'
                     }`}
                   >
-                    <svg className={`w-3.5 h-3.5 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className={`w-3.5 h-3.5 ${false ? 'text-slate-400' : 'text-slate-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </button>
@@ -583,7 +549,7 @@ const Users: React.FC = () => {
               pagination={undefined}
               currentPage={currentPage}
               onPageChange={setCurrentPage}
-              isDarkMode={isDarkMode}
+              false={false}
             />
           </motion.div>
         </div>
@@ -601,7 +567,7 @@ const Users: React.FC = () => {
           }}
           onSubmit={handleSubmit}
           isLoading={createUserMutation.isLoading || updateUserMutation.isLoading}
-          isDarkMode={isDarkMode}
+          false={false}
         />
       )}
 
@@ -622,3 +588,4 @@ const Users: React.FC = () => {
 }
 
 export default Users
+

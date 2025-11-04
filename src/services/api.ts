@@ -138,6 +138,9 @@ api.interceptors.response.use(
         // Process any queued requests
         processQueue(null, newAccessToken)
         
+        // Broadcast token refresh event for WebSocket reconnection
+        window.dispatchEvent(new CustomEvent('token:refreshed', { detail: { token: newAccessToken } }))
+        
         return api(originalRequest)
       } catch (refreshError: any) {
         console.error('❌ Token refresh failed:', refreshError)

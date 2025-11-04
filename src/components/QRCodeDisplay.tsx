@@ -41,3 +41,4 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ qrCodeUri }) => {
 }
 
 export default QRCodeDisplay
+

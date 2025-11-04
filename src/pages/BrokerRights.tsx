@@ -256,3 +256,4 @@ const BrokerRights: React.FC = () => {
 }
 
 export default BrokerRights
+

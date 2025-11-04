@@ -13,11 +13,9 @@ import { auditLogService } from '../services/auditLogService'
 import { AuditLogFilters } from '../types'
 import AuditLogTable from '../components/AuditLogTable'
 import toast from 'react-hot-toast'
-import { useDarkMode } from '../contexts/DarkModeContext'
 
 const AuditLogs: React.FC = () => {
   const queryClient = useQueryClient()
-  const { isDarkMode } = useDarkMode()
   const [currentPage, setCurrentPage] = useState(1)
   const [filters, setFilters] = useState<AuditLogFilters>({
     page: 1,
@@ -245,14 +243,14 @@ const AuditLogs: React.FC = () => {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
+      false 
         ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
         : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
     }`}>
       {/* Compact Header with Glass Effect */}
       <div className="px-4 pt-3 pb-2">
         <header className={`backdrop-blur-xl border rounded-xl shadow-lg transition-colors duration-300 ${
-          isDarkMode 
+          false 
             ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
             : 'bg-white/80 border-white/60 shadow-blue-500/5'
         }`}>
@@ -267,14 +265,14 @@ const AuditLogs: React.FC = () => {
                 </div>
                 <div>
                   <h1 className={`text-lg font-bold transition-colors duration-300 ${
-                    isDarkMode 
+                    false 
                       ? 'bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent' 
                       : 'bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent'
                   }`}>
                     Audit Logs
                   </h1>
                   <p className={`text-xs font-medium transition-colors duration-300 ${
-                    isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                    'text-slate-500'
                   }`}>
                     Track all system activities and changes
                   </p>
@@ -289,7 +287,7 @@ const AuditLogs: React.FC = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className={`w-72 pl-9 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-colors ${
-                      isDarkMode 
+                      false 
                         ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
                         : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
                     }`}
@@ -302,7 +300,7 @@ const AuditLogs: React.FC = () => {
                   className={`px-3 py-2 rounded-lg flex items-center gap-2 transition-all shadow-md text-xs font-semibold ${
                     showFilters
                       ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-blue-500/30'
-                      : isDarkMode 
+                      : false 
                         ? 'bg-slate-700/50 text-slate-200 hover:bg-slate-700' 
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
@@ -325,7 +323,7 @@ const AuditLogs: React.FC = () => {
                   <div
                     id="export-dropdown"
                     className={`hidden absolute right-0 mt-2 w-48 rounded-lg shadow-lg border z-10 ${
-                      isDarkMode 
+                      false 
                         ? 'bg-slate-800 border-slate-700' 
                         : 'bg-white border-slate-200'
                     }`}
@@ -333,7 +331,7 @@ const AuditLogs: React.FC = () => {
                     <button
                       onClick={() => handleExport('csv')}
                       className={`block w-full text-left px-4 py-2 first:rounded-t-lg transition-colors ${
-                        isDarkMode 
+                        false 
                           ? 'hover:bg-slate-700 text-slate-200' 
                           : 'hover:bg-slate-50 text-slate-900'
                       }`}
@@ -343,7 +341,7 @@ const AuditLogs: React.FC = () => {
                     <button
                       onClick={() => handleExport('json')}
                       className={`block w-full text-left px-4 py-2 last:rounded-b-lg transition-colors ${
-                        isDarkMode 
+                        false 
                           ? 'hover:bg-slate-700 text-slate-200' 
                           : 'hover:bg-slate-50 text-slate-900'
                       }`}
@@ -375,7 +373,7 @@ const AuditLogs: React.FC = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className={`mt-3 rounded-xl shadow-lg border p-4 backdrop-blur-xl transition-colors ${
-              isDarkMode 
+              false 
                 ? 'bg-slate-800/80 border-slate-700/60' 
                 : 'bg-white/80 border-white/60'
             }`}
@@ -384,7 +382,7 @@ const AuditLogs: React.FC = () => {
             {/* Action Filter */}
             <div>
               <label className={`block text-xs font-medium mb-1.5 ${
-                isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                'text-slate-700'
               }`}>
                 Action
               </label>
@@ -392,7 +390,7 @@ const AuditLogs: React.FC = () => {
                 value={actionFilter}
                 onChange={(e) => setActionFilter(e.target.value)}
                 className={`w-full px-3 py-1.5 text-xs border rounded-lg focus:ring-1 focus:ring-blue-500 transition-colors ${
-                  isDarkMode 
+                  false 
                     ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                     : 'bg-white border-slate-300 text-slate-900'
                 }`}
@@ -409,7 +407,7 @@ const AuditLogs: React.FC = () => {
             {/* Table Filter */}
             <div>
               <label className={`block text-xs font-medium mb-1.5 ${
-                isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                'text-slate-700'
               }`}>
                 Table
               </label>
@@ -417,7 +415,7 @@ const AuditLogs: React.FC = () => {
                 value={tableFilter}
                 onChange={(e) => setTableFilter(e.target.value)}
                 className={`w-full px-3 py-1.5 text-xs border rounded-lg focus:ring-1 focus:ring-blue-500 transition-colors ${
-                  isDarkMode 
+                  false 
                     ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                     : 'bg-white border-slate-300 text-slate-900'
                 }`}
@@ -434,7 +432,7 @@ const AuditLogs: React.FC = () => {
             {/* Start Date */}
             <div>
               <label className={`block text-xs font-medium mb-1.5 ${
-                isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                'text-slate-700'
               }`}>
                 Start Date (DD/MM/YYYY)
               </label>
@@ -443,14 +441,14 @@ const AuditLogs: React.FC = () => {
                 value={startDateValue}
                 onChange={handleStartDateChange}
                 className={`w-full px-3 py-1.5 text-xs border rounded-lg focus:ring-1 focus:ring-blue-500 transition-colors ${
-                  isDarkMode 
+                  false 
                     ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                     : 'bg-white border-slate-300 text-slate-900'
                 }`}
               />
               {startDate && (
                 <p className={`text-[10px] mt-0.5 ${
-                  isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                  'text-slate-500'
                 }`}>{startDate}</p>
               )}
             </div>
@@ -458,7 +456,7 @@ const AuditLogs: React.FC = () => {
             {/* End Date */}
             <div>
               <label className={`block text-xs font-medium mb-1.5 ${
-                isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                'text-slate-700'
               }`}>
                 End Date (DD/MM/YYYY)
               </label>
@@ -467,14 +465,14 @@ const AuditLogs: React.FC = () => {
                 value={endDateValue}
                 onChange={handleEndDateChange}
                 className={`w-full px-3 py-1.5 text-xs border rounded-lg focus:ring-1 focus:ring-blue-500 transition-colors ${
-                  isDarkMode 
+                  false 
                     ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                     : 'bg-white border-slate-300 text-slate-900'
                 }`}
               />
               {endDate && (
                 <p className={`text-[10px] mt-0.5 ${
-                  isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                  'text-slate-500'
                 }`}>{endDate}</p>
               )}
             </div>
@@ -491,7 +489,7 @@ const AuditLogs: React.FC = () => {
               <button
                 onClick={resetFilters}
                 className={`px-4 py-1.5 text-xs rounded-lg transition-colors flex items-center gap-1.5 shadow-md ${
-                  isDarkMode 
+                  false 
                     ? 'bg-slate-700/50 text-slate-200 hover:bg-slate-700' 
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
@@ -576,3 +574,4 @@ const AuditLogs: React.FC = () => {
 }
 
 export default AuditLogs
+

@@ -261,8 +261,37 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
                       </div>
                     </div>
                     <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500 mb-1">Manual Entry Key:</p>
-                      <code className="text-xs font-mono text-gray-700 break-all">{secret}</code>
+                      <p className="text-xs text-gray-500 mb-2">Manual Entry Key:</p>
+                      <div className="flex items-center justify-between gap-2">
+                        <code className="text-xs font-mono text-gray-700 bg-white px-3 py-2 rounded border border-gray-200 flex-1 break-all">{secret}</code>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            try {
+                              // Fallback method for copying text
+                              const textArea = document.createElement('textarea')
+                              textArea.value = secret
+                              textArea.style.position = 'fixed'
+                              textArea.style.left = '-999999px'
+                              document.body.appendChild(textArea)
+                              textArea.select()
+                              document.execCommand('copy')
+                              document.body.removeChild(textArea)
+                              toast.success('Manual entry key copied!')
+                            } catch (err) {
+                              console.error('Failed to copy:', err)
+                              toast.error('Failed to copy to clipboard')
+                            }
+                          }}
+                          className="flex items-center gap-1 px-3 py-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors whitespace-nowrap border border-blue-200"
+                          title="Copy manual entry key"
+                        >
+                          <ClipboardDocumentIcon className="w-4 h-4" />
+                          Copy
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -374,3 +403,4 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
 }
 
 export default Forced2FASetup
+

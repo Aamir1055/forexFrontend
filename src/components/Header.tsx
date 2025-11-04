@@ -23,7 +23,6 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [showDropdown, setShowDropdown] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(false)
   const navigate = useNavigate()
   const { logout } = useAuth()
   const currentUser = authService.getCurrentUser()
@@ -93,18 +92,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         
         {/* Right side */}
         <div className="flex items-center space-x-4">
-          {/* Theme toggle */}
-          <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
-          >
-            {isDarkMode ? (
-              <Sun className="w-5 h-5 text-gray-600" />
-            ) : (
-              <Moon className="w-5 h-5 text-gray-600" />
-            )}
-          </button>
-          
           {/* Notifications */}
           <button className="p-2 rounded-xl hover:bg-gray-100 transition-colors relative">
             <Bell className="w-5 h-5 text-gray-600" />
@@ -219,3 +206,4 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
 }
 
 export default Header
+

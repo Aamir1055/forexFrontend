@@ -203,7 +203,7 @@ const ProfileActivity: React.FC = () => {
                             <h4 className="text-sm font-medium text-gray-900 capitalize">
                               {event.event_type.replace('_', ' ')}
                             </h4>
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getRiskLevelColor(event.risk_level)}`}>
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getRiskLevelColor(event.risk_level)}">
                               {event.risk_level} risk
                             </span>
                           </div>
@@ -257,3 +257,4 @@ const ProfileActivity: React.FC = () => {
 }
 
 export default ProfileActivity
+

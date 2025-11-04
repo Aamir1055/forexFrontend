@@ -95,3 +95,4 @@ class MT5SuggestionsService {
 }
 
 export const mt5SuggestionsService = new MT5SuggestionsService()
+

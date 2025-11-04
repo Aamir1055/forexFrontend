@@ -6,7 +6,7 @@ import {
   ChevronRightIcon
 } from '@heroicons/react/24/outline'
 import { Broker } from '../types'
-import { useDarkMode } from '../contexts/DarkModeContext'
+
 import { brokerRightsService } from '../services/brokerRightsService'
 import { PermissionGate } from './PermissionGate'
 import { MODULES } from '../utils/permissions'
@@ -41,8 +41,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
   currentPage,
   onPageChange
 }) => {
-  const { isDarkMode } = useDarkMode()
-  const [brokerRights, setBrokerRights] = useState<{ [key: number]: number }>({})
+    const [brokerRights, setBrokerRights] = useState<{ [key: number]: number }>({})
   const [loadingRights, setLoadingRights] = useState<{ [key: number]: boolean }>({})
 
   // Fetch rights count for brokers efficiently - all at once in parallel
@@ -90,14 +89,14 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
   if (isLoading) {
     return (
       <div className={`backdrop-blur-xl rounded-xl border shadow-lg transition-colors ${
-        isDarkMode 
+        false 
           ? 'bg-slate-800/80 border-slate-700/60' 
           : 'bg-white/80 border-white/60'
       }`}>
         <div className="p-6">
           <div className="animate-pulse space-y-4">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className={`h-12 rounded ${isDarkMode ? 'bg-slate-700' : 'bg-gray-200'}`}></div>
+              <div key={i} className="h-12 rounded bg-gray-200"></div>
             ))}
           </div>
         </div>
@@ -107,7 +106,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
 
   return (
     <div className={`backdrop-blur-xl rounded-xl border shadow-lg overflow-hidden transition-colors ${
-      isDarkMode 
+      false 
         ? 'bg-slate-800/80 border-slate-700/60' 
         : 'bg-white/80 border-white/60'
     }`}>
@@ -170,14 +169,14 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
 
       {/* Desktop view */}
       <div className={`backdrop-blur-xl rounded-xl border shadow-lg overflow-hidden transition-colors ${
-        isDarkMode 
+        false 
           ? 'bg-slate-800/80 border-slate-700/60' 
           : 'bg-white/80 border-white/60'
       }`}>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className={`border-b transition-colors ${
-              isDarkMode 
+              false 
                 ? 'bg-slate-700/50 border-slate-600' 
                 : 'bg-slate-50 border-slate-200'
             }`}>
@@ -185,7 +184,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                 <th 
                   onClick={() => onSort('full_name')}
                   className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
-                    isDarkMode 
+                    false 
                       ? 'text-slate-300 hover:bg-slate-600/50' 
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
@@ -201,7 +200,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                 <th 
                   onClick={() => onSort('email')}
                   className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
-                    isDarkMode 
+                    false 
                       ? 'text-slate-300 hover:bg-slate-600/50' 
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
@@ -215,12 +214,12 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                   </div>
                 </th>
                 <th className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide ${
-                  isDarkMode ? 'text-slate-300' : 'text-gray-600'
+                  'text-gray-600'
                 }`}>Phone</th>
                 <th 
                   onClick={() => onSort('is_active')}
                   className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
-                    isDarkMode 
+                    false 
                       ? 'text-slate-300 hover:bg-slate-600/50' 
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
@@ -236,7 +235,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                 <th 
                   onClick={() => onSort('clients_count')}
                   className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
-                    isDarkMode 
+                    false 
                       ? 'text-slate-300 hover:bg-slate-600/50' 
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
@@ -252,7 +251,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                 <th 
                   onClick={() => onSort('group_mappings_count')}
                   className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
-                    isDarkMode 
+                    false 
                       ? 'text-slate-300 hover:bg-slate-600/50' 
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
@@ -268,7 +267,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                 <th 
                   onClick={() => onSort('rights_count')}
                   className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
-                    isDarkMode 
+                    false 
                       ? 'text-slate-300 hover:bg-slate-600/50' 
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
@@ -282,25 +281,25 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                   </div>
                 </th>
                 <th className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide ${
-                  isDarkMode ? 'text-slate-300' : 'text-gray-600'
+                  'text-gray-600'
                 }`}>Actions</th>
               </tr>
             </thead>
-            <tbody className={`divide-y ${isDarkMode ? 'divide-slate-700' : 'divide-gray-100'}`}>
+            <tbody className="divide-y divide-gray-100">
               {brokers.map((broker) => (
                 <tr key={broker.id} className={`transition-colors duration-150 ${
-                  isDarkMode ? 'hover:bg-slate-700/50' : 'hover:bg-gray-50'
+                  false ? 'hover:bg-slate-700/50' : 'hover:bg-gray-50'
                 }`}>
                   <td className="px-2 py-2">
-                    <p className={`text-xs font-semibold ${isDarkMode ? 'text-slate-200' : 'text-gray-900'}`}>
+                    <p className="text-xs font-semibold text-gray-900">
                       {broker.full_name || 'Unnamed Broker'}
                     </p>
                   </td>
                   <td className="px-2 py-2">
-                    <p className={`text-xs ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>{broker.email || '-'}</p>
+                    <p className="text-xs text-gray-700">{broker.email || '-'}</p>
                   </td>
                   <td className="px-2 py-2">
-                    <p className={`text-xs ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>{broker.phone || '-'}</p>
+                    <p className="text-xs text-gray-700">{broker.phone || '-'}</p>
                   </td>
                   <td className="px-2 py-2">
                     <PermissionGate module={MODULES.BROKERS} action="edit">
@@ -468,3 +467,4 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
 }
 
 export default BrokerTable
+

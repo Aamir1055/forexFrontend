@@ -112,3 +112,4 @@ const BackupCodes: React.FC<BackupCodesProps> = ({ codes }) => {
 }
 
 export default BackupCodes
+

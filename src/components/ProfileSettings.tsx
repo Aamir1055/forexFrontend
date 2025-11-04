@@ -253,3 +253,4 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile }) => {
 }
 
 export default ProfileSettings
+

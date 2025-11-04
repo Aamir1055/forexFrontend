@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { AuditLog } from '../types'
 import Badge from './ui/Badge'
 import { format } from 'date-fns'
-import { useDarkMode } from '../contexts/DarkModeContext'
+
 
 interface AuditLogTableProps {
   logs: AuditLog[]
@@ -13,7 +13,6 @@ interface AuditLogTableProps {
 }
 
 const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, currentSort }) => {
-  const { isDarkMode } = useDarkMode()
   const getActionBadgeColor = (action: string): 'success' | 'warning' | 'danger' | 'info' => {
     if (action.includes('CREATE')) return 'success'
     if (action.includes('UPDATE')) return 'info'
@@ -41,7 +40,7 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
   if (isLoading) {
     return (
       <div className={`backdrop-blur-xl rounded-xl border shadow-lg p-8 transition-colors ${
-        isDarkMode 
+        false 
           ? 'bg-slate-800/80 border-slate-700/60' 
           : 'bg-white/80 border-white/60'
       }`}>
@@ -55,25 +54,25 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
   if (logs.length === 0) {
     return (
       <div className={`backdrop-blur-xl rounded-xl border shadow-lg p-12 text-center transition-colors ${
-        isDarkMode 
+        false 
           ? 'bg-slate-800/80 border-slate-700/60' 
           : 'bg-white/80 border-white/60'
       }`}>
-        <p className={isDarkMode ? 'text-slate-400' : 'text-gray-500'}>No audit logs found</p>
+        <p className={'text-gray-500'}>No audit logs found</p>
       </div>
     )
   }
 
   return (
     <div className={`backdrop-blur-xl rounded-xl border shadow-lg overflow-hidden transition-colors ${
-      isDarkMode 
+      false 
         ? 'bg-slate-800/80 border-slate-700/60' 
         : 'bg-white/80 border-white/60'
     }`}>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className={`border-b transition-colors ${
-            isDarkMode 
+            false 
               ? 'bg-slate-700/50 border-slate-600' 
               : 'bg-slate-50 border-slate-200'
           }`}>
@@ -81,7 +80,7 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
               <th 
                 onClick={() => onSort?.('id')}
                 className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
-                  isDarkMode 
+                  false 
                     ? 'text-slate-300 hover:bg-slate-600/50' 
                     : 'text-gray-600 hover:bg-gray-100'
                 }`}
@@ -234,3 +233,4 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
 }
 
 export default AuditLogTable
+

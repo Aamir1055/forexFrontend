@@ -51,3 +51,4 @@ export const ruleService = {
     return response.data.rule
   },
 }
+

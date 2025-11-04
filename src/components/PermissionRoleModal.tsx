@@ -196,3 +196,4 @@ const PermissionRoleModal: React.FC<PermissionRoleModalProps> = ({
 }
 
 export default PermissionRoleModal
+

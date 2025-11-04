@@ -447,3 +447,4 @@ export const debugPermissions = () => {
   console.log('Is Admin:', isAdmin(user))
   console.groupEnd()
 }
+

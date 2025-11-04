@@ -359,3 +359,4 @@ export interface UpdateRuleData {
   requires_time_parameter?: boolean
   is_active?: boolean
 }
+

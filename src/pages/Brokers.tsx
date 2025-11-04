@@ -11,12 +11,10 @@ import GlobalRightsSyncModal from '../components/GlobalRightsSyncModal'
 import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import { Broker, CreateBrokerData, UpdateBrokerData, BrokerFilters } from '../types'
 import toast from 'react-hot-toast'
-import { useDarkMode } from '../contexts/DarkModeContext'
 import { PermissionGate } from '../components/PermissionGate'
 import { MODULES } from '../utils/permissions'
 
 const Brokers: React.FC = () => {
-  const { isDarkMode } = useDarkMode()
   const [currentPage, setCurrentPage] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isGlobalSyncModalOpen, setIsGlobalSyncModalOpen] = useState(false)
@@ -360,12 +358,12 @@ const Brokers: React.FC = () => {
     if (is403) {
       return (
         <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${
-          isDarkMode 
+          false 
             ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
             : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
         }`}>
           <div className={`max-w-md w-full mx-4 p-8 rounded-xl border shadow-xl text-center ${
-            isDarkMode 
+            false 
               ? 'bg-slate-800/80 border-slate-700' 
               : 'bg-white border-slate-200'
           }`}>
@@ -374,10 +372,10 @@ const Brokers: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h2 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+            <h2 className="text-xl font-bold mb-2 text-slate-900">
               Access Denied
             </h2>
-            <p className={`mb-6 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+            <p className="mb-6 text-slate-600">
               You don't have permission to view brokers. Please contact your administrator for access.
             </p>
             <button
@@ -400,14 +398,14 @@ const Brokers: React.FC = () => {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
+      false 
         ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
         : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
     }`}>
       {/* Compact Header with Glass Effect */}
       <div className="px-4 pt-3 pb-2">
         <header className={`backdrop-blur-xl border rounded-xl shadow-lg transition-colors duration-300 ${
-          isDarkMode 
+          false 
             ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
             : 'bg-white/80 border-white/60 shadow-blue-500/5'
         }`}>
@@ -422,14 +420,14 @@ const Brokers: React.FC = () => {
                 </div>
                 <div>
                   <h1 className={`text-lg font-bold transition-colors duration-300 ${
-                    isDarkMode 
+                    false 
                       ? 'bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent' 
                       : 'bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent'
                   }`}>
                     Broker Management
                   </h1>
                   <p className={`text-xs font-medium transition-colors duration-300 ${
-                    isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                    'text-slate-500'
                   }`}>
                     Manage brokers and their permissions
                   </p>
@@ -444,7 +442,7 @@ const Brokers: React.FC = () => {
                     value={searchTerm}
                     onChange={(e) => handleSearch(e.target.value)}
                     className={`w-72 pl-9 pr-9 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-colors ${
-                      isDarkMode 
+                      false 
                         ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
                         : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
                     }`}
@@ -454,7 +452,7 @@ const Brokers: React.FC = () => {
                     <button
                       onClick={() => handleSearch('')}
                       className={`absolute right-3 top-1/2 transform -translate-y-1/2 hover:text-slate-600 ${
-                        isDarkMode ? 'text-slate-400' : 'text-slate-400'
+                        'text-slate-400'
                       }`}
                     >
                       ×
@@ -464,7 +462,7 @@ const Brokers: React.FC = () => {
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className={`px-3 py-2 border rounded-lg transition-colors flex items-center gap-2 text-sm ${
-                    isDarkMode 
+                    false 
                       ? 'border-slate-600 hover:bg-slate-700/50 text-slate-200' 
                       : 'border-slate-300 hover:bg-slate-50 text-slate-700'
                   }`}
@@ -528,7 +526,7 @@ const Brokers: React.FC = () => {
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
               transition={{ duration: 0.2 }}
               className={`fixed top-20 left-1/2 -translate-x-1/2 w-[450px] max-h-[calc(100vh-120px)] overflow-y-auto rounded-2xl border shadow-2xl p-6 ${
-                isDarkMode 
+                false 
                   ? 'bg-slate-800 border-slate-700' 
                   : 'bg-white border-slate-200'
               }`}
@@ -538,12 +536,12 @@ const Brokers: React.FC = () => {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between mb-3">
                           <h3 className={`font-semibold ${
-                            isDarkMode ? 'text-white' : 'text-slate-900'
+                            'text-slate-900'
                           }`}>Filters</h3>
                           <button
                             onClick={() => setShowFilters(false)}
                             className={`hover:text-slate-600 ${
-                              isDarkMode ? 'text-slate-400' : 'text-slate-400'
+                              'text-slate-400'
                             }`}
                           >
                             ×
@@ -553,7 +551,7 @@ const Brokers: React.FC = () => {
                         {/* Status Filter */}
                         <div>
                           <label className={`block text-xs font-medium mb-1 ${
-                            isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                            'text-slate-700'
                           }`}>Status</label>
                           <select
                             value={filters.is_active?.toString() || 'all'}
@@ -561,7 +559,7 @@ const Brokers: React.FC = () => {
                               is_active: e.target.value === 'all' ? undefined : e.target.value === 'true' 
                             })}
                             className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                              isDarkMode 
+                              false 
                                 ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                                 : 'bg-white border-slate-300 text-slate-900'
                             }`}
@@ -575,7 +573,7 @@ const Brokers: React.FC = () => {
                         {/* Rights Filter */}
                         <div>
                           <label className={`block text-xs font-medium mb-1 ${
-                            isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                            'text-slate-700'
                           }`}>Rights</label>
                           <select
                             value={filters.has_rights?.toString() || 'all'}
@@ -583,7 +581,7 @@ const Brokers: React.FC = () => {
                               has_rights: e.target.value === 'all' ? undefined : e.target.value === 'true' 
                             })}
                             className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                              isDarkMode 
+                              false 
                                 ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                                 : 'bg-white border-slate-300 text-slate-900'
                             }`}
@@ -597,7 +595,7 @@ const Brokers: React.FC = () => {
                         {/* Account Range From */}
                         <div>
                           <label className={`block text-xs font-medium mb-1 ${
-                            isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                            'text-slate-700'
                           }`}>Account Range From</label>
                           <input
                             type="number"
@@ -607,7 +605,7 @@ const Brokers: React.FC = () => {
                               account_range_from: e.target.value ? Number(e.target.value) : undefined 
                             })}
                             className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                              isDarkMode 
+                              false 
                                 ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
                                 : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
                             }`}
@@ -617,7 +615,7 @@ const Brokers: React.FC = () => {
                         {/* Account Range To */}
                         <div>
                           <label className={`block text-xs font-medium mb-1 ${
-                            isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                            'text-slate-700'
                           }`}>Account Range To</label>
                           <input
                             type="number"
@@ -627,7 +625,7 @@ const Brokers: React.FC = () => {
                               account_range_to: e.target.value ? Number(e.target.value) : undefined 
                             })}
                             className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                              isDarkMode 
+                              false 
                                 ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
                                 : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
                             }`}
@@ -637,7 +635,7 @@ const Brokers: React.FC = () => {
                         {/* Created Date From */}
                         <div>
                           <label className={`block text-xs font-medium mb-1 ${
-                            isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                            'text-slate-700'
                           }`}>Created From</label>
                           <input
                             type="date"
@@ -646,7 +644,7 @@ const Brokers: React.FC = () => {
                               created_from: e.target.value || undefined 
                             })}
                             className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                              isDarkMode 
+                              false 
                                 ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                                 : 'bg-white border-slate-300 text-slate-900'
                             }`}
@@ -656,7 +654,7 @@ const Brokers: React.FC = () => {
                         {/* Created Date To */}
                         <div>
                           <label className={`block text-xs font-medium mb-1 ${
-                            isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                            'text-slate-700'
                           }`}>Created To</label>
                           <input
                             type="date"
@@ -665,7 +663,7 @@ const Brokers: React.FC = () => {
                               created_to: e.target.value || undefined 
                             })}
                             className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
-                              isDarkMode 
+                              false 
                                 ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                                 : 'bg-white border-slate-300 text-slate-900'
                             }`}
@@ -674,7 +672,7 @@ const Brokers: React.FC = () => {
 
                         {/* Actions */}
                         <div className={`flex items-center justify-between pt-3 border-t transition-colors ${
-                          isDarkMode ? 'border-slate-700' : 'border-slate-200'
+                          'border-slate-200'
                         }`}>
                           <button
                             onClick={() => {
@@ -682,7 +680,7 @@ const Brokers: React.FC = () => {
                               setSearchTerm('')
                             }}
                             className={`text-xs hover:text-slate-800 transition-colors ${
-                              isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                              'text-slate-600'
                             }`}
                           >
                             Clear All
@@ -708,13 +706,13 @@ const Brokers: React.FC = () => {
           <div className="mt-3 mb-2 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <span className={`text-xs transition-colors ${
-                isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                'text-slate-600'
               }`}>Show</span>
               <select
                 value={pageSize}
                 onChange={(e) => setPageSize(Number(e.target.value))}
                 className={`px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs transition-colors ${
-                  isDarkMode 
+                  false 
                     ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                     : 'bg-white border-slate-300 text-slate-900'
                 }`}
@@ -726,11 +724,11 @@ const Brokers: React.FC = () => {
                 ))}
               </select>
               <span className={`text-xs transition-colors ${
-                isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                'text-slate-600'
               }`}>entries</span>
             </div>
             <div className={`text-xs transition-colors ${
-              isDarkMode ? 'text-slate-300' : 'text-slate-700'
+              'text-slate-700'
             }`}>
               Showing {brokersData?.pagination.total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, brokersData?.pagination.total || 0)} of {brokersData?.pagination.total || 0} results
             </div>
@@ -740,7 +738,7 @@ const Brokers: React.FC = () => {
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
                   className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                    isDarkMode 
+                    false 
                       ? 'border-slate-600 hover:bg-slate-700/50' 
                       : 'border-slate-300 hover:bg-slate-50'
                   }`}
@@ -750,7 +748,7 @@ const Brokers: React.FC = () => {
                   </svg>
                 </button>
                 <span className={`text-xs transition-colors ${
-                  isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                  'text-slate-700'
                 }`}>
                   Page {currentPage} of {brokersData.pagination.pages}
                 </span>
@@ -758,7 +756,7 @@ const Brokers: React.FC = () => {
                   onClick={() => setCurrentPage(prev => Math.min(brokersData.pagination.pages, prev + 1))}
                   disabled={currentPage === brokersData.pagination.pages}
                   className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                    isDarkMode 
+                    false 
                       ? 'border-slate-600 hover:bg-slate-700/50' 
                       : 'border-slate-300 hover:bg-slate-50'
                   }`}
@@ -835,3 +833,4 @@ const Brokers: React.FC = () => {
 }
 
 export default Brokers
+

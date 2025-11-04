@@ -278,3 +278,4 @@ const RuleTable: React.FC<RuleTableProps> = ({
 }
 
 export default RuleTable
+

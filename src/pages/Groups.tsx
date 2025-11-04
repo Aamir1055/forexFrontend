@@ -12,13 +12,12 @@ import GroupTable from '../components/GroupTable'
 import GroupModal from '../components/GroupModal'
 import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import toast from 'react-hot-toast'
-import { useDarkMode } from '../contexts/DarkModeContext'
+
 import { PermissionGate } from '../components/PermissionGate'
 import { MODULES } from '../utils/permissions'
 
 const Groups: React.FC = () => {
-  const { isDarkMode } = useDarkMode()
-  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
+    const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
@@ -219,14 +218,14 @@ const Groups: React.FC = () => {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
+      false 
         ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
         : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
     }`}>
       {/* Compact Header with Glass Effect */}
       <div className="px-4 pt-3 pb-2">
         <header className={`backdrop-blur-xl border rounded-xl shadow-lg transition-colors duration-300 ${
-          isDarkMode 
+          false 
             ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
             : 'bg-white/80 border-white/60 shadow-blue-500/5'
         }`}>
@@ -243,14 +242,14 @@ const Groups: React.FC = () => {
                 </div>
                 <div>
                   <h1 className={`text-lg font-bold transition-colors duration-300 ${
-                    isDarkMode 
+                    false 
                       ? 'bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent' 
                       : 'bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent'
                   }`}>
                     Groups
                   </h1>
                   <p className={`text-xs font-medium transition-colors duration-300 ${
-                    isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                    false ? 'text-slate-400' : 'text-slate-500'
                   }`}>
                     Manage trading groups
                   </p>
@@ -265,7 +264,7 @@ const Groups: React.FC = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className={`w-72 pl-9 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-colors ${
-                      isDarkMode 
+                      false 
                         ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
                         : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
                     }`}
@@ -305,13 +304,13 @@ const Groups: React.FC = () => {
             <div className="mt-3 mb-2 flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <span className={`text-xs transition-colors ${
-                  isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                  false ? 'text-slate-400' : 'text-slate-600'
                 }`}>Show</span>
                 <select
                   value={pageSize}
                   onChange={(e) => setPageSize(Number(e.target.value))}
                   className={`px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs transition-colors ${
-                    isDarkMode 
+                    false 
                       ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
                       : 'bg-white border-slate-300 text-slate-900'
                   }`}
@@ -323,11 +322,11 @@ const Groups: React.FC = () => {
                   ))}
                 </select>
                 <span className={`text-xs transition-colors ${
-                  isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                  false ? 'text-slate-400' : 'text-slate-600'
                 }`}>entries</span>
               </div>
               <div className={`text-xs transition-colors ${
-                isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                false ? 'text-slate-300' : 'text-slate-700'
               }`}>
                 Showing {pagination.total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, pagination.total)} of {pagination.total} results
               </div>
@@ -337,7 +336,7 @@ const Groups: React.FC = () => {
                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                     disabled={currentPage === 1}
                     className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                      isDarkMode 
+                      false 
                         ? 'border-slate-600 hover:bg-slate-700/50' 
                         : 'border-slate-300 hover:bg-slate-50'
                     }`}
@@ -347,7 +346,7 @@ const Groups: React.FC = () => {
                     </svg>
                   </button>
                   <span className={`text-xs transition-colors ${
-                    isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                    false ? 'text-slate-300' : 'text-slate-700'
                   }`}>
                     Page {currentPage} of {pagination.total_pages}
                   </span>
@@ -355,7 +354,7 @@ const Groups: React.FC = () => {
                     onClick={() => setCurrentPage(prev => Math.min(pagination.total_pages, prev + 1))}
                     disabled={currentPage === pagination.total_pages}
                     className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                      isDarkMode 
+                      false 
                         ? 'border-slate-600 hover:bg-slate-700/50' 
                         : 'border-slate-300 hover:bg-slate-50'
                     }`}
@@ -431,3 +430,4 @@ const Groups: React.FC = () => {
 }
 
 export default Groups
+

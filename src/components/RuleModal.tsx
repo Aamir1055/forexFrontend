@@ -380,3 +380,4 @@ const RuleModal: React.FC<RuleModalProps> = ({
 }
 
 export default RuleModal
+

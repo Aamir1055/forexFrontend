@@ -157,3 +157,4 @@ const BrokerRightsTable: React.FC<BrokerRightsTableProps> = ({
 }
 
 export default BrokerRightsTable
+

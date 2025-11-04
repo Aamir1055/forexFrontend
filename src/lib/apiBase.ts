@@ -16,3 +16,4 @@ export function buildApiUrl(path: string): string {
   if (!path.startsWith('/')) return `${base}/${path}`
   return `${base}${path}`
 }
+

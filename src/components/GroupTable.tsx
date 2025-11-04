@@ -8,7 +8,7 @@ import {
   CalendarIcon
 } from '@heroicons/react/24/outline'
 import { Group } from '../types'
-import { useDarkMode } from '../contexts/DarkModeContext'
+
 import { PermissionGate } from './PermissionGate'
 import { MODULES } from '../utils/permissions'
 
@@ -40,8 +40,7 @@ const GroupTable: React.FC<GroupTableProps> = ({
   onPageChange,
   viewMode
 }) => {
-  const { isDarkMode } = useDarkMode()
-  const [sortField, setSortField] = useState<string | null>(null)
+    const [sortField, setSortField] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('ASC')
 
   const handleSort = (field: string) => {
@@ -74,14 +73,14 @@ const GroupTable: React.FC<GroupTableProps> = ({
   if (isLoading) {
     return (
       <div className={`backdrop-blur-xl rounded-xl border shadow-lg transition-colors ${
-        isDarkMode 
+        false 
           ? 'bg-slate-800/80 border-slate-700/60' 
           : 'bg-white/80 border-white/60'
       }`}>
         <div className="p-6">
           <div className="animate-pulse space-y-4">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className={`h-16 rounded-lg ${isDarkMode ? 'bg-slate-700' : 'bg-gray-200'}`}></div>
+              <div key={i} className="h-16 rounded-lg bg-gray-200"></div>
             ))}
           </div>
         </div>
@@ -92,13 +91,13 @@ const GroupTable: React.FC<GroupTableProps> = ({
   if (groups.length === 0) {
     return (
       <div className={`backdrop-blur-xl rounded-xl border shadow-lg p-8 text-center transition-colors ${
-        isDarkMode 
+        false 
           ? 'bg-slate-800/80 border-slate-700/60' 
           : 'bg-white/80 border-white/60'
       }`}>
-        <ServerIcon className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-slate-500' : 'text-gray-300'}`} />
-        <h3 className={`text-base font-medium mb-1 ${isDarkMode ? 'text-slate-200' : 'text-gray-900'}`}>No groups found</h3>
-        <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>Create your first trading group to get started.</p>
+        <ServerIcon className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+        <h3 className="text-base font-medium mb-1 text-gray-900">No groups found</h3>
+        <p className="text-sm text-gray-500">Create your first trading group to get started.</p>
       </div>
     )
   }
@@ -154,7 +153,7 @@ const GroupTable: React.FC<GroupTableProps> = ({
 
                 {/* MT5 Group */}
                 <div className="mb-3">
-                  <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${getGroupTypeColor(group.mt5_group)}`}>
+                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium ${getGroupTypeColor(group.mt5_group)}">
                     {group.mt5_group}
                   </span>
                 </div>
@@ -266,7 +265,7 @@ const GroupTable: React.FC<GroupTableProps> = ({
   // Table View
   return (
     <div className={`backdrop-blur-xl rounded-xl border shadow-lg overflow-hidden transition-colors ${
-      isDarkMode 
+      false 
         ? 'bg-slate-800/80 border-slate-700/60' 
         : 'bg-white/80 border-white/60'
     }`}>
@@ -289,7 +288,7 @@ const GroupTable: React.FC<GroupTableProps> = ({
                   
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getGroupTypeColor(group.mt5_group)}`}>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getGroupTypeColor(group.mt5_group)}">
                         {group.mt5_group}
                       </span>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -350,7 +349,7 @@ const GroupTable: React.FC<GroupTableProps> = ({
       <div className="hidden lg:block overflow-x-auto">
         <table className="w-full">
           <thead className={`border-b transition-colors ${
-            isDarkMode 
+            false 
               ? 'bg-slate-700/50 border-slate-600' 
               : 'bg-slate-50 border-slate-200'
           }`}>
@@ -358,7 +357,7 @@ const GroupTable: React.FC<GroupTableProps> = ({
               <th 
                 onClick={() => handleSort('broker_view_group')}
                 className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider cursor-pointer transition-colors ${
-                  isDarkMode 
+                  false 
                     ? 'text-slate-300 hover:bg-slate-600/50' 
                     : 'text-gray-500 hover:bg-gray-100'
                 }`}
@@ -425,7 +424,7 @@ const GroupTable: React.FC<GroupTableProps> = ({
                 </td>
                 
                 <td className="px-3 py-2">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium ${getGroupTypeColor(group.mt5_group)}`}>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium ${getGroupTypeColor(group.mt5_group)}">
                     {group.mt5_group}
                   </span>
                 </td>
@@ -499,3 +498,4 @@ const GroupTable: React.FC<GroupTableProps> = ({
 }
 
 export default GroupTable
+

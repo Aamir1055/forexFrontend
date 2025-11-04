@@ -435,3 +435,4 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
 }
 
 export default ProfileInfo
+

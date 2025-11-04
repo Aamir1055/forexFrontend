@@ -225,3 +225,4 @@ const GlobalRightsSyncModal: React.FC<GlobalRightsSyncModalProps> = ({
 }
 
 export default GlobalRightsSyncModal
+

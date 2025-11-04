@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { XMarkIcon, ServerIcon } from '@heroicons/react/24/outline'
-import { useDarkMode } from '../contexts/DarkModeContext'
+
 import { Group, CreateGroupData, UpdateGroupData } from '../types'
 
 interface GroupModalProps {
@@ -19,8 +19,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
   onSubmit,
   isLoading
 }) => {
-  const { isDarkMode } = useDarkMode()
-  const [formData, setFormData] = useState<CreateGroupData>({
+    const [formData, setFormData] = useState<CreateGroupData>({
     mt5_group: '',
     broker_view_group: '',
     description: '',
@@ -123,20 +122,20 @@ const GroupModal: React.FC<GroupModalProps> = ({
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", duration: 0.3 }}
               className={`relative rounded-lg shadow-xl transform w-full max-w-md mx-4 ${
-                isDarkMode ? 'bg-slate-800' : 'bg-white'
+                'bg-white'
               }`}
             >
               <form onSubmit={handleSubmit}>
                 {/* Header */}
                 <div className={`flex items-center justify-between px-4 py-3 border-b ${
-                  isDarkMode ? 'border-slate-700' : 'border-gray-200'
+                  'border-gray-200'
                 }`}>
                   <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
                       <ServerIcon className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-slate-200' : 'text-gray-900'}`}>
+                      <h2 className="text-lg font-semibold text-gray-900">
                         {group ? 'Edit Group' : 'Create Group'}
                       </h2>
                     </div>
@@ -145,7 +144,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                     type="button"
                     onClick={onClose}
                     className={`p-1.5 rounded transition-colors ${
-                      isDarkMode 
+                      false 
                         ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-700' 
                         : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
                     }`}
@@ -159,7 +158,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                   {/* MT5 Group */}
                   <div>
                     <label className={`block text-sm font-medium mb-1 ${
-                      isDarkMode ? 'text-slate-300' : 'text-gray-700'
+                      'text-gray-700'
                     }`}>
                       MT5 Group *
                     </label>
@@ -169,7 +168,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                       value={formData.mt5_group}
                       onChange={handleInputChange}
                       className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                        isDarkMode 
+                        false 
                           ? errors.mt5_group 
                             ? 'border-red-600 bg-red-900/20 text-slate-200' 
                             : 'border-slate-600 bg-slate-700 text-slate-200'
@@ -185,7 +184,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                     
                     {/* Suggestions */}
                     <div className="mt-2">
-                      <p className={`text-xs mb-1 ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>Common patterns:</p>
+                      <p className="text-xs mb-1 text-gray-500">Common patterns:</p>
                       <div className="flex flex-wrap gap-1">
                         {suggestedMT5Groups.map((suggestion) => (
                           <button
@@ -193,7 +192,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                             type="button"
                             onClick={() => setFormData(prev => ({ ...prev, mt5_group: suggestion }))}
                             className={`px-2 py-0.5 text-xs rounded transition-colors ${
-                              isDarkMode 
+                              false 
                                 ? 'bg-slate-700 hover:bg-blue-900/50 text-slate-300 hover:text-blue-300' 
                                 : 'bg-gray-100 hover:bg-blue-100 text-gray-700 hover:text-blue-700'
                             }`}
@@ -208,7 +207,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                   {/* Broker View Group */}
                   <div>
                     <label className={`block text-sm font-medium mb-1 ${
-                      isDarkMode ? 'text-slate-300' : 'text-gray-700'
+                      'text-gray-700'
                     }`}>
                       Broker View Group *
                     </label>
@@ -218,7 +217,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                       value={formData.broker_view_group}
                       onChange={handleInputChange}
                       className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                        isDarkMode 
+                        false 
                           ? errors.broker_view_group 
                             ? 'border-red-600 bg-red-900/20 text-slate-200' 
                             : 'border-slate-600 bg-slate-700 text-slate-200'
@@ -231,7 +230,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                     {errors.broker_view_group && (
                       <p className="mt-1 text-xs text-red-600">{errors.broker_view_group}</p>
                     )}
-                    <p className={`mt-1 text-xs ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                    <p className="mt-1 text-xs text-gray-500">
                       Display name shown to brokers
                     </p>
                   </div>
@@ -239,7 +238,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                   {/* Description */}
                   <div>
                     <label className={`block text-sm font-medium mb-1 ${
-                      isDarkMode ? 'text-slate-300' : 'text-gray-700'
+                      'text-gray-700'
                     }`}>
                       Description *
                     </label>
@@ -249,7 +248,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                       onChange={handleInputChange}
                       rows={2}
                       className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors resize-none ${
-                        isDarkMode 
+                        false 
                           ? errors.description 
                             ? 'border-red-600 bg-red-900/20 text-slate-200' 
                             : 'border-slate-600 bg-slate-700 text-slate-200'
@@ -267,7 +266,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                   {/* Status */}
                   <div>
                     <label className={`block text-sm font-medium mb-1 ${
-                      isDarkMode ? 'text-slate-300' : 'text-gray-700'
+                      'text-gray-700'
                     }`}>
                       Status
                     </label>
@@ -276,7 +275,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                       value={formData.is_active ? 'active' : 'inactive'}
                       onChange={(e) => setFormData(prev => ({ ...prev, is_active: e.target.value === 'active' }))}
                       className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                        isDarkMode 
+                        false 
                           ? 'border-slate-600 bg-slate-700 text-slate-200' 
                           : 'border-gray-300'
                       }`}
@@ -289,7 +288,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
 
                 {/* Footer */}
                 <div className={`flex items-center justify-end space-x-2 px-4 py-3 border-t ${
-                  isDarkMode 
+                  false 
                     ? 'bg-slate-900/50 border-slate-700' 
                     : 'bg-gray-50 border-gray-200'
                 }`}>
@@ -297,7 +296,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                     type="button"
                     onClick={onClose}
                     className={`px-3 py-1.5 border rounded transition-colors text-sm ${
-                      isDarkMode 
+                      false 
                         ? 'text-slate-300 bg-slate-800 border-slate-600 hover:bg-slate-700' 
                         : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'
                     }`}
@@ -325,3 +324,4 @@ const GroupModal: React.FC<GroupModalProps> = ({
 }
 
 export default GroupModal
+

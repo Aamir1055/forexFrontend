@@ -48,7 +48,7 @@ const ApiStatus: React.FC = () => {
   }
 
   return (
-    <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor()}`}>
+    <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor()}">
       {getStatusIcon()}
       <span className="ml-1">{getStatusText()}</span>
       {lastCheck && (
@@ -61,3 +61,4 @@ const ApiStatus: React.FC = () => {
 }
 
 export default ApiStatus
+
