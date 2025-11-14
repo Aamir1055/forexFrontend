@@ -30,6 +30,9 @@ interface PermissionContextType {
 
 const PermissionContext = createContext<PermissionContextType | undefined>(undefined)
 
+// Export PermissionContext for testing
+export { PermissionContext }
+
 export const usePermissions = () => {
   const context = useContext(PermissionContext)
   if (!context) {
