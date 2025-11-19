@@ -15,6 +15,7 @@ import Rules from './pages/Rules'
 import Settings from './pages/Settings'
 import AuditLogs from './pages/AuditLogs'
 import Logs from './pages/Logs'
+import ApiMetrics from './pages/ApiMetrics'
 
 import ModalTest from './components/ModalTest'
 import Dashboard from './pages/Dashboard'
@@ -48,6 +49,7 @@ function App() {
                                         <Route path="/rules" element={<Rules />} />
                                         <Route path="/audit-logs" element={<AuditLogs />} />
                                         <Route path="/logs" element={<Logs />} />
+                                        <Route path="/api-metrics" element={<ApiMetrics />} />
 
                                         <Route path="/settings" element={<Settings />} />
                                         <Route path="/modal-test" element={<ModalTest />} />

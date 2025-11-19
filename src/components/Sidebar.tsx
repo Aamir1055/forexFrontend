@@ -15,7 +15,8 @@ import {
   Sparkles,
   ClipboardList,
   FileSpreadsheet,
-  ScrollText
+  ScrollText,
+  Activity
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { authService } from '../services/authService'
@@ -46,6 +47,7 @@ const allNavigation: NavigationItem[] = [
   { name: 'Rules', href: '/rules', icon: ScrollText, module: MODULES.RULES },
   { name: 'Audit Logs', href: '/audit-logs', icon: ClipboardList, module: MODULES.AUDIT_LOGS },
   { name: 'Logs', href: '/logs', icon: FileSpreadsheet, module: MODULES.LOGS },
+  { name: 'API Metrics', href: '/api-metrics', icon: Activity },
   { name: 'Settings', href: '/settings', icon: Settings, module: MODULES.PROFILE },
 ]
 
