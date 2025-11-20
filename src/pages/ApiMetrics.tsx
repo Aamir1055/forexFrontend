@@ -144,25 +144,25 @@ export default function ApiMetrics() {
       </motion.div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 hover:border-blue-200 transform hover:-translate-y-1"
+          className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-3 border border-gray-100 hover:border-blue-200"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <ServerIcon className="w-6 h-6 text-white" />
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-300">
+              <ServerIcon className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Total</span>
+            <span className="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Total</span>
           </div>
-          <div className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">API Calls</div>
-          <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+          <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-0.5">API Calls</div>
+          <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
             {stats.totalCalls.toLocaleString()}
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <p className="text-xs text-gray-500">Total requests processed</p>
+          <div className="mt-2 pt-2 border-t border-gray-100">
+            <p className="text-[10px] text-gray-500">Total requests processed</p>
           </div>
         </motion.div>
 
@@ -170,20 +170,20 @@ export default function ApiMetrics() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 hover:border-purple-200 transform hover:-translate-y-1"
+          className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-3 border border-gray-100 hover:border-purple-200"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <ClockIcon className="w-6 h-6 text-white" />
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-300">
+              <ClockIcon className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xs font-semibold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">Avg</span>
+            <span className="text-[10px] font-semibold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">Avg</span>
           </div>
-          <div className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">Response Time</div>
-          <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">
+          <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Response Time</div>
+          <div className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">
             {formatTime(stats.avgResponseTime)}
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <p className="text-xs text-gray-500">Average across all endpoints</p>
+          <div className="mt-2 pt-2 border-t border-gray-100">
+            <p className="text-[10px] text-gray-500">Average across all endpoints</p>
           </div>
         </motion.div>
 
@@ -191,20 +191,20 @@ export default function ApiMetrics() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 hover:border-green-200 transform hover:-translate-y-1"
+          className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-3 border border-gray-100 hover:border-green-200"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <ArrowsRightLeftIcon className="w-6 h-6 text-white rotate-90" />
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-300">
+              <ArrowsRightLeftIcon className="w-4 h-4 text-white rotate-90" />
             </div>
-            <span className="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Sent</span>
+            <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">Sent</span>
           </div>
-          <div className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">Data Sent</div>
-          <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
+          <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Data Sent</div>
+          <div className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
             {formatBytes(stats.totalSent)}
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <p className="text-xs text-gray-500">Total outbound traffic</p>
+          <div className="mt-2 pt-2 border-t border-gray-100">
+            <p className="text-[10px] text-gray-500">Total outbound traffic</p>
           </div>
         </motion.div>
 
@@ -212,20 +212,20 @@ export default function ApiMetrics() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 hover:border-orange-200 transform hover:-translate-y-1"
+          className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-3 border border-gray-100 hover:border-orange-200"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <ArrowsRightLeftIcon className="w-6 h-6 text-white -rotate-90" />
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-300">
+              <ArrowsRightLeftIcon className="w-4 h-4 text-white -rotate-90" />
             </div>
-            <span className="text-xs font-semibold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">Received</span>
+            <span className="text-[10px] font-semibold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">Received</span>
           </div>
-          <div className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">Data Received</div>
-          <div className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
+          <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Data Received</div>
+          <div className="text-xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
             {formatBytes(stats.totalReceived)}
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <p className="text-xs text-gray-500">Total inbound traffic</p>
+          <div className="mt-2 pt-2 border-t border-gray-100">
+            <p className="text-[10px] text-gray-500">Total inbound traffic</p>
           </div>
         </motion.div>
       </div>

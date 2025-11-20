@@ -11,8 +11,9 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     server: {
-      port: 3000,
+      port: 5175,
       host: true,
+      strictPort: false,
       watch: {
         ignored: ['**/.git/**', '**/node_modules/**']
       },
