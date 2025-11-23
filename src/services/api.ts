@@ -107,10 +107,9 @@ api.interceptors.response.use(
         console.log('🔄 API Base URL:', getApiBaseUrl())
         
         // Use separate axios instance to avoid interceptor loop
-        const response = await refreshApi.post('/api/auth/refresh', {}, {
-          headers: {
-            'Authorization': `Bearer ${refreshToken}`
-          }
+        // Send refresh_token in request body as per backend API spec
+        const response = await refreshApi.post('/api/auth/refresh', {
+          refresh_token: refreshToken
         })
         
         console.log('✅ Refresh API response status:', response.status)

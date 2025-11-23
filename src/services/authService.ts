@@ -273,10 +273,8 @@ export const authService = {
       throw new Error('No refresh token available')
     }
 
-    const response = await api.post<ApiResponse<{ access_token: string; expires_in: number; token_type: string }>>('/api/auth/refresh', {}, {
-      headers: {
-        'Authorization': `Bearer ${refreshToken}`
-      }
+    const response = await api.post<ApiResponse<{ access_token: string; expires_in: number; token_type: string }>>('/api/auth/refresh', {
+      refresh_token: refreshToken
     })
     
     const data = response.data.data
