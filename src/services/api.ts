@@ -66,10 +66,17 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
     
+    // Handle network errors before checking status
+    if (!error.response) {
+      console.error('❌ Network error:', error.message)
+      // Don't retry on network errors, just reject
+      return Promise.reject(error)
+    }
+    
     // Don't retry refresh token requests or login requests to prevent infinite loops
-    if (originalRequest.url?.includes('/api/auth/refresh') || 
-        originalRequest.url?.includes('/api/auth/login') ||
-        originalRequest.url?.includes('/api/auth/verify-2fa')) {
+    if (originalRequest.url?.includes('/auth/refresh') || 
+        originalRequest.url?.includes('/auth/login') ||
+        originalRequest.url?.includes('/auth/verify-2fa')) {
       console.log('🔒 Auth endpoint failed, not retrying:', originalRequest.url)
       return Promise.reject(error)
     }
@@ -100,22 +107,21 @@ api.interceptors.response.use(
           throw new Error('No refresh token available')
         }
 
-        console.log('🔄 Calling refresh token API...')
+        console.log('🔄 Calling refresh token API with token:', refreshToken.substring(0, 20) + '...')
         // Use separate axios instance to avoid interceptor loop
-        // Send refresh token in Authorization header as Bearer token
-        const response = await refreshApi.post('/api/auth/refresh', {}, {
+        const response = await refreshApi.post('/auth/refresh', {}, {
           headers: {
             'Authorization': `Bearer ${refreshToken}`
           }
         })
         
         console.log('✅ Refresh API response:', response.data)
-        const responseData = response.data.data
-        const newAccessToken = responseData.access_token
-        const newRefreshToken = responseData.refresh_token
+        const responseData = response.data.data || response.data
+        const newAccessToken = responseData.access_token || responseData.accessToken
+        const newRefreshToken = responseData.refresh_token || responseData.refreshToken
         
         if (!newAccessToken) {
-          console.error('❌ No access token in refresh response')
+          console.error('❌ No access token in refresh response:', responseData)
           throw new Error('No access token received')
         }
         
@@ -127,8 +133,6 @@ api.interceptors.response.use(
           localStorage.setItem('refreshToken', newRefreshToken)
           console.log('✅ Both tokens refreshed successfully')
         } else {
-
-
           console.log('✅ Access token refreshed (refresh token unchanged)')
         }
         
@@ -144,6 +148,7 @@ api.interceptors.response.use(
         return api(originalRequest)
       } catch (refreshError: any) {
         console.error('❌ Token refresh failed:', refreshError)
+        console.error('❌ Refresh error details:', refreshError.response?.data || refreshError.message)
         processQueue(refreshError, null)
         
         // Always clear tokens when refresh fails
