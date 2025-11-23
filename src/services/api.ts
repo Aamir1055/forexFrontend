@@ -53,6 +53,9 @@ api.interceptors.request.use(
     const token = localStorage.getItem('authToken')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
+      console.log('📤 Request to:', config.url, '| Has token:', !!token)
+    } else {
+      console.warn('⚠️ No auth token found for request:', config.url)
     }
     return config
   },
@@ -78,6 +81,8 @@ api.interceptors.response.use(
     // Handle 401 errors (unauthorized)
     if (error.response?.status === 401 && !originalRequest._retry) {
       console.log('🔄 401 detected on URL:', originalRequest.url)
+      console.log('🔄 Original request retry flag:', originalRequest._retry)
+      console.log('🔄 Is refreshing flag:', isRefreshing)
       console.log('🔄 Attempting token refresh...')
       
       if (isRefreshing) {
@@ -100,10 +105,11 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem('refreshToken')
         if (!refreshToken) {
           console.error('❌ No refresh token available in localStorage')
+          console.error('❌ LocalStorage keys:', Object.keys(localStorage))
           throw new Error('No refresh token available')
         }
 
-        console.log('🔄 Refresh token found, calling API...')
+        console.log('🔄 Refresh token found:', refreshToken.substring(0, 30) + '...')
         console.log('🔄 API Base URL:', getApiBaseUrl())
         
         // Use separate axios instance to avoid interceptor loop
