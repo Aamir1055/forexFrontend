@@ -24,10 +24,11 @@ const api = axios.create({
 // Create a separate instance for refresh calls to avoid interceptor loops
 const refreshApi = axios.create({
   baseURL: getApiBaseUrl(),
-  timeout: 30000, // Increased to 30 seconds
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Enable CORS credentials
 })
 
 // Track if we're currently refreshing to prevent multiple simultaneous refresh attempts
@@ -66,13 +67,6 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
     
-    // Handle network errors before checking status
-    if (!error.response) {
-      console.error('❌ Network error:', error.message)
-      // Don't retry on network errors, just reject
-      return Promise.reject(error)
-    }
-    
     // Don't retry refresh token requests or login requests to prevent infinite loops
     if (originalRequest.url?.includes('/auth/refresh') || 
         originalRequest.url?.includes('/auth/login') ||
@@ -81,8 +75,10 @@ api.interceptors.response.use(
       return Promise.reject(error)
     }
     
+    // Handle 401 errors (unauthorized)
     if (error.response?.status === 401 && !originalRequest._retry) {
-      console.log('🔄 401 detected, attempting token refresh...')
+      console.log('🔄 401 detected on URL:', originalRequest.url)
+      console.log('🔄 Attempting token refresh...')
       
       if (isRefreshing) {
         console.log('⏳ Refresh already in progress, queuing request...')
@@ -103,19 +99,23 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem('refreshToken')
         if (!refreshToken) {
-          console.error('❌ No refresh token available')
+          console.error('❌ No refresh token available in localStorage')
           throw new Error('No refresh token available')
         }
 
-        console.log('🔄 Calling refresh token API with token:', refreshToken.substring(0, 20) + '...')
+        console.log('🔄 Refresh token found, calling API...')
+        console.log('🔄 API Base URL:', getApiBaseUrl())
+        
         // Use separate axios instance to avoid interceptor loop
-        const response = await refreshApi.post('/auth/refresh', {}, {
+        const response = await refreshApi.post('/api/auth/refresh', {}, {
           headers: {
             'Authorization': `Bearer ${refreshToken}`
           }
         })
         
-        console.log('✅ Refresh API response:', response.data)
+        console.log('✅ Refresh API response status:', response.status)
+        console.log('✅ Refresh API response data:', response.data)
+        
         const responseData = response.data.data || response.data
         const newAccessToken = responseData.access_token || responseData.accessToken
         const newRefreshToken = responseData.refresh_token || responseData.refreshToken
@@ -124,6 +124,8 @@ api.interceptors.response.use(
           console.error('❌ No access token in refresh response:', responseData)
           throw new Error('No access token received')
         }
+        
+        console.log('✅ New access token received')
         
         // Store the new access token
         localStorage.setItem('authToken', newAccessToken)
