@@ -21,6 +21,9 @@ const api = axios.create({
   },
 })
 
+// Startup debug
+console.log('🔧 API base URL resolved to:', getApiBaseUrl())
+
 // Create a separate instance for refresh calls to avoid interceptor loops
 const refreshApi = axios.create({
   baseURL: getApiBaseUrl(),
@@ -88,33 +91,12 @@ api.interceptors.response.use(
 
     // Network error fallback: attempt refresh if token likely expired
     if (!error.response) {
-      const refreshEndpoint = originalRequest?.url?.includes('/auth/refresh')
-      if (!refreshEndpoint) {
-        const accessToken = localStorage.getItem('authToken')
-        const refreshToken = localStorage.getItem('refreshToken')
-        const accessExpired = isTokenExpired(accessToken)
-        if (refreshToken && accessExpired && !originalRequest._networkRetry) {
-          console.warn('🌐 Network error + expired token detected. Attempting silent refresh...')
-          originalRequest._networkRetry = true
-          try {
-            const resp = await refreshApi.post('/api/auth/refresh', { refresh_token: refreshToken })
-            const data = resp.data?.data || resp.data
-            const newAccess = data?.access_token
-            const newRefresh = data?.refresh_token
-            if (newAccess) {
-              localStorage.setItem('authToken', newAccess)
-              if (newRefresh) localStorage.setItem('refreshToken', newRefresh)
-              originalRequest.headers = originalRequest.headers || {}
-              originalRequest.headers.Authorization = `Bearer ${newAccess}`
-              console.log('✅ Silent refresh succeeded after network error. Retrying original request.')
-              return api(originalRequest)
-            }
-          } catch (silentErr) {
-            console.error('❌ Silent refresh failed after network error:', silentErr)
-          }
-        }
+      // Likely CORS / network / DNS. Surface clearer diagnostic once per request.
+      if (!originalRequest._networkLogged) {
+        originalRequest._networkLogged = true
+        console.error('🌐 Network-level failure (no response). Possible CORS/preflight rejection for:', originalRequest.url)
+        console.info('🔍 Diagnose: Verify backend CORS allows Origin, Authorization, Content-Type for method', originalRequest.method?.toUpperCase())
       }
-      // Give up - propagate original network error
       return Promise.reject(error)
     }
     
@@ -199,6 +181,7 @@ api.interceptors.response.use(
         
         // Broadcast token refresh event for WebSocket reconnection
         window.dispatchEvent(new CustomEvent('token:refreshed', { detail: { token: newAccessToken } }))
+        window.dispatchEvent(new CustomEvent('token:refresh-status', { detail: { ok: true, at: Date.now() } }))
         
         return api(originalRequest)
       } catch (refreshError: any) {
@@ -223,6 +206,7 @@ api.interceptors.response.use(
         const absoluteUrl = `${normalized}login`
         
         // Use replace to prevent back navigation to protected pages
+        window.dispatchEvent(new CustomEvent('token:refresh-status', { detail: { ok: false, at: Date.now(), error: refreshError.response?.status } }))
         window.location.replace(absoluteUrl)
         
         return Promise.reject(refreshError)
