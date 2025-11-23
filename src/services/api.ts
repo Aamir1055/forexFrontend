@@ -47,6 +47,22 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = []
 }
 
+// Helper: decode exp from JWT and determine expiry (with small safety buffer)
+const isTokenExpired = (jwt?: string | null, bufferSeconds = 10): boolean => {
+  if (!jwt) return true
+  try {
+    const parts = jwt.split('.')
+    if (parts.length < 2) return true
+    const payload = JSON.parse(atob(parts[1]))
+    const exp = payload.exp
+    if (!exp) return true
+    const now = Math.floor(Date.now() / 1000)
+    return exp <= (now + bufferSeconds)
+  } catch {
+    return true
+  }
+}
+
 // Request interceptor for adding auth tokens
 api.interceptors.request.use(
   (config) => {
@@ -69,6 +85,38 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
+
+    // Network error fallback: attempt refresh if token likely expired
+    if (!error.response) {
+      const refreshEndpoint = originalRequest?.url?.includes('/auth/refresh')
+      if (!refreshEndpoint) {
+        const accessToken = localStorage.getItem('authToken')
+        const refreshToken = localStorage.getItem('refreshToken')
+        const accessExpired = isTokenExpired(accessToken)
+        if (refreshToken && accessExpired && !originalRequest._networkRetry) {
+          console.warn('🌐 Network error + expired token detected. Attempting silent refresh...')
+          originalRequest._networkRetry = true
+          try {
+            const resp = await refreshApi.post('/api/auth/refresh', { refresh_token: refreshToken })
+            const data = resp.data?.data || resp.data
+            const newAccess = data?.access_token
+            const newRefresh = data?.refresh_token
+            if (newAccess) {
+              localStorage.setItem('authToken', newAccess)
+              if (newRefresh) localStorage.setItem('refreshToken', newRefresh)
+              originalRequest.headers = originalRequest.headers || {}
+              originalRequest.headers.Authorization = `Bearer ${newAccess}`
+              console.log('✅ Silent refresh succeeded after network error. Retrying original request.')
+              return api(originalRequest)
+            }
+          } catch (silentErr) {
+            console.error('❌ Silent refresh failed after network error:', silentErr)
+          }
+        }
+      }
+      // Give up - propagate original network error
+      return Promise.reject(error)
+    }
     
     // Don't retry refresh token requests or login requests to prevent infinite loops
     if (originalRequest.url?.includes('/auth/refresh') || 

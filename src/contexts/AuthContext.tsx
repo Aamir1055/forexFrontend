@@ -85,14 +85,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${refreshToken}`
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({})
+        // Backend expects refresh token in body, not Authorization header
+        body: JSON.stringify({ refresh_token: refreshToken })
       })
 
       if (!response.ok) {
-        console.error('❌ Proactive token refresh failed')
+        console.error('❌ Proactive token refresh failed - status:', response.status)
+        // Do NOT logout immediately if server returns 401/403 here; let interceptor attempt on next call
+        if (response.status === 401 || response.status === 403) {
+          console.warn('⚠️ Proactive refresh unauthorized - will defer to interceptor on next protected request')
+          return
+        }
         logout()
         return
       }
