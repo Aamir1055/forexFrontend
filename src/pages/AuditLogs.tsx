@@ -261,7 +261,7 @@ const AuditLogs: React.FC = () => {
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
                     <ClipboardDocumentListIcon className="w-5 h-5 text-white" />
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
                 </div>
                 <div>
                   <h1 className={`text-lg font-bold transition-colors duration-300 ${
@@ -311,7 +311,7 @@ const AuditLogs: React.FC = () => {
 
                 <div className="relative">
                   <button
-                    className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 font-semibold text-xs"
+                    className="px-4 py-2 bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-black rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-yellow-500/30 hover:shadow-xl hover:shadow-yellow-500/40 font-semibold text-xs"
                     onClick={() => {
                       const dropdown = document.getElementById('export-dropdown')
                       dropdown?.classList.toggle('hidden')

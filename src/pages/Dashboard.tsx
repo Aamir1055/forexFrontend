@@ -122,8 +122,8 @@ const Dashboard: React.FC = () => {
   const recentActivities = [
     {
       icon: UserPlusIcon,
-      iconBg: 'bg-green-100',
-      iconColor: 'text-green-600',
+      iconBg: 'bg-yellow-100',
+      iconColor: 'text-yellow-600',
       title: 'New broker registered',
       description: 'John Smith joined the platform',
       time: '2 min ago'
@@ -156,7 +156,7 @@ const Dashboard: React.FC = () => {
 
   const quickActions = [
     { title: 'Add New Broker', icon: UserPlusIcon, color: 'bg-blue-600' },
-    { title: 'Create Group', icon: UserGroupIcon, color: 'bg-green-500' },
+    { title: 'Create Group', icon: UserGroupIcon, color: 'bg-yellow-500' },
     { title: 'Manage Roles', icon: ShieldCheckIcon, color: 'bg-purple-500' },
     { title: 'System Settings', icon: ChartBarIcon, color: 'bg-orange-500' }
   ]
@@ -173,7 +173,7 @@ const Dashboard: React.FC = () => {
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
                     <ChartBarIcon className="w-5 h-5 text-white" />
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
                 </div>
                 <div>
                   <h1 className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
@@ -220,16 +220,16 @@ const Dashboard: React.FC = () => {
                       <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
                       <div className="flex items-center mt-2">
                         {stat.trend === 'up' && stat.title !== 'System Health' ? (
-                          <ArrowUpIcon className="w-4 h-4 text-green-500 mr-1" />
+                          <ArrowUpIcon className="w-4 h-4 text-yellow-500 mr-1" />
                         ) : stat.trend === 'down' ? (
                           <ArrowDownIcon className="w-4 h-4 text-red-500 mr-1" />
                         ) : stat.title === 'System Health' ? (
-                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                          <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2 animate-pulse"></div>
                         ) : null}
                         <span className={`text-xs font-semibold ${
-                          stat.trend === 'up' ? 'text-green-500' : 
+                          stat.trend === 'up' ? 'text-yellow-500' : 
                           stat.trend === 'down' ? 'text-red-500' : 
-                          'text-green-500'
+                          'text-yellow-500'
                         }`}>
                           {stat.change}
                         </span>
@@ -291,7 +291,7 @@ const Dashboard: React.FC = () => {
                     <span className="text-xs text-slate-600">CPU</span>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-3 h-3 bg-green-500 rounded-full mr-1.5"></div>
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full mr-1.5"></div>
                     <span className="text-xs text-slate-600">Memory</span>
                   </div>
                 </div>

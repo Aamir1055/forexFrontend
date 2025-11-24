@@ -397,7 +397,7 @@ const BrokerProfiles: React.FC = () => {
                               </span>
                             </td>
                             <td className="px-3 py-2">
-                              <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-[10px] font-medium">
+                              <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-[10px] font-medium">
                                 {profile.groupsCount} groups
                               </span>
                             </td>

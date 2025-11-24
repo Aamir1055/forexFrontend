@@ -211,7 +211,7 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
                   <div className="max-w-xs overflow-hidden">
                     {log.new_values && (
                       <div className="mb-0.5">
-                        <span className="text-xs font-semibold text-green-600">New: </span>
+                        <span className="text-xs font-semibold text-yellow-600">New: </span>
                         <span className="text-xs text-gray-600 truncate">{formatValues(log.new_values)}</span>
                       </div>
                     )}

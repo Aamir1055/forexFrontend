@@ -54,31 +54,31 @@ const AuthDebug: React.FC = () => {
       <div className="space-y-1 text-xs">
         <div>
           <span className="font-medium">Auth Token:</span> 
-          <span className={authToken ? 'text-green-600' : 'text-red-600'}>
+          <span className={authToken ? 'text-yellow-600' : 'text-red-600'}>
             {authToken ? 'Present' : 'Missing'}
           </span>
         </div>
         <div>
           <span className="font-medium">Refresh Token:</span> 
-          <span className={refreshToken ? 'text-green-600' : 'text-red-600'}>
+          <span className={refreshToken ? 'text-yellow-600' : 'text-red-600'}>
             {refreshToken ? 'Present' : 'Missing'}
           </span>
         </div>
         <div>
           <span className="font-medium">User Data:</span> 
-          <span className={user ? 'text-green-600' : 'text-red-600'}>
+          <span className={user ? 'text-yellow-600' : 'text-red-600'}>
             {user ? 'Present' : 'Missing'}
           </span>
         </div>
         <div>
           <span className="font-medium">Auth User:</span> 
-          <span className={authUser ? 'text-green-600' : 'text-red-600'}>
+          <span className={authUser ? 'text-yellow-600' : 'text-red-600'}>
             {authUser ? 'Present' : 'Missing'}
           </span>
         </div>
         <div>
           <span className="font-medium">Is Authenticated:</span> 
-          <span className={isAuthenticated ? 'text-green-600' : 'text-red-600'}>
+          <span className={isAuthenticated ? 'text-yellow-600' : 'text-red-600'}>
             {isAuthenticated ? 'Yes' : 'No'}
           </span>
         </div>
@@ -105,7 +105,7 @@ const AuthDebug: React.FC = () => {
                 isAuthenticated: authService.isAuthenticated()
               })
             }}
-            className="px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
+            className="px-2 py-1 bg-yellow-500 text-black text-xs rounded hover:bg-yellow-600"
           >
             Log State
           </button>

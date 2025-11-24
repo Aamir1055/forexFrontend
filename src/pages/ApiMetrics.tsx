@@ -191,16 +191,16 @@ export default function ApiMetrics() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-3 border border-gray-100 hover:border-green-200"
+          className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-3 border border-gray-100 hover:border-yellow-200"
         >
           <div className="flex items-center justify-between mb-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-300">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-500 to-yellow-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-300">
               <ArrowsRightLeftIcon className="w-4 h-4 text-white rotate-90" />
             </div>
-            <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">Sent</span>
+            <span className="text-[10px] font-semibold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full">Sent</span>
           </div>
           <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Data Sent</div>
-          <div className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
+          <div className="text-xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-700 bg-clip-text text-transparent">
             {formatBytes(stats.totalSent)}
           </div>
           <div className="mt-2 pt-2 border-t border-gray-100">
@@ -326,7 +326,7 @@ export default function ApiMetrics() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
                     {formatTime(metric.avg_time_ms)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-600 font-medium">
                     {formatTime(metric.min_time_ms)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-orange-600 font-medium">
