@@ -33,100 +33,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<{ username: string; email: string } | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [initialized, setInitialized] = useState(false)
-  const [refreshTimeoutId, setRefreshTimeoutId] = useState<NodeJS.Timeout | null>(null)
-
-  // Proactive token refresh - schedules refresh 60 seconds before expiry
-  const scheduleTokenRefresh = (accessToken: string) => {
-    // Clear any existing timeout
-    if (refreshTimeoutId) {
-      clearTimeout(refreshTimeoutId)
-    }
-
-    try {
-      // Decode JWT to get expiry time
-      const payload = JSON.parse(atob(accessToken.split('.')[1]))
-      const expiryTime = payload.exp * 1000 // Convert to milliseconds
-      const currentTime = Date.now()
-      const timeUntilExpiry = expiryTime - currentTime
-      
-      // Schedule refresh 60 seconds before expiry
-      const refreshTime = timeUntilExpiry - 60000 // 60 seconds before expiry
-      
-      if (refreshTime > 0) {
-        console.log(`🔄 Token refresh scheduled in ${Math.floor(refreshTime / 1000)} seconds`)
-        
-        const timeoutId = setTimeout(async () => {
-          console.log('🔄 Proactive token refresh triggered')
-          await performTokenRefresh()
-        }, refreshTime)
-        
-        setRefreshTimeoutId(timeoutId)
-      } else {
-        console.warn('⚠️ Token already expired or expiring soon, will refresh on next API call')
-      }
-    } catch (error) {
-      console.error('❌ Failed to decode token for refresh scheduling:', error)
-    }
-  }
-
-  // Perform the actual token refresh
-  const performTokenRefresh = async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken')
-      if (!refreshToken) {
-        console.error('❌ No refresh token available for proactive refresh')
-        logout()
-        return
-      }
-
-      const apiUrl = buildApiUrl('/api/auth/refresh')
-      console.log('🔄 Calling proactive refresh token API...')
-      
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        // Backend expects refresh token in body, not Authorization header
-        body: JSON.stringify({ refresh_token: refreshToken })
-      })
-
-      if (!response.ok) {
-        console.error('❌ Proactive token refresh failed - status:', response.status)
-        // Do NOT logout immediately if server returns 401/403 here; let interceptor attempt on next call
-        if (response.status === 401 || response.status === 403) {
-          console.warn('⚠️ Proactive refresh unauthorized - will defer to interceptor on next protected request')
-          return
-        }
-        logout()
-        return
-      }
-
-      const data = await response.json()
-      const newAccessToken = data.data?.access_token
-      const newRefreshToken = data.data?.refresh_token
-
-      if (newAccessToken) {
-        localStorage.setItem('authToken', newAccessToken)
-        setToken(newAccessToken)
-        
-        if (newRefreshToken) {
-          localStorage.setItem('refreshToken', newRefreshToken)
-        }
-        
-        console.log('✅ Proactive token refresh successful')
-        
-        // Schedule the next refresh
-        scheduleTokenRefresh(newAccessToken)
-        
-        // Dispatch event for WebSocket reconnection
-        window.dispatchEvent(new CustomEvent('token:refreshed', { detail: { token: newAccessToken } }))
-      }
-    } catch (error) {
-      console.error('❌ Proactive token refresh error:', error)
-      logout()
-    }
-  }
+  // Reactive-only strategy: no proactive scheduling. Refresh happens only after backend returns 401/403.
 
   useEffect(() => {
     // Check for existing auth on mount
@@ -139,21 +46,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (savedToken && savedToken !== 'undefined' && savedToken !== 'null') {
         setToken(savedToken)
         setIsAuthenticated(true)
-        // Schedule proactive refresh for existing token
-        scheduleTokenRefresh(savedToken)
-      } 
-      // If no access token but refresh token exists, STAY AUTHENTICATED
-      // The API interceptor will automatically refresh on the first API call
-      else if ((!savedToken || savedToken === 'undefined' || savedToken === 'null') && 
-          savedRefreshToken && savedRefreshToken !== 'undefined' && savedRefreshToken !== 'null') {
-        console.log('🔄 No access token but refresh token exists - staying authenticated')
-        console.log('🔄 API interceptor will handle token refresh on first API call')
-        setIsAuthenticated(true) // Keep user authenticated
-        // Don't call refresh here - let the API interceptor handle it naturally
-      }
-      // If neither token exists, user is not authenticated
-      else {
-        console.log('🔒 No tokens found, user not authenticated')
+      } else if (savedRefreshToken && savedRefreshToken !== 'undefined' && savedRefreshToken !== 'null') {
+        // Keep user tentatively authenticated; first protected request will trigger refresh via interceptor
+        console.log('🔄 Access token missing, refresh token present - waiting for reactive refresh')
+        setIsAuthenticated(true)
+      } else {
         setIsAuthenticated(false)
       }
 
@@ -202,12 +99,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         // Use replace to prevent back navigation to protected pages
         window.location.replace(absoluteUrl)
-      } else if ((savedToken === null || savedToken === 'undefined' || savedToken === 'null') && 
-                 savedRefreshToken && savedRefreshToken !== 'null' && savedRefreshToken !== 'undefined') {
-        // Access token missing but refresh token exists - STAY AUTHENTICATED, let API interceptor handle refresh
-        console.log('🔄 Access token missing but refresh token exists - staying authenticated, API interceptor will handle refresh')
-        setIsAuthenticated(true) // Keep user authenticated
-        // Don't set token here - let the API interceptor handle the refresh when the next API call happens
+      } else if ((savedToken === null || savedToken === 'undefined' || savedToken === 'null') && savedRefreshToken) {
+        console.log('🔄 Access token missing, relying on interceptor for reactive refresh')
+        setIsAuthenticated(true)
       }
 
       if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
@@ -327,9 +221,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(userData))
         localStorage.setItem('authUser', JSON.stringify({ username: userData.username, email: userData.email }))
         
-        // Schedule proactive token refresh
-        scheduleTokenRefresh(token)
-        
         return true
       }
 
@@ -379,9 +270,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(userData)
         setIsAuthenticated(true)
         
-        // Schedule proactive token refresh
-        scheduleTokenRefresh(token)
-        
         return true
       }
 
@@ -393,12 +281,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   const logout = () => {
-    // Clear the refresh timeout
-    if (refreshTimeoutId) {
-      clearTimeout(refreshTimeoutId)
-      setRefreshTimeoutId(null)
-    }
-    
     setToken(null)
     setUser(null)
     setIsAuthenticated(false)
@@ -412,14 +294,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     window.dispatchEvent(new Event('auth:updated'))
   }
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (refreshTimeoutId) {
-        clearTimeout(refreshTimeoutId)
-      }
-    }
-  }, [refreshTimeoutId])
+  // No timeout cleanup needed (reactive-only)
 
   return (
     <AuthContext.Provider value={{

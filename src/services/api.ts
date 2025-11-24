@@ -50,37 +50,75 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = []
 }
 
-// Helper: decode exp from JWT and determine expiry (with small safety buffer)
-const isTokenExpired = (jwt?: string | null, bufferSeconds = 10): boolean => {
-  if (!jwt) return true
+// Helper to check if JWT is expired
+const isTokenExpired = (token: string | null): boolean => {
+  if (!token) return true
   try {
-    const parts = jwt.split('.')
-    if (parts.length < 2) return true
-    const payload = JSON.parse(atob(parts[1]))
+    const payload = JSON.parse(atob(token.split('.')[1]))
     const exp = payload.exp
     if (!exp) return true
     const now = Math.floor(Date.now() / 1000)
-    return exp <= (now + bufferSeconds)
+    // Consider expired if less than 30 seconds remaining
+    return exp <= (now + 30)
   } catch {
     return true
   }
 }
 
-// Request interceptor for adding auth tokens
+// Request interceptor: check expiry and refresh proactively if needed
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('authToken')
+  async (config) => {
+    // Skip token logic for auth endpoints
+    const isAuthEndpoint = config.url?.includes('/auth/login') || 
+                          config.url?.includes('/auth/refresh') || 
+                          config.url?.includes('/auth/verify-2fa')
+    
+    if (isAuthEndpoint) {
+      return config
+    }
+
+    let token = localStorage.getItem('authToken')
+    const refreshToken = localStorage.getItem('refreshToken')
+
+    // Proactive refresh: if token expired and we have refresh token, refresh first
+    if (isTokenExpired(token) && refreshToken && !isRefreshing) {
+      console.log('🔄 Token expired, refreshing before request to:', config.url)
+      isRefreshing = true
+      
+      try {
+        const response = await refreshApi.post('/api/auth/refresh', { 
+          refresh_token: refreshToken 
+        })
+        
+        const newAccessToken = response.data?.data?.access_token
+        if (newAccessToken) {
+          localStorage.setItem('authToken', newAccessToken)
+          api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`
+          token = newAccessToken
+          console.log('✅ Proactive token refresh successful')
+          window.dispatchEvent(new CustomEvent('token:refreshed', { 
+            detail: { token: newAccessToken, proactive: true } 
+          }))
+        }
+      } catch (err) {
+        console.error('❌ Proactive refresh failed:', err)
+        // Let the request proceed; if token is invalid, backend will return 401
+      } finally {
+        isRefreshing = false
+      }
+    }
+
+    // Attach current token (possibly refreshed)
+    token = localStorage.getItem('authToken')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
-      console.log('📤 Request to:', config.url, '| Has token:', !!token)
+      console.log('📤 Request to:', config.url, '| Has token:', true)
     } else {
       console.warn('⚠️ No auth token found for request:', config.url)
     }
     return config
   },
-  (error) => {
-    return Promise.reject(error)
-  }
+  (error) => Promise.reject(error)
 )
 
 // Response interceptor for handling errors
@@ -88,6 +126,14 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
+
+    // Log ALL errors for debugging
+    console.log('🔴 Response Interceptor Error:', {
+      url: originalRequest?.url,
+      status: error.response?.status,
+      hasResponse: !!error.response,
+      retry: originalRequest?._retry
+    })
 
     // Network error fallback: attempt refresh if token likely expired
     if (!error.response) {
@@ -108,8 +154,8 @@ api.interceptors.response.use(
       return Promise.reject(error)
     }
     
-    // Handle 401 errors (unauthorized)
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Handle 401/403 errors (unauthorized / token expired) -> reactive refresh only
+    if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
       console.groupCollapsed('🔄 401 Intercepted')
       console.log('Request URL:', originalRequest.url)
       console.log('Retry flag:', originalRequest._retry)
@@ -153,17 +199,10 @@ api.interceptors.response.use(
         console.log('🔄 Refresh token found:', refreshToken.substring(0, 30) + '...')
         console.log('🔄 API Base URL:', getApiBaseUrl())
         
-        // Use separate axios instance to avoid interceptor loop
-        // Send refresh_token in request body as per backend API spec
-        console.log('🔄 Sending refresh request (body + Authorization header for compatibility)')
-        const response = await refreshApi.post('/api/auth/refresh', {
-          refresh_token: refreshToken
-        }, {
-          headers: {
-            // Some backends accept either body or Authorization; sending both avoids mismatch
-            'Authorization': `Bearer ${refreshToken}`,
-            'Content-Type': 'application/json'
-          }
+        // Send refresh_token ONLY after backend signals expiry (reactive pattern)
+        console.log('🔄 Sending reactive refresh request')
+        const response = await refreshApi.post('/api/auth/refresh', { refresh_token: refreshToken }, {
+          headers: { 'Content-Type': 'application/json' }
         })
         
         console.log('✅ Refresh API response status:', response.status)
@@ -182,6 +221,8 @@ api.interceptors.response.use(
         
         // Store the new access token
         localStorage.setItem('authToken', newAccessToken)
+        // Ensure all future requests use the fresh token immediately
+        api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`
         
         // Update refresh token if provided
         if (newRefreshToken) {
@@ -198,7 +239,7 @@ api.interceptors.response.use(
         processQueue(null, newAccessToken)
         
         // Broadcast token refresh event for WebSocket reconnection
-        window.dispatchEvent(new CustomEvent('token:refreshed', { detail: { token: newAccessToken } }))
+        window.dispatchEvent(new CustomEvent('token:refreshed', { detail: { token: newAccessToken, reactive: true } }))
         window.dispatchEvent(new CustomEvent('token:refresh-status', { detail: { ok: true, at: Date.now() } }))
         
         return api(originalRequest)
