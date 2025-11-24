@@ -103,11 +103,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         animate={{ width: isCollapsed ? '5rem' : '16rem' }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex flex-col bg-white shadow-xl border-r border-gray-200 relative overflow-hidden">
+        <div className="flex flex-col h-screen bg-white shadow-xl border-r border-gray-200 relative">
           {/* Background decoration */}
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white flex-shrink-0">
             <AnimatePresence>
               {!isCollapsed && (
                 <motion.div
@@ -141,7 +141,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Navigation */}
-          <div className="flex-1 px-4 py-6">
+          <div className="flex-1 px-4 py-6 overflow-y-auto">
             <nav className="space-y-1">
               {navigation.map((item, index) => {
                 const Icon = item.icon
@@ -189,7 +189,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </div>
           
           {/* Logout Button */}
-          <div className="p-4 border-t border-gray-200 bg-gray-50">
+          <div className="p-4 border-t border-gray-200 bg-gray-50 flex-shrink-0">
             <button
               onClick={handleLogout}
               className="w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 group text-gray-600 hover:bg-red-50 hover:text-red-600"
