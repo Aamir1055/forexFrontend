@@ -121,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                     {currentUser?.username?.charAt(0).toUpperCase() || 'U'}
                   </span>
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center">
                   <div className="w-2 h-2 bg-white rounded-full"></div>
                 </div>
               </div>

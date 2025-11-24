@@ -53,7 +53,7 @@ const DiagnosticTest: React.FC = () => {
         <div>
           <button
             onClick={handleApiTest}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+            className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600 transition-colors"
           >
             Test API Connection
           </button>

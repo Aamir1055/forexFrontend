@@ -188,7 +188,7 @@ const UserTable: React.FC<UserTableProps> = ({
                         className="w-7 h-7 rounded-lg border-2 border-white shadow-sm group-hover:scale-110 transition-transform duration-200"
                       />
                       {user.is_active && (
-                        <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></div>
+                        <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-yellow-500 border-2 border-white rounded-full"></div>
                       )}
                     </div>
                     <div>
@@ -209,7 +209,7 @@ const UserTable: React.FC<UserTableProps> = ({
                           role.name.toLowerCase() === 'admin' 
                             ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
                             : role.name.toLowerCase() === 'editor'
-                            ? 'bg-gradient-to-r from-green-500 to-green-600 text-white'
+                            ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-black'
                             : role.name.toLowerCase() === 'viewer'
                             ? 'bg-gradient-to-r from-slate-400 to-slate-500 text-white'
                             : 'bg-gradient-to-r from-purple-500 to-purple-600 text-white'
@@ -232,7 +232,7 @@ const UserTable: React.FC<UserTableProps> = ({
                     fallback={
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         user.is_active 
-                          ? 'bg-green-100 text-green-800' 
+                          ? 'bg-yellow-100 text-yellow-800' 
                           : 'bg-red-100 text-red-800'
                       }`}>
                         {user.is_active ? 'Active' : 'Inactive'}

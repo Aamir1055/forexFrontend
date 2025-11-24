@@ -200,23 +200,23 @@ const TwoFactorSetup: React.FC = () => {
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <div className="flex items-center mb-4">
-          <ShieldCheckIcon className="h-8 w-8 text-green-600 mr-3" />
+          <ShieldCheckIcon className="h-8 w-8 text-yellow-600 mr-3" />
           <div>
             <h3 className="text-lg font-medium text-gray-900">Two-Factor Authentication Enabled</h3>
             <p className="text-sm text-gray-500">Your account is protected with 2FA</p>
           </div>
         </div>
 
-        <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-4">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
           <div className="flex">
             <div className="flex-shrink-0">
-              <ShieldCheckIcon className="h-5 w-5 text-green-400" />
+              <ShieldCheckIcon className="h-5 w-5 text-yellow-400" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">
+              <h3 className="text-sm font-medium text-yellow-800">
                 2FA is Active
               </h3>
-              <div className="mt-2 text-sm text-green-700">
+              <div className="mt-2 text-sm text-yellow-700">
                 <p>Your account is now protected with two-factor authentication. You'll need your authenticator app to sign in.</p>
               </div>
             </div>

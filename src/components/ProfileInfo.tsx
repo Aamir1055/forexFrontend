@@ -340,7 +340,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                 <div className="flex items-center space-x-2">
                   <p className="text-gray-900">{profile.phone || 'Not provided'}</p>
                   {profile.phone_verified ? (
-                    <CheckCircleIcon className="w-4 h-4 text-green-500" />
+                    <CheckCircleIcon className="w-4 h-4 text-yellow-500" />
                   ) : (
                     <XCircleIcon className="w-4 h-4 text-red-500" />
                   )}
@@ -422,7 +422,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
             <label className="block text-sm font-medium text-gray-500">Account Status</label>
             <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
               profile.is_active 
-                ? 'bg-green-100 text-green-700' 
+                ? 'bg-yellow-100 text-yellow-700' 
                 : 'bg-red-100 text-red-700'
             }`}>
               {profile.is_active ? 'Active' : 'Inactive'}

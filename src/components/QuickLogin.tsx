@@ -126,7 +126,7 @@ const QuickLogin: React.FC = () => {
         <button
           onClick={handleDirectApiLogin}
           disabled={isLoading}
-          className="w-full px-3 py-1.5 bg-green-500 text-white text-xs rounded hover:bg-green-600 disabled:opacity-50"
+          className="w-full px-3 py-1.5 bg-yellow-500 text-black text-xs rounded hover:bg-yellow-600 disabled:opacity-50"
         >
           {isLoading ? 'Logging in...' : 'Direct API Login'}
         </button>

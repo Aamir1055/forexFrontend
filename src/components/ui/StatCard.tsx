@@ -29,10 +29,10 @@ const StatCard: React.FC<StatCardProps> = ({
       border: 'border-blue-200'
     },
     green: {
-      bg: 'from-green-500 to-green-600',
-      light: 'bg-green-50',
-      text: 'text-green-600',
-      border: 'border-green-200'
+      bg: 'from-yellow-500 to-yellow-600',
+      light: 'bg-yellow-50',
+      text: 'text-yellow-600',
+      border: 'border-yellow-200'
     },
     purple: {
       bg: 'from-purple-500 to-purple-600',
@@ -75,7 +75,7 @@ const StatCard: React.FC<StatCardProps> = ({
               </div>
               {trend && (
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                  trend.isPositive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  trend.isPositive ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
                 }`}>
                   {trend.isPositive ? '↑' : '↓'} {trend.value}
                 </span>

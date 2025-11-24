@@ -66,8 +66,8 @@ const RoleTable: React.FC<RoleTableProps> = ({
       )
     } else if (name.includes('analyst')) {
       return (
-        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-          <ChartBarIcon className="w-4 h-4 text-green-600" />
+        <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+          <ChartBarIcon className="w-4 h-4 text-yellow-600" />
         </div>
       )
     } else {
@@ -202,7 +202,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <span className="px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                  <span className="px-2.5 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">
                     Active
                   </span>
                 </td>

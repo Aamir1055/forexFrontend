@@ -358,18 +358,18 @@ const UserModal: React.FC<UserModalProps> = ({
                   <div className="space-y-1.5">
                     <label className={`flex items-center cursor-pointer px-2 py-1.5 border rounded-lg transition-all group ${
                       false 
-                        ? 'border-slate-600 hover:bg-gradient-to-br hover:from-green-900/30 hover:to-green-800/20 hover:border-green-600' 
-                        : 'border-slate-200 hover:bg-gradient-to-br hover:from-green-50 hover:to-green-100/30 hover:border-green-300'
+                        ? 'border-slate-600 hover:bg-gradient-to-br hover:from-yellow-900/30 hover:to-yellow-800/20 hover:border-yellow-600' 
+                        : 'border-slate-200 hover:bg-gradient-to-br hover:from-yellow-50 hover:to-yellow-100/30 hover:border-yellow-300'
                     }`}>
                       <input
                         type="checkbox"
                         name="is_active"
                         checked={formData.is_active}
                         onChange={handleInputChange}
-                        className="w-3.5 h-3.5 rounded border-slate-300 text-green-600 focus:ring-green-500 focus:ring-1 transition-colors duration-200"
+                        className="w-3.5 h-3.5 rounded border-slate-300 text-yellow-600 focus:ring-yellow-500 focus:ring-1 transition-colors duration-200"
                       />
                       <span className={`ml-2 text-[11px] font-semibold transition-colors ${
-                        false ? 'text-slate-300 group-hover:text-green-400' : 'text-slate-700 group-hover:text-green-700'
+                        false ? 'text-slate-300 group-hover:text-yellow-400' : 'text-slate-700 group-hover:text-yellow-700'
                       }`}>User is active</span>
                     </label>
                     

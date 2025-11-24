@@ -1779,7 +1779,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                               </div>
                                             </div>
                                             <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                                              group.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                              group.is_active ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
                                             }`}>
                                               {group.is_active ? 'Active' : 'Inactive'}
                                             </span>
@@ -2268,7 +2268,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         type="submit"
-                        className="px-4 py-2 text-xs font-semibold text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+                        className="px-4 py-2 text-xs font-semibold text-black bg-yellow-600 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
                         disabled={isLoading || syncRightsMutation.isLoading}
                       >
                         {isLoading || syncRightsMutation.isLoading ? (

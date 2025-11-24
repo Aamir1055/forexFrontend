@@ -47,7 +47,7 @@ const ProfileActivity: React.FC = () => {
 
   const getActivityIcon = (action: string) => {
     if (action.includes('login')) {
-      return <ClockIcon className="w-4 h-4 text-green-500" />
+      return <ClockIcon className="w-4 h-4 text-yellow-500" />
     } else if (action.includes('logout')) {
       return <ClockIcon className="w-4 h-4 text-gray-500" />
     } else if (action.includes('update') || action.includes('change')) {
@@ -64,7 +64,7 @@ const ProfileActivity: React.FC = () => {
       case 'medium':
         return <ShieldExclamationIcon className="w-4 h-4 text-yellow-500" />
       default:
-        return <InformationCircleIcon className="w-4 h-4 text-green-500" />
+        return <InformationCircleIcon className="w-4 h-4 text-yellow-500" />
     }
   }
 
@@ -75,7 +75,7 @@ const ProfileActivity: React.FC = () => {
       case 'medium':
         return 'bg-yellow-100 text-yellow-700'
       default:
-        return 'bg-green-100 text-green-700'
+        return 'bg-yellow-100 text-yellow-700'
     }
   }
 

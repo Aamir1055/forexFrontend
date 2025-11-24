@@ -246,7 +246,7 @@ const Roles: React.FC = () => {
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
                     <ShieldCheckIcon className="w-5 h-5 text-white" />
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
                 </div>
                 <div>
                   <h1 className={`text-lg font-bold transition-colors duration-300 ${

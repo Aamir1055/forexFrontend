@@ -380,7 +380,7 @@ const Logs: React.FC = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
               </div>
             ) : logContent && logContent.lines.length > 0 ? (
-              <pre className="text-xs text-green-400 font-mono leading-relaxed whitespace-pre-wrap break-all">
+              <pre className="text-xs text-yellow-400 font-mono leading-relaxed whitespace-pre-wrap break-all">
                 {logContent.lines.map((line, index) => (
                   <div key={index} className="hover:bg-gray-800 transition-colors">
                     {line}

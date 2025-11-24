@@ -81,7 +81,7 @@ export const TokenDiagnostics: React.FC = () => {
       <div className="pt-2 border-t border-blue-200">
         <div className="font-medium">Last Refresh Attempt</div>
         {refreshStatus ? (
-          <div className={refreshStatus.ok ? 'text-green-700' : 'text-red-700'}>
+          <div className={refreshStatus.ok ? 'text-yellow-700' : 'text-red-700'}>
             {refreshStatus.ok ? 'SUCCESS' : 'FAILED'} at {formatTs(refreshStatus.at)} {refreshStatus.error && `(status: ${refreshStatus.error})`}
           </div>
         ) : <div className="text-gray-500">None recorded</div>}

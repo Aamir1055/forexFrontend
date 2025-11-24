@@ -86,13 +86,13 @@ const SimpleLoginTest: React.FC = () => {
           <button
             onClick={testLogin}
             disabled={loading}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:opacity-50 ml-4"
+            className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600 disabled:opacity-50 ml-4"
           >
             {loading ? 'Testing...' : '🔑 Test Login (admin/admin123)'}
           </button>
         </div>
 
-        <div className="bg-gray-900 text-green-400 p-4 rounded font-mono text-sm min-h-[100px]">
+        <div className="bg-gray-900 text-yellow-400 p-4 rounded font-mono text-sm min-h-[100px]">
           <div className="text-gray-400 mb-2">Test Result:</div>
           {result || 'Click a button to start testing...'}
         </div>

@@ -103,7 +103,7 @@ export const Button: React.FC<ButtonProps> = ({
   const variants = {
     primary: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 focus:ring-blue-500 shadow-lg hover:shadow-xl',
     secondary: 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-gray-500',
-    success: 'bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 focus:ring-green-500 shadow-lg hover:shadow-xl',
+    success: 'bg-gradient-to-r from-yellow-600 to-yellow-700 text-black hover:from-yellow-700 hover:to-yellow-800 focus:ring-yellow-500 shadow-lg hover:shadow-xl',
     warning: 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600 focus:ring-yellow-500 shadow-lg hover:shadow-xl',
     error: 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 focus:ring-red-500 shadow-lg hover:shadow-xl',
     ghost: 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:ring-gray-500'
@@ -239,7 +239,7 @@ export const Badge: React.FC<BadgeProps> = ({
 }) => {
   const variants = {
     primary: 'bg-blue-100 text-blue-800 border-blue-200',
-    success: 'bg-green-100 text-green-800 border-green-200',
+    success: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     error: 'bg-red-100 text-red-800 border-red-200',
     gray: 'bg-gray-100 text-gray-800 border-gray-200'
@@ -278,7 +278,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
 }) => {
   const colors = {
     blue: 'bg-blue-100 text-blue-600',
-    green: 'bg-green-100 text-green-600',
+    green: 'bg-yellow-100 text-yellow-600',
     purple: 'bg-purple-100 text-purple-600',
     orange: 'bg-orange-100 text-orange-600',
     red: 'bg-red-100 text-red-600'
@@ -296,7 +296,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
           <div className="text-sm font-medium text-gray-600">{title}</div>
           <div className="text-2xl font-bold text-gray-900">{value}</div>
           {trend && (
-            <div className={`text-sm flex items-center mt-1 ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`text-sm flex items-center mt-1 ${trend.isPositive ? 'text-yellow-600' : 'text-red-600'}`}>
               <svg className={`w-4 h-4 mr-1 ${trend.isPositive ? '' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17l9.2-9.2M17 17V7H7" />
               </svg>
