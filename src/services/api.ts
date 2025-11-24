@@ -110,10 +110,21 @@ api.interceptors.response.use(
     
     // Handle 401 errors (unauthorized)
     if (error.response?.status === 401 && !originalRequest._retry) {
-      console.log('🔄 401 detected on URL:', originalRequest.url)
-      console.log('🔄 Original request retry flag:', originalRequest._retry)
-      console.log('🔄 Is refreshing flag:', isRefreshing)
-      console.log('🔄 Attempting token refresh...')
+      console.groupCollapsed('🔄 401 Intercepted')
+      console.log('Request URL:', originalRequest.url)
+      console.log('Retry flag:', originalRequest._retry)
+      console.log('isRefreshing global:', isRefreshing)
+      const currentAccess = localStorage.getItem('authToken')
+      if (currentAccess) {
+        try {
+          const payload = JSON.parse(atob(currentAccess.split('.')[1]))
+          console.log('Access token exp (unix):', payload.exp, 'now:', Math.floor(Date.now()/1000))
+        } catch { console.log('Could not decode access token payload') }
+      } else {
+        console.log('No access token present in storage at 401 time')
+      }
+      console.log('Attempting refresh...')
+      console.groupEnd()
       
       if (isRefreshing) {
         console.log('⏳ Refresh already in progress, queuing request...')
@@ -144,8 +155,15 @@ api.interceptors.response.use(
         
         // Use separate axios instance to avoid interceptor loop
         // Send refresh_token in request body as per backend API spec
+        console.log('🔄 Sending refresh request (body + Authorization header for compatibility)')
         const response = await refreshApi.post('/api/auth/refresh', {
           refresh_token: refreshToken
+        }, {
+          headers: {
+            // Some backends accept either body or Authorization; sending both avoids mismatch
+            'Authorization': `Bearer ${refreshToken}`,
+            'Content-Type': 'application/json'
+          }
         })
         
         console.log('✅ Refresh API response status:', response.status)

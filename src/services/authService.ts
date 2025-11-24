@@ -272,18 +272,39 @@ export const authService = {
     if (!refreshToken) {
       throw new Error('No refresh token available')
     }
-
-    const response = await api.post<ApiResponse<{ access_token: string; expires_in: number; token_type: string }>>('/api/auth/refresh', {
-      refresh_token: refreshToken
-    })
-    
-    const data = response.data.data
-    if (data.access_token) {
-      localStorage.setItem('authToken', data.access_token)
-      console.log('✅ Token refreshed manually')
+    console.log('🔄 Manual refreshToken() call starting')
+    console.log('🔄 Using refresh token (first 25 chars):', refreshToken.substring(0,25) + '…')
+    try {
+      const response = await api.post<ApiResponse<{ access_token: string; expires_in: number; token_type: string }>>('/api/auth/refresh', {
+        refresh_token: refreshToken
+      })
+      const data = response.data.data
+      console.log('✅ Refresh endpoint responded:', response.status, response.data?.message)
+      if (data.access_token) {
+        localStorage.setItem('authToken', data.access_token)
+        console.log('✅ Access token updated (exp in seconds):', data.expires_in)
+        window.dispatchEvent(new CustomEvent('token:refreshed', { detail: { token: data.access_token, manual: true } }))
+      } else {
+        console.warn('⚠️ Refresh response missing access_token field')
+      }
+      return data
+    } catch (err: any) {
+      console.error('❌ Manual refresh failed:', err?.response?.status, err?.response?.data || err.message)
+      if (err?.response?.status === 401 || err?.response?.status === 403) {
+        console.warn('🔒 Refresh token invalid/expired - clearing auth')
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('refreshToken')
+        localStorage.removeItem('user')
+        localStorage.removeItem('authUser')
+      }
+      throw err
     }
-    
-    return data
+  },
+
+  // Force refresh even if access token still valid (for debugging)
+  async forceRefresh(): Promise<void> {
+    console.log('🛠 forceRefresh() invoked')
+    await this.refreshToken()
   },
 
   // Note: Token refresh is also handled automatically by the API interceptor
