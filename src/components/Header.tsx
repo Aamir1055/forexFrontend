@@ -30,15 +30,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const handleLogout = async () => {
     setShowDropdown(false)
 
-    // Clear auth state immediately so ProtectedRoute blocks dashboard
+    // Clear local auth state immediately and rely on client-side redirect.
     logout()
-
-    try {
-      // Try to invalidate server token (non-blocking for UX)
-      await authService.logout()
-    } catch (error) {
-      console.error('Logout API error (continuing anyway):', error)
-    }
 
     // Compute absolute login URL to avoid any SPA/basename edge cases
     const envBase = (import.meta as any).env?.VITE_ADMIN_BASE_URL as string | undefined
