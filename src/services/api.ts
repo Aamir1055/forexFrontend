@@ -154,8 +154,16 @@ api.interceptors.response.use(
       return Promise.reject(error)
     }
     
-    // Handle 401/403 errors (unauthorized / token expired) -> reactive refresh only
-    if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
+    // Handle 403 (Forbidden) separately — user is authenticated but lacks permission
+    // Do NOT trigger token refresh or logout for permission errors
+    if (error.response?.status === 403) {
+      console.warn('⛔ 403 Forbidden — Access denied for:', originalRequest.url)
+      // Let the calling code handle the 403 (e.g., show "Access Denied" UI)
+      return Promise.reject(error)
+    }
+
+    // Handle 401 errors (unauthorized / token expired) -> reactive refresh only
+    if (error.response?.status === 401 && !originalRequest._retry) {
       console.groupCollapsed('🔄 401 Intercepted')
       console.log('Request URL:', originalRequest.url)
       console.log('Retry flag:', originalRequest._retry)
@@ -248,25 +256,29 @@ api.interceptors.response.use(
         console.error('❌ Refresh error details:', refreshError.response?.data || refreshError.message)
         processQueue(refreshError, null)
         
-        // Always clear tokens when refresh fails
-        localStorage.removeItem('authToken')
-        localStorage.removeItem('refreshToken')
-        localStorage.removeItem('user')
-        localStorage.removeItem('authUser')
-        
-        console.log('🔒 Refresh token failed - redirecting to login')
-        
-        // Immediately redirect to login without any delay
-        const envBase = (import.meta as any).env?.VITE_ADMIN_BASE_URL as string | undefined
-        const base = envBase && envBase.trim().length > 0
-          ? envBase
-          : `${window.location.protocol}//${window.location.host}/brk-eye-adm`
-        const normalized = base.endsWith('/') ? base : `${base}/`
-        const absoluteUrl = `${normalized}login`
-        
-        // Use replace to prevent back navigation to protected pages
-        window.dispatchEvent(new CustomEvent('token:refresh-status', { detail: { ok: false, at: Date.now(), error: refreshError.response?.status } }))
-        window.location.replace(absoluteUrl)
+        // Only auto-logout if the refresh token was explicitly rejected by the backend (401/403)
+        // For network errors, timeouts, or server errors — don't logout, just surface the error
+        const refreshStatus = refreshError.response?.status
+        if (refreshStatus === 401 || refreshStatus === 403 || !localStorage.getItem('refreshToken')) {
+          console.log('🔒 Refresh token rejected or missing — clearing session and redirecting to login')
+          localStorage.removeItem('authToken')
+          localStorage.removeItem('refreshToken')
+          localStorage.removeItem('user')
+          localStorage.removeItem('authUser')
+          
+          const envBase = (import.meta as any).env?.VITE_ADMIN_BASE_URL as string | undefined
+          const base = envBase && envBase.trim().length > 0
+            ? envBase
+            : `${window.location.protocol}//${window.location.host}/brk-eye-adm`
+          const normalized = base.endsWith('/') ? base : `${base}/`
+          const absoluteUrl = `${normalized}login`
+          
+          window.dispatchEvent(new CustomEvent('token:refresh-status', { detail: { ok: false, at: Date.now(), error: refreshStatus } }))
+          window.location.replace(absoluteUrl)
+        } else {
+          console.warn('⚠️ Refresh failed due to network/server error (not logging out):', refreshError.message)
+          window.dispatchEvent(new CustomEvent('token:refresh-status', { detail: { ok: false, at: Date.now(), error: refreshStatus || 'network' } }))
+        }
         
         return Promise.reject(refreshError)
       } finally {

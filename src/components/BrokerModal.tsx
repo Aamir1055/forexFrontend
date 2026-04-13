@@ -1086,21 +1086,19 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                             {errors.phone && <p className="form-error-text">{errors.phone}</p>}
                           </div>
 
-                          {!broker && (
-                            <div>
-                              <label className="form-label">Password *</label>
-                              <input
-                                type="password"
-                                name="password"
-                                value={formData.password || ''}
-                                onChange={handleInputChange}
-                                className="form-input ${errors.password ? 'form-input-error' : ''}"
-                                placeholder="Enter password"
-                                required
-                              />
-                              {errors.password && <p className="form-error-text">{errors.password}</p>}
-                            </div>
-                          )}
+                          <div>
+                            <label className="form-label">{broker ? 'New Password' : 'Password *'}</label>
+                            <input
+                              type="password"
+                              name="password"
+                              value={formData.password || ''}
+                              onChange={handleInputChange}
+                              className="form-input ${errors.password ? 'form-input-error' : ''}"
+                              placeholder={broker ? 'Leave blank to keep current password' : 'Enter password'}
+                              required={!broker}
+                            />
+                            {errors.password && <p className="form-error-text">{errors.password}</p>}
+                          </div>
 
                           <div>
                             <label className="form-label">Account Range From *</label>
