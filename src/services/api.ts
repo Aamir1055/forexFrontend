@@ -31,7 +31,6 @@ const refreshApi = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Enable CORS credentials
 })
 
 // Track if we're currently refreshing to prevent multiple simultaneous refresh attempts
@@ -209,8 +208,8 @@ api.interceptors.response.use(
         
         // Send refresh_token ONLY after backend signals expiry (reactive pattern)
         console.log('🔄 Sending reactive refresh request')
-        const response = await refreshApi.post('/api/auth/refresh', { refresh_token: refreshToken }, {
-          headers: { 'Content-Type': 'application/json' }
+        const response = await refreshApi.post('/api/auth/refresh', {
+          refresh_token: refreshToken
         })
         
         console.log('✅ Refresh API response status:', response.status)
