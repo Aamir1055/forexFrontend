@@ -19,7 +19,6 @@ import {
   Activity
 } from 'lucide-react'
 import { cn } from '../lib/utils'
-import { authService } from '../services/authService'
 import { useAuth } from '../contexts/AuthContext'
 import { usePermissions } from '../contexts/PermissionContext'
 import { MODULES } from '../utils/permissions'
@@ -80,13 +79,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
   const { logout } = useAuth()
   const handleLogout = async () => {
-    // Clear local auth immediately
+    // Clear local auth immediately and rely on client-side redirect.
     logout()
-    try {
-      await authService.logout()
-    } catch (error) {
-      console.error('Logout error (continuing):', error)
-    }
     toast.success('Logged out successfully')
     const base = (import.meta as any).env?.VITE_ADMIN_BASE_URL || `${window.location.protocol}//${window.location.host}/brk-eye-adm`
     const normalized = (typeof base === 'string' && base.endsWith('/')) ? base : `${base}/`

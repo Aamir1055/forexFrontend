@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { buildApiUrl } from '../lib/apiBase'
+import { authService } from '../services/authService'
 
 interface AuthContextType {
   isAuthenticated: boolean
@@ -35,37 +36,62 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [initialized, setInitialized] = useState(false)
   // Reactive-only strategy: no proactive scheduling. Refresh happens only after backend returns 401/403.
 
+  const syncUserFromStorage = () => {
+    const savedUser = localStorage.getItem('user') || localStorage.getItem('authUser')
+
+    if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
+      try {
+        const userData = JSON.parse(savedUser)
+        setUser(userData)
+      } catch (error) {
+        console.error('Error parsing saved user data:', error)
+        localStorage.removeItem('user')
+        localStorage.removeItem('authUser')
+        setUser(null)
+      }
+    } else {
+      setUser(null)
+    }
+  }
+
+  const syncAuthState = async () => {
+    const savedToken = localStorage.getItem('authToken')
+    const savedRefreshToken = localStorage.getItem('refreshToken')
+
+    if (savedToken && savedToken !== 'undefined' && savedToken !== 'null') {
+      setToken(savedToken)
+      setIsAuthenticated(true)
+      syncUserFromStorage()
+      return true
+    }
+
+    if (savedRefreshToken && savedRefreshToken !== 'undefined' && savedRefreshToken !== 'null') {
+      try {
+        console.log('🔄 Access token missing, attempting immediate refresh from AuthContext')
+        const refreshed = await authService.refreshToken()
+        setToken(refreshed.access_token)
+        setIsAuthenticated(true)
+        syncUserFromStorage()
+        return true
+      } catch (error) {
+        console.error('❌ Startup/session refresh failed in AuthContext:', error)
+        setToken(null)
+        setIsAuthenticated(false)
+        syncUserFromStorage()
+        return false
+      }
+    }
+
+    setToken(null)
+    setIsAuthenticated(false)
+    syncUserFromStorage()
+    return false
+  }
+
   useEffect(() => {
     // Check for existing auth on mount
     const checkAndRefreshAuth = async () => {
-      const savedToken = localStorage.getItem('authToken')
-      const savedRefreshToken = localStorage.getItem('refreshToken')
-      const savedUser = localStorage.getItem('user') || localStorage.getItem('authUser')
-
-      // If access token exists, use it
-      if (savedToken && savedToken !== 'undefined' && savedToken !== 'null') {
-        setToken(savedToken)
-        setIsAuthenticated(true)
-      } else if (savedRefreshToken && savedRefreshToken !== 'undefined' && savedRefreshToken !== 'null') {
-        // Keep user tentatively authenticated; first protected request will trigger refresh via interceptor
-        console.log('🔄 Access token missing, refresh token present - waiting for reactive refresh')
-        setIsAuthenticated(true)
-      } else {
-        setIsAuthenticated(false)
-      }
-
-      if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
-        try {
-          const userData = JSON.parse(savedUser)
-          setUser(userData)
-        } catch (error) {
-          console.error('Error parsing saved user data:', error)
-          // Clear invalid user data only; keep tokens so user stays logged in
-          localStorage.removeItem('user')
-          localStorage.removeItem('authUser')
-        }
-      }
-      
+      await syncAuthState()
       setInitialized(true)
     }
 
@@ -77,7 +103,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const handler = async () => {
       const savedToken = localStorage.getItem('authToken')
       const savedRefreshToken = localStorage.getItem('refreshToken')
-      const savedUser = localStorage.getItem('user') || localStorage.getItem('authUser')
 
       // Only update state if token exists
       if (savedToken && savedToken !== 'undefined' && savedToken !== 'null') {
@@ -100,21 +125,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Use replace to prevent back navigation to protected pages
         window.location.replace(absoluteUrl)
       } else if ((savedToken === null || savedToken === 'undefined' || savedToken === 'null') && savedRefreshToken) {
-        console.log('🔄 Access token missing, relying on interceptor for reactive refresh')
-        setIsAuthenticated(true)
+        await syncAuthState()
+      } else {
+        setToken(null)
+        setIsAuthenticated(false)
       }
 
-      if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
-        try {
-          setUser(JSON.parse(savedUser))
-        } catch {
-          setUser(null)
-        }
-      } else if (savedUser === null) {
-        setUser(null)
-      }
+      syncUserFromStorage()
 
       setInitialized(true)
+    }
+
+    const tokenRefreshedListener = (event: Event) => {
+      const customEvent = event as CustomEvent<{ token?: string }>
+      const nextToken = customEvent.detail?.token || localStorage.getItem('authToken')
+      if (nextToken) {
+        setToken(nextToken)
+        setIsAuthenticated(true)
+        syncUserFromStorage()
+      }
     }
 
     const storageListener = (e: StorageEvent) => {
@@ -126,9 +155,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     window.addEventListener('auth:updated', handler as EventListener)
+    window.addEventListener('token:refreshed', tokenRefreshedListener as EventListener)
     window.addEventListener('storage', storageListener)
     return () => {
       window.removeEventListener('auth:updated', handler as EventListener)
+      window.removeEventListener('token:refreshed', tokenRefreshedListener as EventListener)
       window.removeEventListener('storage', storageListener)
     }
   }, [])
