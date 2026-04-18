@@ -34,7 +34,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<{ username: string; email: string } | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [initialized, setInitialized] = useState(false)
-  // Reactive-only strategy: no proactive scheduling. Refresh happens only after backend returns 401/403.
 
   const syncUserFromStorage = () => {
     const savedUser = localStorage.getItem('user') || localStorage.getItem('authUser')

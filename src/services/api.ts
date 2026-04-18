@@ -1,281 +1,210 @@
 import axios from 'axios'
 import { getApiBaseUrl } from '../lib/apiBase'
 
-// Import the redirect utility
+// Redirect utility
 const redirectToLogin = () => {
+  const isDev = (import.meta as any).env?.DEV
   const envBase = (import.meta as any).env?.VITE_ADMIN_BASE_URL as string | undefined
   const base = envBase && envBase.trim().length > 0
     ? envBase
-    : `${window.location.protocol}//${window.location.host}/brk-eye-adm`
+    : isDev
+      ? `${window.location.protocol}//${window.location.host}`
+      : `${window.location.protocol}//${window.location.host}/brk-eye-adm`
   const normalized = base.endsWith('/') ? base : `${base}/`
   const absoluteUrl = `${normalized}login`
-  console.log('🔒 API Error - Redirecting to login:', absoluteUrl)
+  console.log('🔒 [LOGOUT] Redirecting to:', absoluteUrl)
   window.location.href = absoluteUrl
 }
 
+// Timestamp helper for logs
+const ts = () => new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })
+
 const api = axios.create({
   baseURL: getApiBaseUrl(),
-  timeout: 30000, // Increased to 30 seconds
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-// Startup debug
-console.log('🔧 API base URL resolved to:', getApiBaseUrl())
+console.log(`🔧 [${ts()}] API base URL: ${getApiBaseUrl()}`)
 
-// Create a separate instance for refresh calls to avoid interceptor loops
+// Separate instance for refresh calls — no interceptors to avoid loops
 const refreshApi = axios.create({
   baseURL: getApiBaseUrl(),
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Enable CORS credentials
 })
 
-// Track if we're currently refreshing to prevent multiple simultaneous refresh attempts
+// Refresh state
 let isRefreshing = false
 let failedQueue: Array<{ resolve: (value?: any) => void; reject: (reason?: any) => void }> = []
 
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach(({ resolve, reject }) => {
-    if (error) {
-      reject(error)
-    } else {
-      resolve(token)
-    }
+    if (error) reject(error)
+    else resolve(token)
   })
-  
   failedQueue = []
 }
 
-// Helper to check if JWT is expired
-const isTokenExpired = (token: string | null): boolean => {
-  if (!token) return true
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]))
-    const exp = payload.exp
-    if (!exp) return true
-    const now = Math.floor(Date.now() / 1000)
-    // Consider expired if less than 30 seconds remaining
-    return exp <= (now + 30)
-  } catch {
-    return true
-  }
-}
-
-// Request interceptor: check expiry and refresh proactively if needed
+// ─── REQUEST INTERCEPTOR: attach access token ───
 api.interceptors.request.use(
-  async (config) => {
-    // Skip token logic for auth endpoints
+  (config) => {
     const isAuthEndpoint = config.url?.includes('/auth/login') || 
                           config.url?.includes('/auth/refresh') || 
                           config.url?.includes('/auth/verify-2fa')
-    
-    if (isAuthEndpoint) {
-      return config
-    }
+    if (isAuthEndpoint) return config
 
-    let token = localStorage.getItem('authToken')
-    const refreshToken = localStorage.getItem('refreshToken')
-
-    // Proactive refresh: if token expired and we have refresh token, refresh first
-    if (isTokenExpired(token) && refreshToken && !isRefreshing) {
-      console.log('🔄 Token expired, refreshing before request to:', config.url)
-      isRefreshing = true
-      
-      try {
-        const response = await refreshApi.post('/api/auth/refresh', { 
-          refresh_token: refreshToken 
-        })
-        
-        const newAccessToken = response.data?.data?.access_token
-        if (newAccessToken) {
-          localStorage.setItem('authToken', newAccessToken)
-          api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`
-          token = newAccessToken
-          console.log('✅ Proactive token refresh successful')
-          window.dispatchEvent(new CustomEvent('token:refreshed', { 
-            detail: { token: newAccessToken, proactive: true } 
-          }))
-        }
-      } catch (err) {
-        console.error('❌ Proactive refresh failed:', err)
-        // Let the request proceed; if token is invalid, backend will return 401
-      } finally {
-        isRefreshing = false
-      }
-    }
-
-    // Attach current token (possibly refreshed)
-    token = localStorage.getItem('authToken')
+    const token = localStorage.getItem('authToken')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
-      console.log('📤 Request to:', config.url, '| Has token:', true)
+      console.log(`📤 [${ts()}] REQUEST ${config.method?.toUpperCase()} ${config.url}`)
     } else {
-      console.warn('⚠️ No auth token found for request:', config.url)
+      console.warn(`⚠️ [${ts()}] REQUEST ${config.url} — No access token!`)
     }
     return config
   },
   (error) => Promise.reject(error)
 )
 
-// Response interceptor for handling errors
+// ─── RESPONSE INTERCEPTOR: 401/403 → refresh → retry → or logout ───
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`✅ [${ts()}] RESPONSE ${response.status} ${response.config.url}`)
+    return response
+  },
   async (error) => {
     const originalRequest = error.config
+    const status = error.response?.status
 
-    // Log ALL errors for debugging
-    console.log('🔴 Response Interceptor Error:', {
-      url: originalRequest?.url,
-      status: error.response?.status,
-      hasResponse: !!error.response,
-      retry: originalRequest?._retry
-    })
-
-    // Network error fallback: attempt refresh if token likely expired
+    // No response = network error / CORS block
     if (!error.response) {
-      // Likely CORS / network / DNS. Surface clearer diagnostic once per request.
-      if (!originalRequest._networkLogged) {
-        originalRequest._networkLogged = true
-        console.error('🌐 Network-level failure (no response). Possible CORS/preflight rejection for:', originalRequest.url)
-        console.info('🔍 Diagnose: Verify backend CORS allows Origin, Authorization, Content-Type for method', originalRequest.method?.toUpperCase())
-      }
+      console.error(`🌐 [${ts()}] NETWORK ERROR: No response for ${originalRequest?.url} — Check CORS or server`)
       return Promise.reject(error)
     }
-    
-    // Don't retry refresh token requests or login requests to prevent infinite loops
+
+    console.log(`🔴 [${ts()}] RESPONSE ${status} ${originalRequest?.url} | body:`, error.response?.data)
+
+    // Never retry auth endpoints (prevents infinite loop)
     if (originalRequest.url?.includes('/auth/refresh') || 
         originalRequest.url?.includes('/auth/login') ||
         originalRequest.url?.includes('/auth/verify-2fa')) {
-      console.log('🔒 Auth endpoint failed, not retrying:', originalRequest.url)
+      console.log(`⏩ [${ts()}] Skipping refresh for auth endpoint: ${originalRequest.url}`)
       return Promise.reject(error)
     }
-    
-    // Handle 401/403 errors (unauthorized / token expired) -> reactive refresh only
-    if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
-      console.groupCollapsed('🔄 401 Intercepted')
-      console.log('Request URL:', originalRequest.url)
-      console.log('Retry flag:', originalRequest._retry)
-      console.log('isRefreshing global:', isRefreshing)
-      const currentAccess = localStorage.getItem('authToken')
-      if (currentAccess) {
-        try {
-          const payload = JSON.parse(atob(currentAccess.split('.')[1]))
-          console.log('Access token exp (unix):', payload.exp, 'now:', Math.floor(Date.now()/1000))
-        } catch { console.log('Could not decode access token payload') }
-      } else {
-        console.log('No access token present in storage at 401 time')
-      }
-      console.log('Attempting refresh...')
-      console.groupEnd()
-      
+
+    // ─── GOT 401 or 403: Access token expired → try refresh ───
+    // Both 401 and 403 can indicate expired access token depending on backend.
+    // If it's truly a permission issue (not expired token), the retry after refresh
+    // will get 403 again and pass through since _retry is already true.
+    if ((status === 401 || status === 403) && !originalRequest._retry) {
+      console.log(`🔄 [${ts()}] GOT ${status} on ${originalRequest.url} — Will attempt token refresh`)
+
+      // Queue concurrent requests while refreshing
       if (isRefreshing) {
-        console.log('⏳ Refresh already in progress, queuing request...')
-        // If we're already refreshing, queue this request
+        console.log(`⏳ [${ts()}] Refresh in progress, queuing: ${originalRequest.url}`)
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
-        }).then(token => {
-          originalRequest.headers.Authorization = `Bearer ${token}`
+        }).then(newToken => {
+          originalRequest.headers.Authorization = `Bearer ${newToken}`
           return api(originalRequest)
-        }).catch(err => {
-          return Promise.reject(err)
-        })
+        }).catch(err => Promise.reject(err))
       }
 
       originalRequest._retry = true
       isRefreshing = true
 
-      try {
-        const refreshToken = localStorage.getItem('refreshToken')
-        if (!refreshToken) {
-          console.error('❌ No refresh token available in localStorage')
-          console.error('❌ LocalStorage keys:', Object.keys(localStorage))
-          throw new Error('No refresh token available')
-        }
+      const refreshToken = localStorage.getItem('refreshToken')
 
-        console.log('🔄 Refresh token found:', refreshToken.substring(0, 30) + '...')
-        console.log('🔄 API Base URL:', getApiBaseUrl())
-        
-        // Send refresh_token ONLY after backend signals expiry (reactive pattern)
-        console.log('🔄 Sending reactive refresh request')
-        const response = await refreshApi.post('/api/auth/refresh', { refresh_token: refreshToken }, {
-          headers: { 'Content-Type': 'application/json' }
-        })
-        
-        console.log('✅ Refresh API response status:', response.status)
-        console.log('✅ Refresh API response data:', response.data)
-        
-        const responseData = response.data.data || response.data
-        const newAccessToken = responseData.access_token || responseData.accessToken
-        const newRefreshToken = responseData.refresh_token || responseData.refreshToken
-        
-        if (!newAccessToken) {
-          console.error('❌ No access token in refresh response:', responseData)
-          throw new Error('No access token received')
-        }
-        
-        console.log('✅ New access token received')
-        
-        // Store the new access token
-        localStorage.setItem('authToken', newAccessToken)
-        // Ensure all future requests use the fresh token immediately
-        api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`
-        
-        // Update refresh token if provided
-        if (newRefreshToken) {
-          localStorage.setItem('refreshToken', newRefreshToken)
-          console.log('✅ Both tokens refreshed successfully')
-        } else {
-          console.log('✅ Access token refreshed (refresh token unchanged)')
-        }
-        
-        // Update the original request with new token
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-        
-        // Process any queued requests
-        processQueue(null, newAccessToken)
-        
-        // Broadcast token refresh event for WebSocket reconnection
-        window.dispatchEvent(new CustomEvent('token:refreshed', { detail: { token: newAccessToken, reactive: true } }))
-        window.dispatchEvent(new CustomEvent('token:refresh-status', { detail: { ok: true, at: Date.now() } }))
-        
-        return api(originalRequest)
-      } catch (refreshError: any) {
-        console.error('❌ Token refresh failed:', refreshError)
-        console.error('❌ Refresh error details:', refreshError.response?.data || refreshError.message)
-        processQueue(refreshError, null)
-        
-        // Always clear tokens when refresh fails
+      if (!refreshToken) {
+        console.error(`❌ [${ts()}] No refresh token in localStorage — Logging out`)
+        isRefreshing = false
         localStorage.removeItem('authToken')
         localStorage.removeItem('refreshToken')
         localStorage.removeItem('user')
         localStorage.removeItem('authUser')
-        
-        console.log('🔒 Refresh token failed - redirecting to login')
-        
-        // Immediately redirect to login without any delay
-        const envBase = (import.meta as any).env?.VITE_ADMIN_BASE_URL as string | undefined
-        const base = envBase && envBase.trim().length > 0
-          ? envBase
-          : `${window.location.protocol}//${window.location.host}/brk-eye-adm`
-        const normalized = base.endsWith('/') ? base : `${base}/`
-        const absoluteUrl = `${normalized}login`
-        
-        // Use replace to prevent back navigation to protected pages
-        window.dispatchEvent(new CustomEvent('token:refresh-status', { detail: { ok: false, at: Date.now(), error: refreshError.response?.status } }))
-        window.location.replace(absoluteUrl)
-        
+        redirectToLogin()
+        return Promise.reject(error)
+      }
+
+      console.log(`🔄 [${ts()}] CALLING /api/auth/refresh with current refresh token ...`)
+
+      try {
+        // Send refresh token in BOTH Authorization header AND body
+        // to cover both possible backend expectations
+        const response = await refreshApi.post('/api/auth/refresh', 
+          { refresh_token: refreshToken },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${refreshToken}`
+            }
+          }
+        )
+
+        console.log(`✅ [${ts()}] REFRESH SUCCESS — Server responded ${response.status}`)
+        console.log(`✅ [${ts()}] REFRESH response data:`, response.data)
+
+        const responseData = response.data?.data || response.data
+        const newAccessToken = responseData?.access_token || responseData?.accessToken || responseData?.token
+        const newRefreshToken = responseData?.refresh_token || responseData?.refreshToken
+
+        if (!newAccessToken) {
+          console.error(`❌ [${ts()}] REFRESH response missing access_token. Full response:`, JSON.stringify(response.data))
+          throw new Error('No access token in refresh response')
+        }
+
+        // Store new access token
+        localStorage.setItem('authToken', newAccessToken)
+        api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`
+        console.log(`✅ [${ts()}] NEW ACCESS TOKEN stored successfully`)
+
+        // Store rotated refresh token if provided
+        if (newRefreshToken) {
+          localStorage.setItem('refreshToken', newRefreshToken)
+          console.log(`✅ [${ts()}] NEW REFRESH TOKEN stored (rotated)`)
+        } else {
+          console.log(`ℹ️ [${ts()}] Refresh token unchanged (no rotation)`)
+        }
+
+        // Retry the original failed request with new access token
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+        console.log(`🔄 [${ts()}] RETRYING original request: ${originalRequest.url}`)
+
+        processQueue(null, newAccessToken)
+        window.dispatchEvent(new CustomEvent('token:refreshed', { detail: { token: newAccessToken } }))
+
+        return api(originalRequest)
+
+      } catch (refreshError: any) {
+        const rStatus = refreshError?.response?.status
+        const rData = refreshError?.response?.data
+        const rMsg = rData?.message || refreshError.message
+
+        console.error(`❌ [${ts()}] REFRESH FAILED — Status: ${rStatus || 'N/A'} | ${rMsg}`)
+        console.error(`❌ [${ts()}] REFRESH error response:`, rData)
+        console.error(`🔒 [${ts()}] REFRESH TOKEN EXPIRED/INVALID — Clearing tokens & redirecting to login`)
+
+        processQueue(refreshError, null)
+
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('refreshToken')
+        localStorage.removeItem('user')
+        localStorage.removeItem('authUser')
+
+        redirectToLogin()
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false
       }
     }
-    
+
     return Promise.reject(error)
   }
 )
 
 export default api
+export { refreshApi }

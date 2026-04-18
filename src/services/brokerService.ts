@@ -34,7 +34,9 @@ export const brokerService = {
 
   // Update broker
   async updateBroker(id: number, brokerData: UpdateBrokerData): Promise<Broker> {
+    console.log(`📤 [brokerService] PUT /api/brokers/${id}`, JSON.stringify(brokerData))
     const response = await api.put<ApiResponse<{ broker: Broker }>>(`/api/brokers/${id}`, brokerData)
+    console.log(`✅ [brokerService] Update response:`, response.data)
     return response.data.data.broker
   },
 

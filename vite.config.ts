@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
       },
       proxy: {
         '/api': {
-          target: 'http://185.136.159.142:8080',
+          target: 'https://api.brokereye.work.gd',
           changeOrigin: true,
           secure: false,
           configure: (proxy, _options) => {

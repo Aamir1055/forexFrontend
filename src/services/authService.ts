@@ -1,4 +1,4 @@
-import api from './api'
+import api, { refreshApi } from './api'
 import { ApiResponse } from '../types'
 
 export interface LoginRequest {
@@ -272,26 +272,35 @@ export const authService = {
     if (!refreshToken) {
       throw new Error('No refresh token available')
     }
-    console.log('🔄 Manual refreshToken() call starting')
-    console.log('🔄 Using refresh token (first 25 chars):', refreshToken.substring(0,25) + '…')
+    console.log('🔄 [authService] Calling /api/auth/refresh ...')
     try {
-      const response = await api.post<ApiResponse<{ access_token: string; expires_in: number; token_type: string }>>('/api/auth/refresh', {
-        refresh_token: refreshToken
-      })
+      // Send refresh token in both Authorization header AND body
+      const response = await refreshApi.post<ApiResponse<{ access_token: string; expires_in: number; token_type: string }>>('/api/auth/refresh', 
+        { refresh_token: refreshToken },
+        {
+          headers: {
+            'Authorization': `Bearer ${refreshToken}`
+          }
+        }
+      )
       const data = response.data.data
-      console.log('✅ Refresh endpoint responded:', response.status, response.data?.message)
+      console.log('✅ [authService] Refresh responded:', response.status)
       if (data.access_token) {
         localStorage.setItem('authToken', data.access_token)
-        console.log('✅ Access token updated (exp in seconds):', data.expires_in)
-        window.dispatchEvent(new CustomEvent('token:refreshed', { detail: { token: data.access_token, manual: true } }))
-      } else {
-        console.warn('⚠️ Refresh response missing access_token field')
+        console.log('✅ [authService] New access token stored')
+        // Also save rotated refresh token if backend returns one
+        const newRefresh = (data as any).refresh_token || (data as any).refreshToken
+        if (newRefresh) {
+          localStorage.setItem('refreshToken', newRefresh)
+          console.log('✅ [authService] Refresh token rotated & stored')
+        }
+        window.dispatchEvent(new CustomEvent('token:refreshed', { detail: { token: data.access_token } }))
       }
       return data
     } catch (err: any) {
-      console.error('❌ Manual refresh failed:', err?.response?.status, err?.response?.data || err.message)
+      console.error('❌ [authService] Refresh failed:', err?.response?.status, err?.response?.data?.message || err.message)
       if (err?.response?.status === 401 || err?.response?.status === 403) {
-        console.warn('🔒 Refresh token invalid/expired - clearing auth')
+        console.error('🔒 [authService] Refresh token expired — clearing auth')
         localStorage.removeItem('authToken')
         localStorage.removeItem('refreshToken')
         localStorage.removeItem('user')
@@ -378,23 +387,4 @@ export const authService = {
   getRefreshToken(): string | null {
     return localStorage.getItem('refreshToken')
   },
-
-  // Check if token is expired or about to expire (within 5 minutes)
-  isTokenExpired(): boolean {
-    const token = this.getToken()
-    if (!token) return true
-
-    try {
-      // Decode JWT token to check expiration
-      const base64Payload = token.split('.')[1]
-      const payload = JSON.parse(atob(base64Payload))
-      const currentTime = Math.floor(Date.now() / 1000)
-      const bufferTime = 5 * 60 // 5 minutes buffer
-      
-      return payload.exp < (currentTime + bufferTime)
-    } catch (error) {
-      console.error('Error decoding token:', error)
-      return true // Assume expired if we can't decode
-    }
-  }
 }

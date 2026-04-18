@@ -449,9 +449,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
       }
 
       // Clean up data for API submission
-      const cleanedData = {
+      const cleanedData: Record<string, any> = {
         username: formData.username,
-        password: formData.password || undefined,
         full_name: formData.full_name,
         email: formData.email,
         phone: formData.phone,
@@ -464,8 +463,16 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
         right_ids: selectedRights // Use selected permissions
       }
 
+      // Only include password if user actually typed one
+      if (formData.password && formData.password.trim().length > 0) {
+        cleanedData.password = formData.password
+        console.log('🔑 Password included in update payload')
+      }
+
+      console.log('📤 Submitting broker data:', { ...cleanedData, password: cleanedData.password ? '***' : undefined })
+
       // Create/update the broker
-      const result = await onSubmit(cleanedData)
+      const result = await onSubmit(cleanedData as CreateBrokerData | UpdateBrokerData)
       
       // If this was a new broker creation and we have pending mappings, save them
       if (!broker && pendingMappings.length > 0 && result?.id) {
@@ -1086,21 +1093,19 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                             {errors.phone && <p className="form-error-text">{errors.phone}</p>}
                           </div>
 
-                          {!broker && (
-                            <div>
-                              <label className="form-label">Password *</label>
-                              <input
-                                type="password"
-                                name="password"
-                                value={formData.password || ''}
-                                onChange={handleInputChange}
-                                className="form-input ${errors.password ? 'form-input-error' : ''}"
-                                placeholder="Enter password"
-                                required
-                              />
-                              {errors.password && <p className="form-error-text">{errors.password}</p>}
-                            </div>
-                          )}
+                          <div>
+                            <label className="form-label">{broker ? 'New Password' : 'Password *'}</label>
+                            <input
+                              type="password"
+                              name="password"
+                              value={formData.password || ''}
+                              onChange={handleInputChange}
+                              className="form-input ${errors.password ? 'form-input-error' : ''}"
+                              placeholder={broker ? 'Leave blank to keep current' : 'Enter password'}
+                              required={!broker}
+                            />
+                            {errors.password && <p className="form-error-text">{errors.password}</p>}
+                          </div>
 
                           <div>
                             <label className="form-label">Account Range From *</label>
