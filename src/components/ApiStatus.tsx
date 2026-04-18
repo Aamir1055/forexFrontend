@@ -8,7 +8,9 @@ const ApiStatus: React.FC = () => {
 
   const checkApiStatus = async () => {
     try {
-      await api.get('/api/users?page=1&limit=1')
+      // Use a lightweight health-check that won't trigger auth refresh logic
+      const baseUrl = api.defaults.baseURL || ''
+      await fetch(`${baseUrl}/api/health`, { method: 'GET', signal: AbortSignal.timeout(5000) })
       setStatus('connected')
     } catch (error) {
       setStatus('disconnected')
