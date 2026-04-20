@@ -1,0 +1,53 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /brk-eye-adm/
+
+  # 1) Proxy API requests to backend on :8080 (avoid CORS)
+  # Requires mod_proxy + mod_proxy_http + mod_rewrite enabled in Apache
+  # Example: http://57.129.88.254/brk-eye-adm -> app, http://57.129.88.254/api -> backend via proxy
+  RewriteCond %{REQUEST_URI} ^/api/
+  RewriteRule ^api/(.*)$ https://api.brokereye.app/api/$1 [P,L]
+  
+  # 2) Don't rewrite files or directories (for SPA assets)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # 3) Rewrite everything else to index.html to allow React Router to work
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes
+
+# Cache static assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+  
+  # Images
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  
+  # CSS and JavaScript
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  
+  # Fonts
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/ttf "access plus 1 year"
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+  # Prevent clickjacking
+  Header always set X-Frame-Options "SAMEORIGIN"
+  
+  # Prevent MIME type sniffing
+  Header always set X-Content-Type-Options "nosniff"
+  
+  # Enable XSS protection
+  Header always set X-XSS-Protection "1; mode=block"
+</IfModule>

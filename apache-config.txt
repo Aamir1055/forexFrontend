@@ -1,0 +1,58 @@
+# Apache Reverse Proxy Configuration for Broker Eye Admin Panel
+# Copy this configuration to your XAMPP Apache config
+
+# Step 1: Enable required modules in httpd.conf
+# Edit: C:\xampp\apache\conf\httpd.conf
+# Uncomment these lines (remove the # at the beginning):
+
+LoadModule proxy_module modules/mod_proxy.so
+LoadModule proxy_http_module modules/mod_proxy_http.so
+LoadModule headers_module modules/mod_headers.so
+LoadModule rewrite_module modules/mod_rewrite.so
+
+# Step 2: Add VirtualHost configuration
+# Edit: C:\xampp\apache\conf\extra\httpd-vhosts.conf
+# Add this at the end of the file:
+
+<VirtualHost *:80>
+  ServerName 185.136.159.142
+  DocumentRoot "C:/xampp/htdocs"
+
+  <Directory "C:/xampp/htdocs">
+    AllowOverride All
+    Require all granted
+  </Directory>
+
+  # Serve admin SPA at /brk-eye-adm
+  Alias /brk-eye-adm "C:/xampp/htdocs/brk-eye-adm"
+  <Directory "C:/xampp/htdocs/brk-eye-adm">
+    AllowOverride All
+    Require all granted
+    
+    # Enable SPA routing - all requests go to index.html
+    RewriteEngine On
+    RewriteBase /brk-eye-adm/
+    RewriteRule ^index\.html$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /brk-eye-adm/index.html [L]
+  </Directory>
+
+  # Reverse proxy API to backend on port 8080
+  # This eliminates CORS by making API same-origin
+  ProxyPass        /api http://127.0.0.1:8080/api
+  ProxyPassReverse /api http://127.0.0.1:8080/api
+  
+  # Preserve client information
+  ProxyPreserveHost On
+  RequestHeader set X-Forwarded-Proto "http"
+  RequestHeader set X-Forwarded-For "%{REMOTE_ADDR}s"
+</VirtualHost>
+
+# Step 3: Restart Apache
+# In XAMPP Control Panel, click "Stop" then "Start" for Apache
+
+# Step 4: Test
+# Frontend: http://185.136.159.142/brk-eye-adm/
+# API (via proxy): http://185.136.159.142/api/users
+# Backend direct: http://185.136.159.142:8080/api/users
