@@ -1176,7 +1176,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                       </motion.div>
                     )}
 
-                    {/* Assign Profile Tab - Only for CREATE */}
+                    {/* Assign Profile Tab - Only for CREATE and EDIT */}
                     {activeTab === 'profiles' && !broker && (
                       <motion.div
                         key="profiles"
@@ -1185,7 +1185,9 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <div className="mb-4">
+                        {/* Scrollable container for Assign Profile tab (CREATE only) */}
+                        <div className="max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">
+                          <div className="mb-4">
                           <div className="mb-3">
                             <h3 className="text-base font-semibold text-gray-900 mb-1">Assign Profile</h3>
                             <p className="text-xs text-gray-600">
@@ -1340,7 +1342,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                             {profileSearchQuery && ` - ${filteredRights.length} match${filteredRights.length !== 1 ? 'es' : ''}`}
                                           </h4>
                                         </div>
-                                        <div className="space-y-2 overflow-y-auto pr-2" style={{ maxHeight: '400px' }}>
+                                        <div className="space-y-2 pr-2">
                                           {Object.entries(
                                             filteredRights.reduce((acc, right) => {
                                               const category = right.category || 'Other'
@@ -1473,7 +1475,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                             </div>
                                           </div>
 
-                                          <div className="space-y-1.5 overflow-y-auto pr-2" style={{ maxHeight: '400px' }}>
+                                          <div className="space-y-1.5 pr-2">
                                             {paginatedGroups.length > 0 ? paginatedGroups.map((group) => (
                                               <details 
                                                 key={group.id}
@@ -1559,6 +1561,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                             <p className="text-xs text-gray-500">Select a profile from the dropdown above to view and edit its rights and groups.</p>
                           </div>
                         )}
+                          {/* Close scrollable container for Assign Profile tab */}
+                        </div>
                       </motion.div>
                     )}
 
@@ -2178,7 +2182,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                               </table>
                             </div>
                           </div>
-                          {/* End scrollable container */}
+                            {/* End scrollable container */}
                           </div>
                         </div>
                       </motion.div>
