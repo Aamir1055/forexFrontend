@@ -1022,7 +1022,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
+                <div className="p-6 max-h-[60vh] overflow-y-auto">
                   {/* Tab Content */}
                   <AnimatePresence mode="wait">
                     {activeTab === 'basic' && (
@@ -1754,7 +1754,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                   </div>
 
                                   {/* Groups as Dropdown/Accordion Style */}
-                                  <div className="space-y-1.5 overflow-y-auto pr-2" style={{ maxHeight: '400px' }}>
+                                  <div className="space-y-1.5 pr-2">
                                     {paginatedGroups.map((group) => {
                                       const isSelected = selectedGroups.includes(group.id)
                                       return (
