@@ -42,42 +42,36 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
   onPageChange
 }) => {
     const [brokerRights, setBrokerRights] = useState<{ [key: number]: number }>({})
-  const [loadingRights, setLoadingRights] = useState<{ [key: number]: boolean }>({})
+    const [loadingRights, setLoadingRights] = useState<{ [key: number]: boolean }>({})
 
-  // Fetch rights count for brokers efficiently - all at once in parallel
-  useEffect(() => {
-    const fetchAllRightsCount = async () => {
-      if (brokers.length === 0) return
+    // Only fetch rights when the table is first loaded or when the page changes
+    useEffect(() => {
+      const fetchAllRightsCount = async () => {
+        if (!brokers || brokers.length === 0) return
 
-      // Fetch all broker rights in parallel
-      const rightsPromises = brokers.map(async (broker) => {
-        setLoadingRights(prev => ({ ...prev, [broker.id]: true }))
-        
-        try {
-          const rights = await brokerRightsService.getBrokerRights(broker.id)
-          return { brokerId: broker.id, count: rights.length }
-        } catch (error) {
-          // Silently fail for individual brokers
-          return { brokerId: broker.id, count: 0 }
-        } finally {
-          setLoadingRights(prev => ({ ...prev, [broker.id]: false }))
-        }
-      })
+        // Fetch all broker rights in parallel for current page only
+        const rightsPromises = brokers.map(async (broker) => {
+          setLoadingRights(prev => ({ ...prev, [broker.id]: true }))
+          try {
+            const rights = await brokerRightsService.getBrokerRights(broker.id)
+            return { brokerId: broker.id, count: rights.length }
+          } catch (error) {
+            return { brokerId: broker.id, count: 0 }
+          } finally {
+            setLoadingRights(prev => ({ ...prev, [broker.id]: false }))
+          }
+        })
 
-      // Wait for all requests to complete
-      const results = await Promise.all(rightsPromises)
-      
-      // Update state with all results at once
-      const rightsData = results.reduce((acc, { brokerId, count }) => {
-        acc[brokerId] = count
-        return acc
-      }, {} as { [key: number]: number })
-      
-      setBrokerRights(rightsData)
-    }
+        const results = await Promise.all(rightsPromises)
+        const rightsData = results.reduce((acc, { brokerId, count }) => {
+          acc[brokerId] = count
+          return acc
+        }, {} as { [key: number]: number })
+        setBrokerRights(rightsData)
+      }
 
-    fetchAllRightsCount()
-  }, [brokers])
+      fetchAllRightsCount()
+    }, [currentPage, brokers])
 
   const getRightsDisplay = (brokerId: number) => {
     if (loadingRights[brokerId]) {

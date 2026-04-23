@@ -45,7 +45,7 @@ const Brokers: React.FC = () => {
   })
   const [searchTerm, setSearchTerm] = useState('')
   const [showFilters, setShowFilters] = useState(false)
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(50)
   const queryClient = useQueryClient()
 
   // Fetch brokers
@@ -291,27 +291,8 @@ const Brokers: React.FC = () => {
   // Generate dynamic pagination options based on total items
   const totalItems = brokersData?.pagination?.total || 0
   const paginationOptions = useMemo(() => {
-    const options = []
-    const baseOptions = [10, 25, 50, 100]
-    
-    for (const option of baseOptions) {
-      if (option < totalItems) {
-        options.push(option)
-      }
-    }
-    
-    // Always add "All" option at the end if we have items
-    if (totalItems > 0) {
-      options.push(totalItems) // Show exact total
-    }
-    
-    // If no options were added (totalItems is very small), add at least one option
-    if (options.length === 0 && totalItems > 0) {
-      options.push(totalItems)
-    }
-    
-    return options
-  }, [totalItems])
+    return [10, 25, 50]
+  }, [])
 
   // Apply client-side sorting for count fields
   const sortedBrokers = useMemo(() => {
@@ -469,17 +450,6 @@ const Brokers: React.FC = () => {
                 >
                   <FunnelIcon className="w-4 h-4" />
                   <span>Filters</span>
-                </button>
-                <button
-                  onClick={() => setIsGlobalSyncModalOpen(true)}
-                  disabled={!brokersData?.brokers || brokersData.brokers.length === 0}
-                  className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 font-semibold text-xs group disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Sync rights to all brokers at once"
-                >
-                  <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  <span>Sync Rights to All</span>
                 </button>
                 <button
                   onClick={handleRefresh}
