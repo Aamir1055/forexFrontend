@@ -978,32 +978,30 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                       Add Account Mapping
                     </button>
                     
-                    {/* Show Rights & Groups tabs only when EDITING */}
+                    {/* Show Rights tab for both create and edit, Groups only for edit */}
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('rights')}
+                      className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
+                        activeTab === 'rights'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      Rights
+                    </button>
                     {broker && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => setActiveTab('rights')}
-                          className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
-                            activeTab === 'rights'
-                              ? 'border-blue-500 text-blue-600'
-                              : 'border-transparent text-gray-500 hover:text-gray-700'
-                          }`}
-                        >
-                          Rights
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setActiveTab('groups')}
-                          className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
-                            activeTab === 'groups'
-                              ? 'border-blue-500 text-blue-600'
-                              : 'border-transparent text-gray-500 hover:text-gray-700'
-                          }`}
-                        >
-                          Groups
-                        </button>
-                      </>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('groups')}
+                        className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
+                          activeTab === 'groups'
+                            ? 'border-blue-500 text-blue-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
+                      >
+                        Groups
+                      </button>
                     )}
                     
                     {/* Show Assign Profile tab only when CREATING */}
@@ -1834,6 +1832,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         transition={{ duration: 0.2 }}
                         className=""
                       >
+                        {/* Scrollable container for Add Account Mapping section */}
+                        <div className="max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">
                         <div className="flex items-start justify-between mb-4">
                           <div>
                             <h3 className="text-base font-semibold text-gray-900 mb-1">Account Mappings</h3>
@@ -2177,6 +2177,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                 </tbody>
                               </table>
                             </div>
+                          </div>
+                          {/* End scrollable container */}
                           </div>
                         </div>
                       </motion.div>

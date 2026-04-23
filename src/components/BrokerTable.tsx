@@ -41,43 +41,13 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
   currentPage,
   onPageChange
 }) => {
-    const [brokerRights, setBrokerRights] = useState<{ [key: number]: number }>({})
-    const [loadingRights, setLoadingRights] = useState<{ [key: number]: boolean }>({})
 
-    // Only fetch rights when the table is first loaded or when the page changes
-    useEffect(() => {
-      const fetchAllRightsCount = async () => {
-        if (!brokers || brokers.length === 0) return
-
-        // Fetch all broker rights in parallel for current page only
-        const rightsPromises = brokers.map(async (broker) => {
-          setLoadingRights(prev => ({ ...prev, [broker.id]: true }))
-          try {
-            const rights = await brokerRightsService.getBrokerRights(broker.id)
-            return { brokerId: broker.id, count: rights.length }
-          } catch (error) {
-            return { brokerId: broker.id, count: 0 }
-          } finally {
-            setLoadingRights(prev => ({ ...prev, [broker.id]: false }))
-          }
-        })
-
-        const results = await Promise.all(rightsPromises)
-        const rightsData = results.reduce((acc, { brokerId, count }) => {
-          acc[brokerId] = count
-          return acc
-        }, {} as { [key: number]: number })
-        setBrokerRights(rightsData)
-      }
-
-      fetchAllRightsCount()
-    }, [currentPage, brokers])
+    // No need to fetch rights separately; use rights_count from brokers API response
+    // Remove brokerRights and loadingRights state and effect
 
   const getRightsDisplay = (brokerId: number) => {
-    if (loadingRights[brokerId]) {
-      return <span className="text-xs animate-pulse text-purple-400">...</span>
-    }
-    return brokerRights[brokerId] ?? 0
+    const broker = brokers.find(b => b.id === brokerId)
+    return broker?.rights_count ?? 0
   }
 
   if (isLoading) {
