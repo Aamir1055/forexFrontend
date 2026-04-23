@@ -118,7 +118,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
               <div key={broker.id} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="text-sm font-medium text-gray-900">{broker.full_name || 'Unnamed Broker'}</h3>
+                    <h3 className="text-sm font-medium text-gray-900">{broker.username || 'No Username'}</h3>
                     <p className="text-sm text-gray-500">{broker.email || 'No email'}</p>
                     <p className="text-sm text-gray-500">{broker.phone}</p>
                     <p className="text-sm text-gray-500">Range: {broker.account_range_from} - {broker.account_range_to}</p>
@@ -191,7 +191,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                   title="Click to sort"
                 >
                   <div className="flex items-center space-x-1">
-                    <span>Broker</span>
+                    <span>Username</span>
                     {currentSort.field === 'full_name' && (
                       <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                     )}
@@ -292,7 +292,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                 }`}>
                   <td className="px-2 py-2">
                     <p className="text-xs font-semibold text-gray-900">
-                      {broker.full_name || 'Unnamed Broker'}
+                      {broker.username || 'No Username'}
                     </p>
                   </td>
                   <td className="px-2 py-2">
