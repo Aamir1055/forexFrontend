@@ -212,13 +212,36 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
 
   // Create account mapping mutation
   const createAccountMappingMutation = useMutation(
-    (mappingData: { field_name: string; operator_type: string; field_value: string }) =>
-      accountMappingService.createAccountMapping(broker!.id, mappingData),
+    async (mappingData: { field_name: string; operator_type: string; field_value: string }) => {
+      const newMapping = await accountMappingService.createAccountMapping(broker!.id, mappingData)
+      // Fetch the updated broker object after mapping change
+      try {
+        const updatedBroker = await brokerService.getBrokerById(broker!.id)
+        return { newMapping, updatedBroker }
+      } catch {
+        return { newMapping, updatedBroker: null }
+      }
+    },
     {
-      onSuccess: (newMapping) => {
-        setAccountMappings(prev => [...prev, newMapping])
+      onSuccess: (data, variables, context) => {
+        setAccountMappings(prev => [...prev, data.newMapping])
         queryClient.invalidateQueries(['account-mappings', broker!.id])
-        queryClient.invalidateQueries(['brokers']) // Ensure broker list updates
+        // Update all broker list queries in cache
+        if (data.updatedBroker && data.updatedBroker.id) {
+          queryClient.getQueryCache().findAll(["brokers"]).forEach((query: any) => {
+            queryClient.setQueryData(query.queryKey, (oldData: any) => {
+              if (!oldData || !oldData.brokers) return oldData;
+              return {
+                ...oldData,
+                brokers: oldData.brokers.map((b: any) =>
+                  b.id === data.updatedBroker.id ? data.updatedBroker : b
+                )
+              };
+            });
+          });
+        } else {
+          queryClient.invalidateQueries(['brokers']);
+        }
         setAccountMappingData({ field_name: '', operator_type: '=', field_value: '' })
         setAccountMappingErrors({})
         toast.success('Account mapping added successfully!')
@@ -231,13 +254,34 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
 
   // Delete account mapping mutation
   const deleteAccountMappingMutation = useMutation(
-    (mappingId: number) => accountMappingService.deleteAccountMapping(broker!.id, mappingId),
+    async (mappingId: number) => {
+      await accountMappingService.deleteAccountMapping(broker!.id, mappingId)
+      try {
+        const updatedBroker = await brokerService.getBrokerById(broker!.id)
+        return { updatedBroker }
+      } catch {
+        return { updatedBroker: null }
+      }
+    },
     {
-      onSuccess: async (_, mappingId) => {
+      onSuccess: (data, mappingId) => {
         setAccountMappings(prev => prev.filter(mapping => mapping.id !== mappingId))
         queryClient.invalidateQueries(['account-mappings', broker!.id])
-        await queryClient.invalidateQueries(['brokers']) // Ensure broker list updates
-        await queryClient.refetchQueries(['brokers']) // Force immediate refetch for instant UI update
+        if (data.updatedBroker && data.updatedBroker.id) {
+          queryClient.getQueryCache().findAll(["brokers"]).forEach((query: any) => {
+            queryClient.setQueryData(query.queryKey, (oldData: any) => {
+              if (!oldData || !oldData.brokers) return oldData;
+              return {
+                ...oldData,
+                brokers: oldData.brokers.map((b: any) =>
+                  b.id === data.updatedBroker.id ? data.updatedBroker : b
+                )
+              };
+            });
+          });
+        } else {
+          queryClient.invalidateQueries(['brokers']);
+        }
         toast.success('Account mapping deleted successfully!')
       },
       onError: (error: any) => {
