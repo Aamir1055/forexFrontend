@@ -194,6 +194,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     {
       onSuccess: ({ successCount, errorCount }) => {
         queryClient.invalidateQueries(['broker-rights'])
+        queryClient.invalidateQueries(['brokers']) // Ensure broker list updates
         if (errorCount === 0) {
           toast.success(`Successfully synced rights to all ${successCount} brokers!`)
         } else {
@@ -215,11 +216,9 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
       accountMappingService.createAccountMapping(broker!.id, mappingData),
     {
       onSuccess: (newMapping) => {
-        // Update local state immediately for instant UI feedback
         setAccountMappings(prev => [...prev, newMapping])
-        // Invalidate and refetch the cache to keep it in sync
         queryClient.invalidateQueries(['account-mappings', broker!.id])
-        // Reset form
+        queryClient.invalidateQueries(['brokers']) // Ensure broker list updates
         setAccountMappingData({ field_name: '', operator_type: '=', field_value: '' })
         setAccountMappingErrors({})
         toast.success('Account mapping added successfully!')
@@ -234,11 +233,11 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   const deleteAccountMappingMutation = useMutation(
     (mappingId: number) => accountMappingService.deleteAccountMapping(broker!.id, mappingId),
     {
-      onSuccess: (_, mappingId) => {
-        // Update local state immediately for instant UI feedback
+      onSuccess: async (_, mappingId) => {
         setAccountMappings(prev => prev.filter(mapping => mapping.id !== mappingId))
-        // Invalidate and refetch the cache to keep it in sync
         queryClient.invalidateQueries(['account-mappings', broker!.id])
+        await queryClient.invalidateQueries(['brokers']) // Ensure broker list updates
+        await queryClient.refetchQueries(['brokers']) // Force immediate refetch for instant UI update
         toast.success('Account mapping deleted successfully!')
       },
       onError: (error: any) => {
@@ -280,6 +279,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['broker-rights'])
+        queryClient.invalidateQueries(['brokers']) // Ensure broker list updates
         toast.success('Broker permissions updated successfully!')
       },
       onError: (error: any) => {
