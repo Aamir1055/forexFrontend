@@ -1022,18 +1022,20 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                       Add Account Mapping
                     </button>
                     
-                    {/* Show Rights tab for both create and edit, Groups only for edit */}
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('rights')}
-                      className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
-                        activeTab === 'rights'
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700'
-                      }`}
-                    >
-                      Rights
-                    </button>
+                    {/* Show Rights tab only for EDIT (not for create) */}
+                    {broker && (
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('rights')}
+                        className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
+                          activeTab === 'rights'
+                            ? 'border-blue-500 text-blue-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
+                      >
+                        Rights
+                      </button>
+                    )}
                     {broker && (
                       <button
                         type="button"
@@ -1610,8 +1612,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                       </motion.div>
                     )}
 
-                    {/* Rights Tab */}
-                    {activeTab === 'rights' && (
+                    {/* Rights Tab - Only for EDIT (not for create) */}
+                    {activeTab === 'rights' && broker && (
                       <motion.div
                         key="rights"
                         initial={{ opacity: 0, x: 20 }}
