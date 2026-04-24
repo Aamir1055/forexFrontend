@@ -413,15 +413,22 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
       setSelectedRights(brokerRights.map(right => right.id))
     }
   }, [broker, brokerRights])
-  
+
   useEffect(() => {
     if (broker && brokerGroups) {
       // Set selected groups for existing broker
       const groupIds = brokerGroups.map(group => group.group_id)
-      console.log('Setting selected groups:', groupIds, 'from brokerGroups:', brokerGroups)
       setSelectedGroups(groupIds)
     }
   }, [broker, brokerGroups])
+
+  // Automatically sync Assign Profile tab selections to main state when leaving the tab (for create broker)
+  useEffect(() => {
+    if (!broker && activeTab !== 'profiles') {
+      setSelectedRights(editableRolePermissions)
+      setSelectedGroups(editableProfileGroups)
+    }
+  }, [activeTab, broker, editableRolePermissions, editableProfileGroups])
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
@@ -492,6 +499,11 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
         }
       }
 
+      // For create broker, use Assign Profile selections (editableRolePermissions/editableProfileGroups)
+      // For edit broker, use selectedRights/selectedGroups
+      const rightsToSync = !broker ? editableRolePermissions : selectedRights
+      const groupsToSync = !broker ? editableProfileGroups : selectedGroups
+
       // Clean up data for API submission
       const cleanedData: Record<string, any> = {
         username: formData.username,
@@ -504,7 +516,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
         credit_limit: formData.credit_limit,
         default_percentage: formData.default_percentage,
         match_all_condition: formData.match_all_condition,
-        right_ids: selectedRights // Use selected permissions
+        right_ids: rightsToSync // Use selected permissions
       }
 
       // Only include password if user actually typed one
@@ -542,14 +554,13 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
         // Sync rights
         await syncRightsMutation.mutateAsync({ 
           brokerId: brokerId, 
-          rightIds: selectedRights 
+          rightIds: rightsToSync 
         })
         
         // Sync groups (always sync, even if empty to handle removal)
-        console.log('📤 Submitting groups sync:', { brokerId, selectedGroups })
         await syncGroupsMutation.mutateAsync({
           brokerId: brokerId,
-          groupIds: selectedGroups
+          groupIds: groupsToSync
         })
       }
     } catch (error) {
