@@ -186,30 +186,10 @@ const Groups: React.FC = () => {
   const groups = groupsData?.groups || []
   const pagination = groupsData?.pagination
 
-  // Generate dynamic pagination options based on total items
-  const totalItems = pagination?.total || 0
-  const paginationOptions = useMemo(() => {
-    const options = []
-    const baseOptions = [10, 20, 50, 100]
+  // Use fixed pagination options: 10, 25, 50
+  const paginationOptions = [10, 25, 50]
     
-    for (const option of baseOptions) {
-      if (option < totalItems) {
-        options.push(option)
-      }
-    }
-    
-    // Always add "All" option at the end if we have items
-    if (totalItems > 0) {
-      options.push(totalItems) // Show exact total
-    }
-    
-    // If no options were added (totalItems is very small), add at least one option
-    if (options.length === 0 && totalItems > 0) {
-      options.push(totalItems)
-    }
-    
-    return options
-  }, [totalItems])
+  // ...existing code...
 
   // Reset to page 1 when pageSize changes
   useEffect(() => {
@@ -317,7 +297,7 @@ const Groups: React.FC = () => {
                 >
                   {paginationOptions.map(option => (
                     <option key={option} value={option}>
-                      {option === totalItems ? `All (${option})` : option}
+                      {option}
                     </option>
                   ))}
                 </select>

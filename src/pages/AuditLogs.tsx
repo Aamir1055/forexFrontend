@@ -76,30 +76,8 @@ const AuditLogs: React.FC = () => {
     })
   }, [allLogs, searchTerm])
 
-  // Generate dynamic pagination options based on total items
-  const totalItems = pagination?.total_items || 0
-  const paginationOptions = useMemo(() => {
-    const options = []
-    
-    // Start with 50 and increment by 50 until we reach or exceed totalItems
-    let current = 50
-    while (current < totalItems) {
-      options.push(current)
-      current += 50
-    }
-    
-    // Always add "All" option at the end if we have items
-    if (totalItems > 0) {
-      options.push(totalItems) // Show exact total
-    }
-    
-    // If no options were added (totalItems is very small), add at least one option
-    if (options.length === 0 && totalItems > 0) {
-      options.push(totalItems)
-    }
-    
-    return options
-  }, [totalItems])
+  // Use fixed pagination options: 10, 25, 50
+  const paginationOptions = useMemo(() => [10, 25, 50], [])
 
   // No need for debounced search anymore since we're doing client-side filtering
 
@@ -515,7 +493,7 @@ const AuditLogs: React.FC = () => {
             >
               {paginationOptions.map(option => (
                 <option key={option} value={option}>
-                  {option === totalItems ? `All (${option})` : option}
+                  {option}
                 </option>
               ))}
             </select>
