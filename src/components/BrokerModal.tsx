@@ -1663,7 +1663,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                 Rights ({selectedRights.length} selected)
                               </h4>
                             </div>
-                            <div className="space-y-2 overflow-y-auto pr-2" style={{ maxHeight: '400px' }}>
+                            <div className="space-y-2 pr-2">
                               {/* Group rights by category */}
                               {Object.entries(
                                 allBrokerRights.reduce((acc, right) => {

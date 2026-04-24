@@ -153,29 +153,8 @@ const Roles: React.FC = () => {
   const endIndex = startIndex + itemsPerPage
   const paginatedRoles = filteredRoles.slice(startIndex, endIndex)
 
-  // Generate dynamic pagination options based on total items
-  const paginationOptions = useMemo(() => {
-    const options = []
-    const baseOptions = [5, 10, 25, 50, 100]
-    
-    for (const option of baseOptions) {
-      if (option < totalItems) {
-        options.push(option)
-      }
-    }
-    
-    // Always add "All" option at the end if we have items
-    if (totalItems > 0) {
-      options.push(totalItems) // Show exact total
-    }
-    
-    // If no options were added (totalItems is very small), add at least one option
-    if (options.length === 0 && totalItems > 0) {
-      options.push(totalItems)
-    }
-    
-    return options
-  }, [totalItems])
+  // Only allow 10, 25, 50 as pagination options
+  const paginationOptions = [10, 25, 50]
 
   // Reset to page 1 when search or itemsPerPage changes
   React.useEffect(() => {
@@ -324,7 +303,7 @@ const Roles: React.FC = () => {
               >
                 {paginationOptions.map(option => (
                   <option key={option} value={option}>
-                    {option === totalItems ? `All (${option})` : option}
+                    {option}
                   </option>
                 ))}
               </select>
