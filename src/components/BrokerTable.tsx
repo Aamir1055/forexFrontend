@@ -27,6 +27,7 @@ interface BrokerTableProps {
   }
   currentPage: number
   onPageChange: (page: number) => void
+  topContent?: React.ReactNode
 }
 
 const BrokerTable: React.FC<BrokerTableProps> = ({
@@ -39,7 +40,8 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
   currentSort,
   pagination,
   currentPage,
-  onPageChange
+  onPageChange,
+  topContent
 }) => {
 
     // No need to fetch rights separately; use rights_count from brokers API response
@@ -57,6 +59,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
           ? 'bg-slate-800/80 border-slate-700/60' 
           : 'bg-white/80 border-white/60'
       }`}>
+        {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
         <div className="p-6">
           <div className="animate-pulse space-y-4">
             {[...Array(5)].map((_, i) => (
@@ -74,6 +77,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
         ? 'bg-slate-800/80 border-slate-700/60' 
         : 'bg-white/80 border-white/60'
     }`}>
+      {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
       {/* Mobile view */}
       <div className="block sm:hidden">
         <div className="px-4 py-5 sm:p-6">

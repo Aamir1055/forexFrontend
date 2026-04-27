@@ -9,6 +9,7 @@ import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import toast from 'react-hot-toast'
 import { PermissionGate } from '../components/PermissionGate'
 import { MODULES } from '../utils/permissions'
+import PageHeaderShell from '../components/layout/PageHeaderShell'
 
 const Rules: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -183,9 +184,7 @@ const Rules: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
       {/* Header */}
-      <div className="px-6 pt-6">
-        <header className="bg-white border border-gray-200 rounded-xl">
-          <div className="px-6 py-4">
+      <PageHeaderShell>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center space-x-4">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
@@ -201,50 +200,48 @@ const Rules: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                {/* Active Only Filter */}
-                <label className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={showActiveOnly}
-                    onChange={(e) => setShowActiveOnly(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
-                  />
-                  <span>Active Only</span>
-                </label>
-
-                <button
-                  onClick={handleRefresh}
-                  disabled={isLoading}
-                  className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 flex items-center gap-1.5 font-semibold text-xs group disabled:opacity-50"
-                >
-                  <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
-                  <span>Refresh</span>
-                </button>
-
-                <PermissionGate module={MODULES.RULES} action="create">
-                  <button
-                    onClick={handleCreateRule}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 font-semibold text-xs group"
-                  >
-                    <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                    <span>Create Rule</span>
-                  </button>
-                </PermissionGate>
-              </div>
+              <div />
             </div>
-          </div>
-        </header>
-      </div>
+      </PageHeaderShell>
 
       {/* Main Content */}
-      <main className="px-6 py-6">
+      <main className="px-2 pt-3 pb-4">
         <RuleTable
           rules={rules}
           isLoading={isLoading}
           onEdit={handleEditRule}
           onDelete={handleDeleteRule}
           onToggleStatus={handleToggleStatus}
+          topContent={
+            <div className="flex w-full flex-wrap items-center justify-end gap-2">
+              <label className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors whitespace-nowrap">
+                <input
+                  type="checkbox"
+                  checked={showActiveOnly}
+                  onChange={(e) => setShowActiveOnly(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+                />
+                <span>Active Only</span>
+              </label>
+              <button
+                onClick={handleRefresh}
+                disabled={isLoading}
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-blue-500/30 font-semibold text-xs group disabled:opacity-50 whitespace-nowrap"
+              >
+                <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
+                <span>Refresh</span>
+              </button>
+              <PermissionGate module={MODULES.RULES} action="create">
+                <button
+                  onClick={handleCreateRule}
+                  className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-blue-500/30 font-semibold text-xs group whitespace-nowrap"
+                >
+                  <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                  <span>Create Rule</span>
+                </button>
+              </PermissionGate>
+            </div>
+          }
         />
       </main>
 

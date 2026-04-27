@@ -10,9 +10,10 @@ interface AuditLogTableProps {
   isLoading?: boolean
   onSort?: (field: string) => void
   currentSort?: { field: string; order: 'asc' | 'desc' }
+  topContent?: React.ReactNode
 }
 
-const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, currentSort }) => {
+const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, currentSort, topContent }) => {
   const getActionBadgeColor = (action: string): 'success' | 'warning' | 'danger' | 'info' => {
     if (action.includes('CREATE')) return 'success'
     if (action.includes('UPDATE')) return 'info'
@@ -44,6 +45,7 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
           ? 'bg-slate-800/80 border-slate-700/60' 
           : 'bg-white/80 border-white/60'
       }`}>
+        {topContent && <div className="p-3 mb-3 border-b border-slate-200/80">{topContent}</div>}
         <div className="flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -58,6 +60,7 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
           ? 'bg-slate-800/80 border-slate-700/60' 
           : 'bg-white/80 border-white/60'
       }`}>
+        {topContent && <div className="p-3 mb-3 border-b border-slate-200/80 text-left">{topContent}</div>}
         <p className={'text-gray-500'}>No audit logs found</p>
       </div>
     )
@@ -69,6 +72,7 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({ logs, isLoading, onSort, 
         ? 'bg-slate-800/80 border-slate-700/60' 
         : 'bg-white/80 border-white/60'
     }`}>
+      {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className={`border-b transition-colors ${

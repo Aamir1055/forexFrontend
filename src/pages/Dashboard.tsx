@@ -20,6 +20,7 @@ import { brokerService } from '../services/brokerService'
 import { groupService } from '../services/groupService'
 import { CreateBrokerData, CreateGroupData } from '../types'
 import toast from 'react-hot-toast'
+import PageHeaderShell from '../components/layout/PageHeaderShell'
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate()
@@ -163,46 +164,32 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
-      {/* Compact Header with Glass Effect */}
-      <div className="px-4 pt-3 pb-2">
-        <header className="backdrop-blur-xl border rounded-xl shadow-lg bg-white/80 border-white/60 shadow-blue-500/5">
-          <div className="px-4 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
-                    <ChartBarIcon className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
-                </div>
-                <div>
-                  <h1 className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                    Dashboard Overview
-                  </h1>
-                  <p className="text-xs font-medium text-slate-500">
-                    Welcome back, here's what's happening today
-                  </p>
-                </div>
+      {/* Header */}
+      <PageHeaderShell>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+                <ChartBarIcon className="w-5 h-5 text-white" />
               </div>
-              
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => handleQuickAction('Add New Broker')}
-                  className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 font-semibold text-xs group"
-                >
-                  <UserPlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                  <span>New Broker</span>
-                </button>
-              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
+            </div>
+            <div>
+              <h1 className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                Dashboard Overview
+              </h1>
+              <p className="text-xs font-medium text-slate-500">
+                Welcome back, here's what's happening today
+              </p>
             </div>
           </div>
-        </header>
-      </div>
+          <div />
+        </div>
+      </PageHeaderShell>
 
       {/* Main Content */}
-      <main className="p-4">
-        <div className="max-w-7xl mx-auto">
-          {/* Stats Cards */}
+      <main className="px-2 pt-3 pb-4">
+        {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             {stats.map((stat, index) => {
               const Icon = stat.icon
@@ -244,7 +231,7 @@ const Dashboard: React.FC = () => {
             })}
           </div>
 
-          {/* Charts Section */}
+        {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
             {/* User Activity Chart */}
             <motion.div
@@ -331,7 +318,7 @@ const Dashboard: React.FC = () => {
             </motion.div>
           </div>
 
-          {/* Bottom Section */}
+        {/* Bottom Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Recent Activity */}
             <motion.div
@@ -392,7 +379,6 @@ const Dashboard: React.FC = () => {
               </div>
             </motion.div>
           </div>
-        </div>
       </main>
 
       {/* Broker Modal */}

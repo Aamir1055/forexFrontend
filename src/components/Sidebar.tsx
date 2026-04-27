@@ -94,17 +94,31 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       {/* Desktop sidebar */}
       <motion.div 
         className="hidden lg:flex lg:flex-shrink-0"
-        animate={{ width: isCollapsed ? '5rem' : '16rem' }}
+        animate={{ width: isCollapsed ? '2.7rem' : '13.50rem' }}
         transition={{ duration: 0.3 }}
       >
         <div className="flex flex-col h-screen bg-white shadow-xl border-r border-gray-200 relative">
           {/* Background decoration */}
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white flex-shrink-0">
-            <AnimatePresence>
-              {!isCollapsed && (
+          <div className={cn(
+            "border-b border-gray-200 bg-white flex-shrink-0",
+            isCollapsed ? "px-1 py-2 flex items-center justify-center" : "p-6 flex items-center"
+          )}>
+            <AnimatePresence initial={false}>
+              {isCollapsed ? (
                 <motion.div
+                  key="collapsed-brand"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center shadow"
+                >
+                  <Sparkles className="w-4 h-4 text-white" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="expanded-brand"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
@@ -122,20 +136,29 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 </motion.div>
               )}
             </AnimatePresence>
-            
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 text-gray-400 hover:text-gray-600 border border-gray-200 hover:border-gray-300"
-            >
-              <ChevronRight className={cn(
-                "w-4 h-4 transition-transform duration-300",
-                isCollapsed ? "rotate-0" : "rotate-180"
-              )} />
-            </button>
           </div>
 
+          {/* Edge collapse button */}
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className={cn(
+              "absolute z-20 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 border border-blue-500 shadow-md hover:shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 text-white flex items-center justify-center",
+              isCollapsed ? "right-0 top-12 translate-x-1/2 w-7 h-7" : "right-0 top-12 translate-x-1/2 w-8 h-8"
+            )}
+            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <ChevronRight className={cn(
+              "transition-transform duration-300",
+              isCollapsed ? "w-3.5 h-3.5" : "w-4 h-4",
+              isCollapsed ? "rotate-0" : "rotate-180"
+            )} />
+          </button>
+
           {/* Navigation */}
-          <div className="flex-1 px-4 py-6 overflow-y-auto">
+          <div className={cn(
+            "flex-1 overflow-y-auto",
+            isCollapsed ? "px-1 pt-10 pb-6" : "px-4 py-6"
+          )}>
             <nav className="space-y-1">
               {navigation.map((item, index) => {
                 const Icon = item.icon
@@ -151,9 +174,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                     <Link
                       to={item.href}
                       className={cn(
-                        "flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 group relative",
+                        "flex items-center rounded-lg transition-all duration-200 group relative",
+                        isCollapsed ? "justify-center px-0 py-3" : "space-x-3 p-3",
                         isActive
-                          ? "bg-blue-50 text-blue-700 border-l-4 border-blue-600"
+                          ? isCollapsed
+                            ? "bg-blue-50 text-blue-700"
+                            : "bg-blue-50 text-blue-700 border-l-4 border-blue-600"
                           : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                       )}
                     >
@@ -186,7 +212,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <div className="p-4 border-t border-gray-200 bg-gray-50 flex-shrink-0">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 group text-gray-600 hover:bg-red-50 hover:text-red-600"
+              className={cn(
+                "w-full flex items-center rounded-lg transition-all duration-200 group text-gray-600 hover:bg-red-50 hover:text-red-600",
+                isCollapsed ? "justify-center px-0 py-3" : "space-x-3 p-3"
+              )}
             >
               <LogOut className="w-5 h-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105" />
               <AnimatePresence>

@@ -27,6 +27,7 @@ interface GroupTableProps {
   currentPage: number
   onPageChange: (page: number) => void
   viewMode: 'table' | 'grid'
+  topContent?: React.ReactNode
 }
 
 const GroupTable: React.FC<GroupTableProps> = ({
@@ -38,7 +39,8 @@ const GroupTable: React.FC<GroupTableProps> = ({
   pagination,
   currentPage,
   onPageChange,
-  viewMode
+  viewMode,
+  topContent
 }) => {
     const [sortField, setSortField] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('ASC')
@@ -77,6 +79,7 @@ const GroupTable: React.FC<GroupTableProps> = ({
           ? 'bg-slate-800/80 border-slate-700/60' 
           : 'bg-white/80 border-white/60'
       }`}>
+        {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
         <div className="p-6">
           <div className="animate-pulse space-y-4">
             {[...Array(5)].map((_, i) => (
@@ -90,14 +93,17 @@ const GroupTable: React.FC<GroupTableProps> = ({
 
   if (groups.length === 0) {
     return (
-      <div className={`backdrop-blur-xl rounded-xl border shadow-lg p-8 text-center transition-colors ${
+      <div className={`backdrop-blur-xl rounded-xl border shadow-lg transition-colors ${
         false 
           ? 'bg-slate-800/80 border-slate-700/60' 
           : 'bg-white/80 border-white/60'
       }`}>
+        {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
+        <div className="p-8 text-center">
         <ServerIcon className="w-12 h-12 mx-auto mb-3 text-gray-300" />
         <h3 className="text-base font-medium mb-1 text-gray-900">No groups found</h3>
         <p className="text-sm text-gray-500">Create your first trading group to get started.</p>
+        </div>
       </div>
     )
   }
@@ -269,6 +275,7 @@ const GroupTable: React.FC<GroupTableProps> = ({
         ? 'bg-slate-800/80 border-slate-700/60' 
         : 'bg-white/80 border-white/60'
     }`}>
+      {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
       {/* Mobile view */}
       <div className="block lg:hidden">
         <div className="divide-y divide-gray-200">

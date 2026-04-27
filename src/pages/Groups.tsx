@@ -12,6 +12,7 @@ import GroupTable from '../components/GroupTable'
 import GroupModal from '../components/GroupModal'
 import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import toast from 'react-hot-toast'
+import PageHeaderShell from '../components/layout/PageHeaderShell'
 
 import { PermissionGate } from '../components/PermissionGate'
 import { MODULES } from '../utils/permissions'
@@ -20,6 +21,7 @@ const Groups: React.FC = () => {
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
   const [filters, setFilters] = useState<GroupFilters>({})
@@ -39,13 +41,13 @@ const Groups: React.FC = () => {
 
   // Fetch groups with filters
   const { data: groupsData, isLoading, error, refetch } = useQuery(
-    ['groups', currentPage, pageSize, searchTerm, filters],
+    ['groups', currentPage, pageSize, debouncedSearchTerm, filters],
     () => {
       // For "All" option or large numbers, fetch a large batch
       const fetchSize = pageSize > 100 ? 1000 : pageSize
       return groupService.getGroups(currentPage, fetchSize, { 
         ...filters, 
-        search: searchTerm || undefined 
+        search: debouncedSearchTerm || undefined 
       })
     },
     {
@@ -117,12 +119,21 @@ const Groups: React.FC = () => {
 
   // Handle search with debounce
   useEffect(() => {
+    if (searchTerm === '') {
+      setDebouncedSearchTerm('')
+      return
+    }
+
     const timer = setTimeout(() => {
-      setCurrentPage(1) // Reset to first page when searching
-    }, 300)
+      setDebouncedSearchTerm(searchTerm)
+    }, 400)
 
     return () => clearTimeout(timer)
   }, [searchTerm])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [debouncedSearchTerm])
 
   const handleCreateGroup = () => {
     setSelectedGroup(null)
@@ -130,7 +141,6 @@ const Groups: React.FC = () => {
   }
 
   const handleRefresh = async () => {
-    await queryClient.invalidateQueries(['groups'])
     await refetch()
     toast.success('Groups list refreshed!')
   }
@@ -203,13 +213,7 @@ const Groups: React.FC = () => {
         : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
     }`}>
       {/* Compact Header with Glass Effect */}
-      <div className="px-4 pt-3 pb-2">
-        <header className={`backdrop-blur-xl border rounded-xl shadow-lg transition-colors duration-300 ${
-          false 
-            ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
-            : 'bg-white/80 border-white/60 shadow-blue-500/5'
-        }`}>
-          <div className="px-4 py-3">
+      <PageHeaderShell>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
@@ -236,149 +240,119 @@ const Groups: React.FC = () => {
                 </div>
               </div>
               
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search groups..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className={`w-72 pl-9 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-colors ${
-                      false 
-                        ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
-                        : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
-                    }`}
-                  />
-                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
-                </div>
-                
-                <button
-                  onClick={handleRefresh}
-                  className="px-3 py-2 bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-slate-500/30 hover:shadow-xl hover:shadow-slate-500/40 font-semibold text-xs group"
-                  title="Refresh groups list"
-                >
-                  <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
-                  <span>Refresh</span>
-                </button>
-                
-                <PermissionGate module={MODULES.GROUPS} action="create">
-                  <button
-                    onClick={handleCreateGroup}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 font-semibold text-xs group"
-                  >
-                    <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                    <span>Create Group</span>
-                  </button>
-                </PermissionGate>
-              </div>
+              <div />
             </div>
-          </div>
-        </header>
-      </div>
+      </PageHeaderShell>
 
       {/* Main Content */}
-      <main className="px-4 pb-4">
-        <div>
-          {/* Pagination Controls */}
-          {!isLoading && pagination && (
-            <div className="mt-3 mb-2 flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <span className={`text-xs transition-colors ${
-                  false ? 'text-slate-400' : 'text-slate-600'
-                }`}>Show</span>
-                <select
-                  value={pageSize}
-                  onChange={(e) => setPageSize(Number(e.target.value))}
-                  className={`px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs transition-colors ${
-                    false 
-                      ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
-                      : 'bg-white border-slate-300 text-slate-900'
-                  }`}
-                >
-                  {paginationOptions.map(option => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-                <span className={`text-xs transition-colors ${
-                  false ? 'text-slate-400' : 'text-slate-600'
-                }`}>entries</span>
-              </div>
-              <div className={`text-xs transition-colors ${
-                false ? 'text-slate-300' : 'text-slate-700'
-              }`}>
-                Showing {pagination.total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, pagination.total)} of {pagination.total} results
-              </div>
-              {pagination.total_pages > 1 && (
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                    className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                      false 
-                        ? 'border-slate-600 hover:bg-slate-700/50' 
-                        : 'border-slate-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                  <span className={`text-xs transition-colors ${
-                    false ? 'text-slate-300' : 'text-slate-700'
-                  }`}>
-                    Page {currentPage} of {pagination.total_pages}
-                  </span>
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.min(pagination.total_pages, prev + 1))}
-                    disabled={currentPage === pagination.total_pages}
-                    className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                      false 
-                        ? 'border-slate-600 hover:bg-slate-700/50' 
-                        : 'border-slate-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-              )}
+      <main className="px-2 pt-3 pb-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          {error ? (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+              <div className="text-red-600 mb-2">Failed to load groups</div>
+              <button
+                onClick={() => queryClient.invalidateQueries(['groups'])}
+                className="text-red-600 hover:text-red-700 underline"
+              >
+                Try again
+              </button>
             </div>
+          ) : (
+            <GroupTable
+              groups={groups}
+              isLoading={isLoading}
+              onEdit={handleEditGroup}
+              onDelete={handleDeleteGroup}
+              onToggleStatus={handleToggleStatus}
+              pagination={pagination}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+              viewMode={viewMode}
+              topContent={
+                <div className="flex flex-col gap-3">
+                  {/* Row 1: search + actions */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className="relative flex-1 min-w-[220px]">
+                      <input
+                        type="text"
+                        placeholder="Search groups..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white text-slate-900 placeholder-slate-400"
+                      />
+                      <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                    </div>
+                    <button
+                      onClick={handleRefresh}
+                      className="px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 font-semibold text-xs group"
+                      title="Refresh groups list"
+                    >
+                      <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
+                      <span>Refresh</span>
+                    </button>
+                    <PermissionGate module={MODULES.GROUPS} action="create">
+                      <button
+                        onClick={handleCreateGroup}
+                        className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 font-semibold text-xs group"
+                      >
+                        <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                        <span>Create Group</span>
+                      </button>
+                    </PermissionGate>
+                  </div>
+                  {/* Row 2: show entries + page info + pagination */}
+                  {!isLoading && pagination && (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs text-slate-600">Show</span>
+                        <select
+                          value={pageSize}
+                          onChange={(e) => setPageSize(Number(e.target.value))}
+                          className="px-2 py-1 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs bg-white text-slate-900"
+                        >
+                          {paginationOptions.map(option => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </select>
+                        <span className="text-xs text-slate-600">entries</span>
+                      </div>
+                      <div className="text-xs text-slate-700">
+                        Showing {pagination.total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, pagination.total)} of {pagination.total} results
+                      </div>
+                      {pagination.total_pages > 1 && (
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                            disabled={currentPage === 1}
+                            className="px-2 py-1 border border-slate-300 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                          </button>
+                          <span className="text-xs text-slate-700">Page {currentPage} of {pagination.total_pages}</span>
+                          <button
+                            onClick={() => setCurrentPage(prev => Math.min(pagination.total_pages, prev + 1))}
+                            disabled={currentPage === pagination.total_pages}
+                            className="px-2 py-1 border border-slate-300 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              }
+            />
           )}
-
-          {/* Groups Table */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            {error ? (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                <div className="text-red-600 mb-2">Failed to load groups</div>
-                <button
-                  onClick={() => queryClient.invalidateQueries(['groups'])}
-                  className="text-red-600 hover:text-red-700 underline"
-                >
-                  Try again
-                </button>
-              </div>
-            ) : (
-              <GroupTable
-                groups={groups}
-                isLoading={isLoading}
-                onEdit={handleEditGroup}
-                onDelete={handleDeleteGroup}
-                onToggleStatus={handleToggleStatus}
-                pagination={pagination}
-                currentPage={currentPage}
-                onPageChange={setCurrentPage}
-                viewMode={viewMode}
-              />
-            )}
-          </motion.div>
-        </div>
+        </motion.div>
       </main>
 
       {/* Modal */}

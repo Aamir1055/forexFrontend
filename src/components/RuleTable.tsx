@@ -11,6 +11,7 @@ interface RuleTableProps {
   onEdit: (rule: Rule) => void
   onDelete: (id: number) => void
   onToggleStatus: (rule: Rule) => void
+  topContent?: React.ReactNode
 }
 
 const RuleTable: React.FC<RuleTableProps> = ({
@@ -19,6 +20,7 @@ const RuleTable: React.FC<RuleTableProps> = ({
   onEdit,
   onDelete,
   onToggleStatus,
+  topContent,
 }) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -30,10 +32,13 @@ const RuleTable: React.FC<RuleTableProps> = ({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="flex flex-col items-center gap-3">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="text-sm text-gray-500">Loading rules...</p>
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
+        <div className="flex items-center justify-center py-12">
+          <div className="flex flex-col items-center gap-3">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p className="text-sm text-gray-500">Loading rules...</p>
+          </div>
         </div>
       </div>
     )
@@ -41,7 +46,9 @@ const RuleTable: React.FC<RuleTableProps> = ({
 
   if (rules.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
+        <div className="text-center py-12">
         <svg
           className="mx-auto h-12 w-12 text-gray-400"
           fill="none"
@@ -57,12 +64,14 @@ const RuleTable: React.FC<RuleTableProps> = ({
         </svg>
         <h3 className="mt-2 text-sm font-medium text-gray-900">No rules found</h3>
         <p className="mt-1 text-sm text-gray-500">Get started by creating a new rule.</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <>
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
       {/* Mobile view */}
       <div className="lg:hidden space-y-3">
         {rules.map((rule, index) => (
@@ -273,7 +282,7 @@ const RuleTable: React.FC<RuleTableProps> = ({
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   )
 }
 

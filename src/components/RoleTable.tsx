@@ -10,13 +10,15 @@ interface RoleTableProps {
   isLoading: boolean
   onEdit: (role: Role) => void
   onDelete: (id: number) => void
+  topContent?: React.ReactNode
 }
 
 const RoleTable: React.FC<RoleTableProps> = ({
   roles,
   isLoading,
   onEdit,
-  onDelete
+  onDelete,
+  topContent
 }) => {
     const [sortField, setSortField] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('ASC')
@@ -84,6 +86,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
       <div className={`rounded-xl shadow-sm overflow-hidden ${
         'bg-white'
       }`}>
+        {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
         <div className="p-8 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-6"></div>
           <p className="font-medium text-slate-600">Loading roles...</p>
@@ -97,6 +100,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
       <div className={`rounded-xl shadow-sm overflow-hidden ${
         'bg-white'
       }`}>
+        {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
         <div className="p-16 text-center">
           <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 ${
             'bg-slate-100'
@@ -116,6 +120,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
         ? 'bg-slate-800/80 border-slate-700/60' 
         : 'bg-white/80 border-white/60'
     }`}>
+      {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className={`border-b ${

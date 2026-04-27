@@ -9,6 +9,7 @@ import { MODULES } from '../utils/permissions'
 interface UserTableProps {
   users: User[]
   isLoading: boolean
+  topContent?: React.ReactNode
   onEdit: (user: User) => void
   onDelete: (id: number) => void
   onToggleStatus: (id: number) => void
@@ -23,6 +24,7 @@ interface UserTableProps {
 const UserTable: React.FC<UserTableProps> = ({
   users,
   isLoading,
+  topContent,
   onEdit,
   onDelete,
   onToggleStatus,
@@ -48,6 +50,11 @@ const UserTable: React.FC<UserTableProps> = ({
           ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
           : 'bg-white/80 border-white/60 shadow-blue-500/5'
       }`}>
+        {topContent && (
+          <div className="p-3 border-b border-slate-200/80">
+            {topContent}
+          </div>
+        )}
         <div className="p-12 text-center">
           <div className="relative inline-flex">
             <div className={`animate-spin rounded-full h-12 w-12 border-4 ${
@@ -73,6 +80,11 @@ const UserTable: React.FC<UserTableProps> = ({
           ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
           : 'bg-white/80 border-white/60 shadow-blue-500/5'
       }`}>
+        {topContent && (
+          <div className="p-3 border-b border-slate-200/80">
+            {topContent}
+          </div>
+        )}
         <div className="p-16 text-center">
           <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border ${
             false 
@@ -96,6 +108,11 @@ const UserTable: React.FC<UserTableProps> = ({
           ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
           : 'bg-white/80 border-white/60 shadow-blue-500/5'
       }`}>
+        {topContent && (
+          <div className="p-3 border-b border-slate-200/80 bg-white/60">
+            {topContent}
+          </div>
+        )}
         <div className="overflow-x-auto">
         <table className="w-full">
           <thead>

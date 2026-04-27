@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PlusIcon, FunnelIcon, MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
@@ -13,6 +14,7 @@ import { Broker, CreateBrokerData, UpdateBrokerData, BrokerFilters } from '../ty
 import toast from 'react-hot-toast'
 import { PermissionGate } from '../components/PermissionGate'
 import { MODULES } from '../utils/permissions'
+import PageHeaderShell from '../components/layout/PageHeaderShell'
 
 const Brokers: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -44,17 +46,36 @@ const Brokers: React.FC = () => {
     sort_order: 'DESC'
   })
   const [searchTerm, setSearchTerm] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [pageSize, setPageSize] = useState(50)
   const queryClient = useQueryClient()
 
+  // Debounce search input to avoid API calls on every keypress
+  React.useEffect(() => {
+    if (searchTerm === '') {
+      setDebouncedSearchTerm('')
+      return
+    }
+
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 400)
+
+    return () => clearTimeout(timer)
+  }, [searchTerm])
+
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [debouncedSearchTerm])
+
   // Fetch brokers
   const { data: brokersData, isLoading, error, refetch } = useQuery(
-    ['brokers', currentPage, pageSize, filters, searchTerm],
+    ['brokers', currentPage, pageSize, filters, debouncedSearchTerm],
     () => {
       // For "All" option or large numbers, fetch a large batch
       const fetchSize = pageSize > 100 ? 1000 : pageSize
-      return brokerService.getBrokers(currentPage, fetchSize, { ...filters, search: searchTerm })
+      return brokerService.getBrokers(currentPage, fetchSize, { ...filters, search: debouncedSearchTerm })
     },
     {
       keepPreviousData: true,
@@ -150,7 +171,6 @@ const Brokers: React.FC = () => {
   }
 
   const handleRefresh = async () => {
-    await queryClient.invalidateQueries(['brokers'])
     await refetch()
     toast.success('Brokers list refreshed!')
   }
@@ -199,7 +219,6 @@ const Brokers: React.FC = () => {
 
   const handleSearch = (term: string) => {
     setSearchTerm(term)
-    setCurrentPage(1) // Reset to first page when searching
   }
 
   const handleSort = (sortBy: string) => {
@@ -384,14 +403,8 @@ const Brokers: React.FC = () => {
         : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
     }`}>
       {/* Compact Header with Glass Effect */}
-      <div className="px-4 pt-3 pb-2">
-        <header className={`backdrop-blur-xl border rounded-xl shadow-lg transition-colors duration-300 ${
-          false 
-            ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
-            : 'bg-white/80 border-white/60 shadow-blue-500/5'
-        }`}>
-          <div className="px-4 py-3">
-            <div className="flex items-center justify-between">
+      <PageHeaderShell>
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
@@ -415,94 +428,43 @@ const Brokers: React.FC = () => {
                 </div>
               </div>
               
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search by name, email, username..."
-                    value={searchTerm}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    className={`w-72 pl-9 pr-9 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-colors ${
-                      false 
-                        ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
-                        : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
-                    }`}
-                  />
-                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
-                  {searchTerm && (
-                    <button
-                      onClick={() => handleSearch('')}
-                      className={`absolute right-3 top-1/2 transform -translate-y-1/2 hover:text-slate-600 ${
-                        'text-slate-400'
-                      }`}
-                    >
-                      ×
-                    </button>
-                  )}
-                </div>
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className={`px-3 py-2 border rounded-lg transition-colors flex items-center gap-2 text-sm ${
-                    false 
-                      ? 'border-slate-600 hover:bg-slate-700/50 text-slate-200' 
-                      : 'border-slate-300 hover:bg-slate-50 text-slate-700'
-                  }`}
-                >
-                  <FunnelIcon className="w-4 h-4" />
-                  <span>Filters</span>
-                </button>
-                <button
-                  onClick={handleRefresh}
-                  className="px-3 py-2 bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-slate-500/30 hover:shadow-xl hover:shadow-slate-500/40 font-semibold text-xs group"
-                  title="Refresh brokers list"
-                >
-                  <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
-                  <span>Refresh</span>
-                </button>
-                <PermissionGate module={MODULES.BROKERS} action="create">
-                  <button
-                    onClick={handleCreateBroker}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 font-semibold text-xs group"
-                  >
-                    <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                    <span>Add Broker</span>
-                  </button>
-                </PermissionGate>
-              </div>
+              <div />
             </div>
-          </div>
-        </header>
-      </div>
+      </PageHeaderShell>
 
-      {/* Filter Modal Overlay - Rendered outside header */}
-      <AnimatePresence>
-        {showFilters && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/30 backdrop-blur-sm"
-              style={{ zIndex: 10000 }}
-              onClick={() => setShowFilters(false)}
-            />
-            
-            {/* Filter Panel */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              transition={{ duration: 0.2 }}
-              className={`fixed top-20 left-1/2 -translate-x-1/2 w-[450px] max-h-[calc(100vh-120px)] overflow-y-auto rounded-2xl border shadow-2xl p-6 ${
-                false 
-                  ? 'bg-slate-800 border-slate-700' 
-                  : 'bg-white border-slate-200'
-              }`}
-              style={{ zIndex: 10001 }}
-              onClick={(e) => e.stopPropagation()}
-            >
+      {/* Filter Modal Overlay */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {showFilters && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 bg-black/30 backdrop-blur-sm"
+                style={{ zIndex: 10000 }}
+                onClick={() => setShowFilters(false)}
+              />
+
+              {/* Filter Panel */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: -20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 flex items-center justify-center p-4 pointer-events-none"
+                style={{ zIndex: 10001 }}
+              >
+                <div
+                  className={`w-[min(450px,calc(100vw-2rem))] max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl border shadow-2xl p-6 pointer-events-auto ${
+                    false
+                      ? 'bg-slate-800 border-slate-700'
+                      : 'bg-white border-slate-200'
+                  }`}
+                  onClick={(e) => e.stopPropagation()}
+                >
                       <div className="space-y-3">
                         <div className="flex items-center justify-between mb-3">
                           <h3 className={`font-semibold ${
@@ -569,11 +531,17 @@ const Brokers: React.FC = () => {
                           }`}>Account Range From</label>
                           <input
                             type="number"
+                            min={0}
                             placeholder="e.g. 1000"
                             value={filters.account_range_from || ''}
                             onChange={(e) => handleFilterChange({ 
-                              account_range_from: e.target.value ? Number(e.target.value) : undefined 
+                              account_range_from: e.target.value ? Math.max(0, Number(e.target.value)) : undefined 
                             })}
+                            onKeyDown={(e) => {
+                              if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                                e.preventDefault()
+                              }
+                            }}
                             className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
                               false 
                                 ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
@@ -589,11 +557,17 @@ const Brokers: React.FC = () => {
                           }`}>Account Range To</label>
                           <input
                             type="number"
+                            min={0}
                             placeholder="e.g. 5000"
                             value={filters.account_range_to || ''}
                             onChange={(e) => handleFilterChange({ 
-                              account_range_to: e.target.value ? Number(e.target.value) : undefined 
+                              account_range_to: e.target.value ? Math.max(0, Number(e.target.value)) : undefined 
                             })}
+                            onKeyDown={(e) => {
+                              if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                                e.preventDefault()
+                              }
+                            }}
                             className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
                               false 
                                 ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
@@ -663,105 +637,130 @@ const Brokers: React.FC = () => {
                           </button>
                         </div>
                       </div>
+                </div>
                     </motion.div>
                   </>
                 )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body
+      )}
 
       {/* Main Content */}
-      <main className="px-4 pb-4">
-        <div>
-
-          {/* Pagination dropdown */}
-          <div className="mt-3 mb-2 flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <span className={`text-xs transition-colors ${
-                'text-slate-600'
-              }`}>Show</span>
-              <select
-                value={pageSize}
-                onChange={(e) => setPageSize(Number(e.target.value))}
-                className={`px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs transition-colors ${
-                  false 
-                    ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
-                    : 'bg-white border-slate-300 text-slate-900'
-                }`}
-              >
-                {paginationOptions.map(option => (
-                  <option key={option} value={option}>
-                    {option === totalItems ? `All (${option})` : option}
-                  </option>
-                ))}
-              </select>
-              <span className={`text-xs transition-colors ${
-                'text-slate-600'
-              }`}>entries</span>
-            </div>
-            <div className={`text-xs transition-colors ${
-              'text-slate-700'
-            }`}>
-              Showing {brokersData?.pagination.total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, brokersData?.pagination.total || 0)} of {brokersData?.pagination.total || 0} results
-            </div>
-            {brokersData?.pagination && brokersData.pagination.pages > 1 && (
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                    false 
-                      ? 'border-slate-600 hover:bg-slate-700/50' 
-                      : 'border-slate-300 hover:bg-slate-50'
-                  }`}
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <span className={`text-xs transition-colors ${
-                  'text-slate-700'
-                }`}>
-                  Page {currentPage} of {brokersData.pagination.pages}
-                </span>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(brokersData.pagination.pages, prev + 1))}
-                  disabled={currentPage === brokersData.pagination.pages}
-                  className={`px-2 py-1 border rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                    false 
-                      ? 'border-slate-600 hover:bg-slate-700/50' 
-                      : 'border-slate-300 hover:bg-slate-50'
-                  }`}
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+      <main className="px-2 pt-3 pb-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <BrokerTable
+            brokers={sortedBrokers}
+            isLoading={isLoading}
+            onEdit={handleEditBroker}
+            onDelete={handleDeleteBroker}
+            onToggleStatus={handleToggleStatus}
+            onSort={handleSort}
+            currentSort={{
+              field: clientSideSort.field || filters.sort_by || 'created_at',
+              order: clientSideSort.field ? clientSideSort.order : (filters.sort_order || 'DESC')
+            }}
+            pagination={brokersData?.pagination}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            topContent={
+              <div className="flex flex-col gap-3">
+                {/* Row 1: search + actions */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="relative flex-1 min-w-[220px]">
+                    <input
+                      type="text"
+                      placeholder="Search by name, email, username..."
+                      value={searchTerm}
+                      onChange={(e) => handleSearch(e.target.value)}
+                      className="w-full pl-9 pr-9 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white text-slate-900 placeholder-slate-400"
+                    />
+                    <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                    {searchTerm && (
+                      <button
+                        onClick={() => handleSearch('')}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap text-sm shadow-lg shadow-blue-500/30"
+                  >
+                    <FunnelIcon className="w-4 h-4" />
+                    <span>Filters</span>
+                  </button>
+                  <button
+                    onClick={handleRefresh}
+                    className="px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 font-semibold text-xs group"
+                    title="Refresh brokers list"
+                  >
+                    <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
+                    <span>Refresh</span>
+                  </button>
+                  <PermissionGate module={MODULES.BROKERS} action="create">
+                    <button
+                      onClick={handleCreateBroker}
+                      className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 font-semibold text-xs group"
+                    >
+                      <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                      <span>Add Broker</span>
+                    </button>
+                  </PermissionGate>
+                </div>
+                {/* Row 2: show entries + page info + pagination */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-slate-600">Show</span>
+                    <select
+                      value={pageSize}
+                      onChange={(e) => setPageSize(Number(e.target.value))}
+                      className="px-2 py-1 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs bg-white text-slate-900"
+                    >
+                      {paginationOptions.map(option => (
+                        <option key={option} value={option}>
+                          {option === totalItems ? `All (${option})` : option}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="text-xs text-slate-600">entries</span>
+                  </div>
+                  <div className="text-xs text-slate-700">
+                    Showing {brokersData?.pagination.total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, brokersData?.pagination.total || 0)} of {brokersData?.pagination.total || 0} results
+                  </div>
+                  {brokersData?.pagination && brokersData.pagination.pages > 1 && (
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="px-2 py-1 border border-slate-300 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                      <span className="text-xs text-slate-700">Page {currentPage} of {brokersData.pagination.pages}</span>
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.min(brokersData.pagination.pages, prev + 1))}
+                        disabled={currentPage === brokersData.pagination.pages}
+                        className="px-2 py-1 border border-slate-300 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-
-          {/* Brokers Table */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <BrokerTable
-              brokers={sortedBrokers}
-              isLoading={isLoading}
-              onEdit={handleEditBroker}
-              onDelete={handleDeleteBroker}
-              onToggleStatus={handleToggleStatus}
-              onSort={handleSort}
-              currentSort={{ 
-                field: clientSideSort.field || filters.sort_by || 'created_at', 
-                order: clientSideSort.field ? clientSideSort.order : (filters.sort_order || 'DESC')
-              }}
-              pagination={brokersData?.pagination}
-              currentPage={currentPage}
-              onPageChange={setCurrentPage}
-            />
-          </motion.div>
-        </div>
+            }
+          />
+        </motion.div>
       </main>
 
       {/* Broker Modal */}

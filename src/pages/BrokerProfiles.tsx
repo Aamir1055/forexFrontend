@@ -6,6 +6,7 @@ import { DocumentTextIcon } from '@heroicons/react/24/solid'
 import { brokerProfileService, BrokerProfile, CreateBrokerProfileData, UpdateBrokerProfileData } from '../services/brokerProfileService'
 import BrokerProfileModal from '../components/BrokerProfileModal'
 import ConfirmationDialog from '../components/ui/ConfirmationDialog'
+import PageHeaderShell from '../components/layout/PageHeaderShell'
 import toast from 'react-hot-toast'
 
 const BrokerProfiles: React.FC = () => {
@@ -91,7 +92,6 @@ const BrokerProfiles: React.FC = () => {
   }
 
   const handleRefresh = async () => {
-    await queryClient.invalidateQueries(['broker-profiles'])
     await refetch()
     toast.success('Profiles list refreshed!')
   }
@@ -182,9 +182,7 @@ const BrokerProfiles: React.FC = () => {
   return (
     <div className="bg-gray-50 font-sans">
       {/* Header */}
-      <div className="px-6 pt-6">
-        <header className="bg-white border border-gray-200 rounded-xl sticky top-0 z-40">
-          <div className="px-6 py-4">
+      <PageHeaderShell sticky>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
@@ -195,20 +193,35 @@ const BrokerProfiles: React.FC = () => {
                   <p className="text-sm text-gray-500">Manage broker permission profiles</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <div className="relative">
+              <div />
+            </div>
+      </PageHeaderShell>
+
+      {/* Main Content */}
+      <main className="px-2 pt-3 pb-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            {/* Top controls */}
+            <div className="p-3 border-b border-slate-200/80 flex flex-col gap-3">
+              {/* Row 1: search + actions */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative flex-1 min-w-[220px]">
                   <input
                     type="text"
                     placeholder="Search profiles..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />
                   <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 </div>
                 <button
                   onClick={handleRefresh}
-                  className="px-3 py-2 bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-slate-500/30 hover:shadow-xl hover:shadow-slate-500/40 font-semibold text-xs group"
+                  className="px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 font-semibold text-xs group"
                   title="Refresh profiles list"
                 >
                   <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
@@ -216,74 +229,57 @@ const BrokerProfiles: React.FC = () => {
                 </button>
                 <button
                   onClick={handleCreateProfile}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-sm"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm text-xs font-semibold"
                 >
                   <PlusIcon className="w-4 h-4" />
                   <span>Create Profile</span>
                 </button>
               </div>
-            </div>
-          </div>
-        </header>
-      </div>
-
-      {/* Main Content */}
-      <main className="px-6 pb-6">
-        <div>
-          {/* Pagination dropdown */}
-          <div className="mt-4 mb-3 flex items-center justify-between">
-            <div className="flex items-center space-x-1.5">
-              <span className="text-xs text-gray-600">Show</span>
-              <select
-                value={itemsPerPage}
-                onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white text-xs"
-              >
-                {paginationOptions.map(option => (
-                  <option key={option} value={option}>
-                    {option === totalItems ? `All (${option})` : option}
-                  </option>
-                ))}
-              </select>
-              <span className="text-xs text-gray-600">entries</span>
-            </div>
-            <div className="text-xs text-gray-700">
-              Showing {totalItems === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} results
-            </div>
-            {totalPages > 1 && (
-              <div className="flex items-center space-x-1.5">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <span className="text-xs text-gray-700">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                  className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+              {/* Row 2: show entries + page info + pagination */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-1.5">
+                  <span className="text-xs text-gray-600">Show</span>
+                  <select
+                    value={itemsPerPage}
+                    onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                    className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white text-xs"
+                  >
+                    {paginationOptions.map(option => (
+                      <option key={option} value={option}>
+                        {option === totalItems ? `All (${option})` : option}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-xs text-gray-600">entries</span>
+                </div>
+                <div className="text-xs text-gray-700">
+                  Showing {totalItems === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} results
+                </div>
+                {totalPages > 1 && (
+                  <div className="flex items-center space-x-1.5">
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <span className="text-xs text-gray-700">Page {currentPage} of {totalPages}</span>
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-
-          {/* Profiles Table */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            </div>
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -414,9 +410,8 @@ const BrokerProfiles: React.FC = () => {
                   </table>
                 </div>
               )}
-            </div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </main>
 
       {/* Profile Modal */}

@@ -4,6 +4,7 @@ import type { ApiMetric } from '../types/metrics'
 import toast from 'react-hot-toast'
 import { ArrowUpIcon, ArrowDownIcon, ClockIcon, ServerIcon, ArrowsRightLeftIcon, ChartBarIcon } from '@heroicons/react/24/outline'
 import { motion } from 'framer-motion'
+import PageHeaderShell from '../components/layout/PageHeaderShell'
 
 type SortField = keyof ApiMetric
 type SortOrder = 'asc' | 'desc'
@@ -93,7 +94,7 @@ export default function ApiMetrics() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white shadow-lg mb-4">
             <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div>
@@ -107,42 +108,31 @@ export default function ApiMetrics() {
   const stats = getTotalStats()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/20 p-6 space-y-6">
-      {/* Header */}
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
-      >
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
+      <PageHeaderShell>
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
-              <ChartBarIcon className="w-8 h-8 text-white" />
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+                <ChartBarIcon className="w-5 h-5 text-white" />
+              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
             </div>
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                API Metrics Dashboard
+              <h1 className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                API Metrics
               </h1>
-              <p className="text-sm text-gray-500 mt-1 font-medium">
-                Real-time API endpoint performance monitoring and analytics
+              <p className="text-xs font-medium text-slate-500">
+                Real-time API endpoint performance monitoring
               </p>
             </div>
           </div>
-          <button
-            onClick={fetchMetrics}
-            className="group relative px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            <span className="flex items-center space-x-2">
-              <svg className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span>Refresh</span>
-            </span>
-          </button>
+          <div />
         </div>
-      </motion.div>
+      </PageHeaderShell>
 
+      <main className="px-2 pt-3 pb-4">
+      <div className="space-y-4">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <motion.div
@@ -237,9 +227,21 @@ export default function ApiMetrics() {
         transition={{ duration: 0.5, delay: 0.5 }}
         className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
       >
-        <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
-          <h2 className="text-lg font-bold text-gray-900">Endpoint Performance</h2>
-          <p className="text-sm text-gray-500 mt-1">Detailed metrics for each API endpoint</p>
+        <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">Endpoint Performance</h2>
+            <p className="text-sm text-gray-500 mt-1">Detailed metrics for each API endpoint</p>
+          </div>
+          <button
+            onClick={fetchMetrics}
+            className="px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 font-semibold text-xs group"
+            title="Refresh API metrics"
+          >
+            <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Refresh</span>
+          </button>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -354,6 +356,8 @@ export default function ApiMetrics() {
           </div>
         )}
       </motion.div>
+      </div>
+      </main>
     </div>
   )
 }
