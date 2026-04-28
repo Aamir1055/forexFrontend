@@ -1401,7 +1401,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-300"></div>
                           </div>
                         ) : allBrokerRights && allBrokerRights.length > 0 ? (
-                          <div className="bg-white rounded-lg border border-slate-300 p-3">
+                          <div className="bg-white rounded-lg border border-slate-300 p-3 max-h-[340px] overflow-y-auto custom-scrollbar">
                             <div className="mb-2 pb-2 border-b border-slate-300">
                               <h4 className="text-sm font-semibold text-slate-900">
                                 Rights ({selectedRights.length} selected)
@@ -1465,7 +1465,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         className=""
                       >
                         {/* Scrollable container for Add Account Mapping section */}
-                        <div className="max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">
+                        <div className="max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
                         <div className="flex items-start justify-between mb-4">
                           <div>
                             <h3 className="text-base font-semibold text-slate-900 mb-1">Account Mappings</h3>
