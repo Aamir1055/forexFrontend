@@ -93,90 +93,55 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   return (
     <>
       {/* Desktop sidebar */}
-      <motion.div 
-        className="hidden lg:flex lg:flex-shrink-0 relative z-0"
-        animate={{ width: isCollapsed ? '4.5rem' : '13.50rem' }}
-        transition={{ duration: 0.3 }}
+      <div
+        className="hidden lg:flex lg:flex-shrink-0 relative z-0 transition-[width] duration-300 ease-in-out"
+        style={{ width: isCollapsed ? '4.5rem' : '13.5rem' }}
       >
-        <div className="relative z-0 flex h-screen flex-col border-r border-slate-200 bg-white shadow-xl">
+        <div className="relative z-0 flex h-screen flex-col border-r border-slate-200 bg-white shadow-xl w-full overflow-hidden">
           {/* Background decoration */}
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-white0"></div>
           {/* Header */}
           <div className={cn(
-            "border-b border-slate-200 bg-white flex-shrink-0",
-            isCollapsed ? "flex items-center justify-center px-3 py-6" : "p-6 flex items-center"
+            "border-b border-slate-200 bg-white flex-shrink-0 h-[88px]",
+            isCollapsed ? "flex items-center justify-center px-3" : "px-6 flex items-center"
           )}>
-            <AnimatePresence initial={false}>
-              {isCollapsed ? (
-                <motion.div
-                  key="collapsed-brand"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-700 shadow-lg"
-                >
-                  <Sparkles className="h-5 w-5 text-white" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="expanded-brand"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="flex items-center space-x-3"
-                >
-                  <div className="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg">
-                    <Sparkles className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-xl font-bold text-slate-900">
-                      UserAdmin
-                    </h1>
-                    <p className="text-xs text-slate-500 font-medium">Management Pro</p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Edge collapse button */}
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className={cn(
-              "absolute z-10 rounded-full bg-blue-700 border border-blue-600 shadow-md hover:shadow-lg hover:bg-blue-800 transition-all duration-200 text-white flex items-center justify-center",
-              isCollapsed ? "right-0 top-14 translate-x-1/2 h-8 w-8" : "right-0 top-12 translate-x-1/2 w-8 h-8"
+            {isCollapsed ? (
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-700 shadow-lg flex-shrink-0">
+                <Sparkles className="h-5 w-5 text-white" />
+              </div>
+            ) : (
+              <div className="flex items-center space-x-3 min-w-0">
+                <div className="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <div className="min-w-0">
+                  <h1 className="text-xl font-bold text-slate-900 whitespace-nowrap">
+                    UserAdmin
+                  </h1>
+                  <p className="text-xs text-slate-500 font-medium whitespace-nowrap">Management Pro</p>
+                </div>
+              </div>
             )}
-            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            <ChevronRight className={cn(
-              "transition-transform duration-300",
-              isCollapsed ? "w-3.5 h-3.5" : "w-4 h-4",
-              isCollapsed ? "rotate-0" : "rotate-180"
-            )} />
-          </button>
+          </div>
 
           {/* Navigation */}
           <div className={cn(
-            "flex-1 overflow-y-auto",
-            isCollapsed ? "px-3 pt-8 pb-6" : "px-4 py-6"
+            "flex-1 overflow-y-auto overflow-x-hidden",
+            isCollapsed ? "px-2 pt-8 pb-6" : "px-4 py-6"
           )}>
-            <nav className={cn(isCollapsed ? "space-y-4" : "space-y-1")}>
+            <nav className={cn(isCollapsed ? "space-y-2" : "space-y-1")}>
               {navigation.map((item, index) => {
                 const Icon = item.icon
                 const isActive = location.pathname === item.href
                 
                 return (
-                  <motion.div
-                    key={item.name}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
+                  <div key={item.name}>
                     <Link
                       to={item.href}
+                      title={isCollapsed ? item.name : undefined}
                       className={cn(
                         "flex items-center rounded-lg transition-all duration-200 group relative",
-                        isCollapsed ? "justify-center rounded-2xl px-0 py-3.5" : "space-x-3 p-3",
+                        isCollapsed ? "justify-center h-11 w-11 mx-auto" : "space-x-3 p-3",
                         isActive
                           ? isCollapsed
                             ? "bg-blue-700 text-white shadow-lg shadow-blue-500/25"
@@ -192,55 +157,53 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                         isActive
                           ? isCollapsed
                             ? "text-white"
-                            : "text-slate-600"
-                          : "text-slate-400 group-hover:text-slate-600"
+                            : "text-blue-700"
+                          : "text-slate-600 group-hover:text-slate-900"
                       )} />
                       
-                      <AnimatePresence>
-                        {!isCollapsed && (
-                          <motion.span
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -10 }}
-                            className="font-medium"
-                          >
-                            {item.name}
-                          </motion.span>
-                        )}
-                      </AnimatePresence>
+                      {!isCollapsed && (
+                        <span className="font-medium whitespace-nowrap">{item.name}</span>
+                      )}
                     </Link>
-                  </motion.div>
+                  </div>
                 )
               })}
             </nav>
           </div>
           
           {/* Logout Button */}
-          <div className="p-4 border-t border-slate-200 bg-white flex-shrink-0">
+          <div className={cn(
+            "border-t border-slate-200 bg-white flex-shrink-0",
+            isCollapsed ? "p-2" : "p-4"
+          )}>
             <button
               onClick={handleLogout}
+              title={isCollapsed ? 'Sign Out' : undefined}
               className={cn(
-                "w-full flex items-center rounded-lg transition-all duration-200 group text-slate-600 hover:bg-red-50 hover:text-red-600",
-                isCollapsed ? "justify-center px-0 py-3" : "space-x-3 p-3"
+                "flex items-center rounded-lg transition-all duration-200 group text-slate-600 hover:bg-red-50 hover:text-red-600",
+                isCollapsed ? "justify-center h-11 w-11 mx-auto" : "w-full space-x-3 p-3"
               )}
             >
               <LogOut className="w-5 h-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105" />
-              <AnimatePresence>
-                {!isCollapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    className="font-medium"
-                  >
-                    Sign Out
-                  </motion.span>
-                )}
-              </AnimatePresence>
+              {!isCollapsed && (
+                <span className="font-medium whitespace-nowrap">Sign Out</span>
+              )}
             </button>
           </div>
         </div>
-      </motion.div>
+
+        {/* Edge collapse button (outside inner overflow container) */}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="absolute z-20 right-0 top-12 translate-x-1/2 rounded-full bg-blue-700 border border-blue-600 shadow-md hover:shadow-lg hover:bg-blue-800 transition-all duration-200 text-white flex items-center justify-center w-8 h-8"
+          title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <ChevronRight className={cn(
+            "w-4 h-4 transition-transform duration-300",
+            isCollapsed ? "rotate-0" : "rotate-180"
+          )} />
+        </button>
+      </div>
 
       {/* Mobile sidebar */}
       <AnimatePresence>
@@ -293,12 +256,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                       const isActive = location.pathname === item.href
                       
                       return (
-                        <motion.div
-                          key={item.name}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                        >
+                        <div key={item.name}>
                           <Link
                             to={item.href}
                             onClick={onClose}
@@ -317,7 +275,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                             
                             <span className="font-medium">{item.name}</span>
                           </Link>
-                        </motion.div>
+                        </div>
                       )
                     })}
                   </nav>
