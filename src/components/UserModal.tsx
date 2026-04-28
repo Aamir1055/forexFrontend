@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 import { User, Role, CreateUserData, UpdateUserData } from '../services/userService'
 
 interface UserModalProps {
@@ -31,6 +31,7 @@ const UserModal: React.FC<UserModalProps> = ({
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     console.log('📝 UserModal - useEffect triggered')
@@ -149,13 +150,13 @@ const UserModal: React.FC<UserModalProps> = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           {/* Backdrop */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60" 
+            className="fixed inset-0 bg-black/30" 
             onClick={onClose} 
           />
 
@@ -165,25 +166,25 @@ const UserModal: React.FC<UserModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 30 }}
             transition={{ duration: 0.25, type: "spring", damping: 25, stiffness: 300 }}
-            className={`relative rounded-2xl shadow-2xl transform w-full max-w-xl mx-4 overflow-hidden border transition-colors duration-300 ${
+            className={`relative rounded-2xl shadow-2xl transform w-full max-w-2xl mx-4 overflow-hidden border transition-colors duration-300 ${
               false 
-                ? 'bg-blue-800 border-blue-700/50' 
+                ? 'bg-slate-800 border-slate-700/50' 
                 : 'bg-white border-white/20'
             }`}
           >
               {/* Compact Header */}
-              <div className="relative flex items-center justify-between bg-white border-b border-slate-300 px-6 py-3.5">
+              <div className="relative flex items-center justify-between bg-white border-b border-gray-200 px-6 py-3.5">
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">
+                  <h3 className="text-lg font-bold text-gray-900">
                     {user ? 'Edit User' : 'Create New User'}
                   </h3>
-                  <p className="mt-0.5 text-xs text-slate-500">
-                    {user ? 'Update user information' : 'Add a new user to the system'}
+                  <p className="mt-0.5 text-xs text-gray-500">
+                    {user ? 'Update user details and assign roles.' : 'Add user details and assign roles.'}
                   </p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="rounded-lg p-1.5 text-slate-400 transition-all hover:bg-blue-100 hover:text-slate-700"
+                  className="rounded-lg p-1.5 text-gray-400 transition-all hover:bg-gray-100 hover:text-gray-700"
                 >
                   <XMarkIcon className="w-5 h-5" />
                 </button>
@@ -209,12 +210,12 @@ const UserModal: React.FC<UserModalProps> = ({
                           name="username"
                           value={formData.username}
                           onChange={handleInputChange}
-                          className={`w-full px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-slate-400/20 focus:border-slate-300 transition-all duration-200 ${
+                          className={`w-full px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 transition-all duration-200 ${
                             errors.username 
                               ? 'border-red-300 bg-red-50/50' 
                               : false 
-                                ? 'border-blue-600 bg-blue-700/50 text-white placeholder:text-slate-400 hover:border-blue-500' 
-                                : 'border-slate-300 bg-white text-slate-900 hover:border-slate-300'
+                                ? 'border-slate-600 bg-slate-700/50 text-white placeholder:text-slate-400 hover:border-slate-500' 
+                                : 'border-slate-200 bg-white text-slate-900 hover:border-slate-300'
                           }`}
                           placeholder="Enter username"
                         />
@@ -237,12 +238,12 @@ const UserModal: React.FC<UserModalProps> = ({
                           name="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className={`w-full px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-slate-400/20 focus:border-slate-300 transition-all duration-200 ${
+                          className={`w-full px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 transition-all duration-200 ${
                             errors.email 
                               ? 'border-red-300 bg-red-50/50' 
                               : false 
-                                ? 'border-blue-600 bg-blue-700/50 text-white placeholder:text-slate-400 hover:border-blue-500' 
-                                : 'border-slate-300 bg-white text-slate-900 hover:border-slate-300'
+                                ? 'border-slate-600 bg-slate-700/50 text-white placeholder:text-slate-400 hover:border-slate-500' 
+                                : 'border-slate-200 bg-white text-slate-900 hover:border-slate-300'
                           }`}
                           placeholder="Enter email address"
                         />
@@ -261,21 +262,29 @@ const UserModal: React.FC<UserModalProps> = ({
                       }`}>
                         Password {user ? <span className="font-normal text-[10px] text-slate-500">(leave blank to keep current)</span> : <span className="text-red-500">*</span>}
                       </label>
-                      <div>
+                      <div className="relative">
                         <input
-                          type="password"
+                          type={showPassword ? 'text' : 'password'}
                           name="password"
                           value={formData.password}
                           onChange={handleInputChange}
-                          className={`w-full px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-slate-400/20 focus:border-slate-300 transition-all duration-200 ${
+                          className={`w-full px-2.5 py-1.5 pr-9 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 transition-all duration-200 ${
                             errors.password 
                               ? 'border-red-300 bg-red-50/50' 
                               : false 
-                                ? 'border-blue-600 bg-blue-700/50 text-white placeholder:text-slate-400 hover:border-blue-500' 
-                                : 'border-slate-300 bg-white text-slate-900 hover:border-slate-300'
+                                ? 'border-slate-600 bg-slate-700/50 text-white placeholder:text-slate-400 hover:border-slate-500' 
+                                : 'border-slate-200 bg-white text-slate-900 hover:border-slate-300'
                           }`}
                           placeholder={user ? 'Leave blank to keep current' : 'Enter password'}
                         />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700 transition-colors"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeSlashIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
+                        </button>
                         {errors.password && (
                           <p className="mt-1 text-[10px] text-red-600 font-medium flex items-center gap-0.5">
                             <span>⚠️</span> {errors.password}
@@ -287,98 +296,68 @@ const UserModal: React.FC<UserModalProps> = ({
 
                   {/* Roles & Permissions Section */}
                   <div>
-                    <label className={`block text-[11px] font-semibold mb-1.5 transition-colors ${
-                      'text-slate-700'
-                    }`}>
+                    <label className="block text-[11px] font-semibold mb-1.5 text-slate-700">
                       Roles <span className="text-red-500">*</span>
                     </label>
-                    <div className={`grid grid-cols-2 gap-2 p-2.5 rounded-lg border ${
-                      errors.role_ids 
-                        ? 'border-red-300 bg-red-50/50' 
-                        : false 
-                          ? 'border-blue-600 bg-gradient-to-br from-blue-700/50 to-blue-900/20' 
-                          : 'border-slate-300 bg-white'
-                    }`}>
+                    <div className={`flex flex-nowrap gap-2 overflow-x-auto ${errors.role_ids ? 'p-2 rounded-lg border border-red-300 bg-red-50/50' : ''}`}>
                       {roles.map((role) => (
                         <label
                           key={role.id}
-                          className={`flex items-center cursor-pointer px-3 py-2.5 border rounded-lg transition-all duration-200 h-10 ${
-                            formData.role_ids.includes(role.id) 
-                              ? false
-                                ? 'border-slate-300 bg-blue-100 shadow-sm' 
-                                : 'border-slate-300 bg-blue-100 shadow-sm'
-                              : false
-                                ? 'border-blue-600 bg-blue-700/30 hover:border-slate-300 hover:bg-white'
-                                : 'border-slate-300 bg-white hover:border-slate-300 hover:bg-white'
+                          className={`flex items-center cursor-pointer px-2.5 py-1.5 border rounded-lg transition-all duration-200 flex-shrink-0 ${
+                            formData.role_ids.includes(role.id)
+                              ? 'border-gray-400 bg-gray-100 shadow-sm'
+                              : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
                           }`}
                         >
                           <input
                             type="checkbox"
                             checked={formData.role_ids.includes(role.id)}
                             onChange={(e) => handleRoleChange(role.id, e.target.checked)}
-                            className="w-3.5 h-3.5 rounded border-slate-300 text-slate-700 focus:ring-slate-400 focus:ring-1 transition-colors duration-200 flex-shrink-0"
+                            className="w-3.5 h-3.5 rounded border-slate-300 text-gray-700 focus:ring-gray-400 focus:ring-1 transition-colors duration-200 flex-shrink-0"
                           />
-                          <span className={`ml-2 text-xs font-medium transition-colors truncate ${
-                            'text-slate-700'
-                          }`}>{role.name}</span>
+                          <span className="ml-1.5 text-xs font-medium text-slate-700 capitalize whitespace-nowrap">{role.name}</span>
                         </label>
                       ))}
                     </div>
                     {errors.role_ids && (
-                      <p className={`mt-1.5 text-[10px] font-semibold flex items-center gap-1 px-2 py-1 rounded border ${
-                        false 
-                          ? 'text-red-400 bg-red-900/30 border-red-800' 
-                          : 'text-red-600 bg-red-50 border-red-200'
-                      }`}>
+                      <p className="mt-1.5 text-[10px] text-red-600 font-semibold flex items-center gap-1">
                         <span>⚠️</span> {errors.role_ids}
                       </p>
                     )}
                     {formData.role_ids.length === 0 && !errors.role_ids && (
-                      <p className={`mt-1.5 text-[10px] font-medium flex items-center gap-1 px-2 py-1 rounded border ${
-                        false 
-                          ? 'text-amber-400 bg-amber-900/30 border-amber-800' 
-                          : 'text-slate-600 bg-white border-slate-300'
-                      }`}>
-                        Select at least one role for the user
+                      <p className="mt-1.5 text-[11px] text-slate-500">
+                        Select at least one role for the user.
                       </p>
                     )}
                   </div>
 
                   {/* Status Section */}
-                  <div className="space-y-1.5">
-                    <label className={`flex items-center cursor-pointer px-2 py-1.5 border rounded-lg transition-all group ${
-                      false 
-                        ? 'border-blue-600 hover:bg-gradient-to-br hover:from-yellow-900/30 hover:to-yellow-800/20 hover:border-yellow-600' 
-                        : 'border-slate-300 hover:bg-white hover:border-slate-300'
-                    }`}>
-                      <input
-                        type="checkbox"
-                        name="is_active"
-                        checked={formData.is_active}
-                        onChange={handleInputChange}
-                        className="w-3.5 h-3.5 rounded border-slate-300 text-slate-700 focus:ring-slate-400 focus:ring-1 transition-colors duration-200"
-                      />
-                      <span className={`ml-2 text-[11px] font-semibold transition-colors ${
-                        false ? 'text-slate-300 group-hover:text-yellow-400' : 'text-slate-700 group-hover:text-slate-900'
-                      }`}>User is active</span>
-                    </label>
-                    
-                    <label className={`flex items-center cursor-pointer px-2 py-1.5 border rounded-lg transition-all group ${
-                      false 
-                        ? 'border-blue-600 hover:bg-gradient-to-br hover:from-orange-900/30 hover:to-orange-800/20 hover:border-orange-600' 
-                        : 'border-slate-300 hover:bg-white hover:border-slate-300'
-                    }`}>
-                      <input
-                        type="checkbox"
-                        name="force_two_factor"
-                        checked={formData.force_two_factor}
-                        onChange={handleInputChange}
-                        className="w-3.5 h-3.5 rounded border-slate-300 text-slate-700 focus:ring-slate-400 focus:ring-1 transition-colors duration-200"
-                      />
-                      <span className={`ml-2 text-[11px] font-semibold transition-colors ${
-                        false ? 'text-slate-300 group-hover:text-orange-400' : 'text-slate-700 group-hover:text-slate-900'
-                      }`}>Force 2FA</span>
-                    </label>
+                  <div className="space-y-2 pt-1 border-t border-slate-100 mt-2">
+                    <div className="flex items-center pt-2">
+                      <label className="flex items-center cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          name="is_active"
+                          checked={formData.is_active}
+                          onChange={handleInputChange}
+                          className="w-3.5 h-3.5 rounded border-slate-300 text-gray-700 focus:ring-gray-400 focus:ring-1"
+                        />
+                        <span className="ml-2 text-[11px] font-semibold text-slate-700">User is active</span>
+                      </label>
+                    </div>
+
+                    <div className="flex items-center">
+                      <label className="flex items-center cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          name="force_two_factor"
+                          checked={formData.force_two_factor}
+                          onChange={handleInputChange}
+                          className="w-3.5 h-3.5 rounded border-slate-300 text-gray-700 focus:ring-gray-400 focus:ring-1"
+                        />
+                        <span className="ml-2 text-[11px] font-semibold text-slate-700">Force 2FA</span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </form>
@@ -386,8 +365,8 @@ const UserModal: React.FC<UserModalProps> = ({
               {/* Actions */}
               <div className={`px-5 py-3 border-t flex justify-end items-center transition-colors duration-300 ${
                 false 
-                  ? 'bg-gradient-to-r from-blue-900/50 via-blue-800/20 to-purple-900/20 border-blue-700' 
-                  : 'bg-white border-slate-300'
+                  ? 'bg-gradient-to-r from-slate-900/50 via-gray-800/20 to-purple-900/20 border-slate-700' 
+                  : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex gap-2">
                   <button
@@ -395,8 +374,8 @@ const UserModal: React.FC<UserModalProps> = ({
                     onClick={onClose}
                     className={`px-4 py-1.5 text-xs font-semibold border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 shadow-sm ${
                       false 
-                        ? 'text-slate-300 bg-blue-700 border-blue-600 hover:bg-blue-600 hover:border-blue-500 focus:ring-blue-500/50' 
-                        : 'text-slate-700 bg-white border-slate-300 hover:bg-white hover:border-slate-300 focus:ring-blue-300/50'
+                        ? 'text-slate-300 bg-slate-700 border-slate-600 hover:bg-slate-600 hover:border-slate-500 focus:ring-slate-500/50' 
+                        : 'text-slate-700 bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 focus:ring-slate-300/50'
                     }`}
                     disabled={isLoading}
                   >
@@ -406,7 +385,7 @@ const UserModal: React.FC<UserModalProps> = ({
                     type="submit"
                     onClick={handleSubmit}
                     disabled={isLoading}
-                    className="px-5 py-1.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-400/50 shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
+                    className="px-5 py-1.5 text-xs font-bold text-gray-700 bg-white border border-gray-400 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400/50 shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
                   >
                     {isLoading ? (
                       <div className="flex items-center gap-1.5">

@@ -105,13 +105,13 @@ const RoleModal: React.FC<RoleModalProps> = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2 }}
-            className={`rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl ${
+            className={`rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl ${
               'bg-white'
             }`}
           >

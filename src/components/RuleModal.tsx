@@ -132,7 +132,7 @@ const RuleModal: React.FC<RuleModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm"
           />
 
           {/* Modal */}
@@ -223,11 +223,7 @@ const RuleModal: React.FC<RuleModalProps> = ({
                 </div>
               </div>
 
-              <div className="border-t border-slate-300 pt-4">
-                <div className="mb-3 flex items-center gap-2">
-                  <div className="h-4 w-1 rounded-full bg-white0"></div>
-                  <h3 className="text-sm font-semibold text-slate-900">MT5 Configuration</h3>
-                </div>
+              <div>
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {/* MT5 Field */}
                 <div>
