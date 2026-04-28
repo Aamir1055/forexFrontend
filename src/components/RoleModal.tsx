@@ -111,7 +111,7 @@ const RoleModal: React.FC<RoleModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2 }}
-            className={`rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl ${
+            className={`rounded-2xl w-full max-w-2xl max-h-[560px] overflow-hidden shadow-2xl ${
               'bg-white'
             }`}
           >
@@ -130,7 +130,7 @@ const RoleModal: React.FC<RoleModalProps> = ({
             </div>
 
             {/* Content */}
-            <div className={`overflow-y-auto max-h-[calc(90vh-200px)] ${
+            <div className={`overflow-y-auto max-h-[430px] ${
               'bg-white'
             }`}>
               <form id="role-form" onSubmit={handleSubmit}>

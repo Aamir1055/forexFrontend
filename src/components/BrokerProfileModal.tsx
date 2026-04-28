@@ -226,7 +226,7 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-hidden"
+            className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[600px] overflow-hidden"
           >
             {/* Header */}
             <div className="px-6 py-4 bg-white border-b border-slate-300">

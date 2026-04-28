@@ -161,7 +161,7 @@ const RuleModal: React.FC<RuleModalProps> = ({
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-3 p-5">
+            <form onSubmit={handleSubmit} className="space-y-2 p-4">
               {/* General Error Alert */}
               {errors.general && (
                 <div className="rounded-lg bg-red-50 border border-red-200 p-4">
@@ -286,7 +286,7 @@ const RuleModal: React.FC<RuleModalProps> = ({
                 </div>
 
                 {/* Description */}
-                <div className="mt-3 md:mt-4">
+                <div className="mt-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1">
                     Description <span className="text-red-500">*</span>
                   </label>
@@ -297,7 +297,7 @@ const RuleModal: React.FC<RuleModalProps> = ({
                     rows={2}
                     className={`w-full rounded-lg border ${
                       errors.description ? 'border-red-300' : 'border-slate-300'
-                    } px-4 py-2.5 text-sm focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400/20`}
+                    } px-3 py-2 text-sm focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400/20`}
                     placeholder="Describe what this rule does..."
                   />
                   {errors.description && (
@@ -306,7 +306,7 @@ const RuleModal: React.FC<RuleModalProps> = ({
                 </div>
               </div>
 
-              <div className="space-y-2 border-t border-slate-300 pt-3">
+              <div className="space-y-1.5 border-t border-slate-300 pt-2">
                 {/* Requires Time Parameter */}
                 <div className="flex items-center rounded-lg border border-slate-300 px-3 py-2 hover:border-slate-300 hover:bg-white/40 transition-colors">
                   <input
@@ -345,7 +345,7 @@ const RuleModal: React.FC<RuleModalProps> = ({
               </div>
 
               {/* Buttons */}
-              <div className="flex justify-end gap-3 pt-3 border-t border-slate-300">
+              <div className="flex justify-end gap-3 pt-2 border-t border-slate-300">
                 <button
                   type="button"
                   onClick={onClose}
