@@ -18,7 +18,7 @@ const UIEnhancementNotification: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.8, y: 50 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.8, y: 50 }}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-2xl max-w-md mx-auto border border-blue-500/20"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-2xl max-w-md mx-auto border border-slate-300/20"
               >
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0">
@@ -30,10 +30,10 @@ const UIEnhancementNotification: React.FC = () => {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-bold mb-2">🎉 UI Enhanced!</h3>
-                    <p className="text-blue-100 text-sm mb-3">
+                    <p className="text-slate-200 text-sm mb-3">
                       Your application now features:
                     </p>
-                    <ul className="text-blue-100 text-sm space-y-1">
+                    <ul className="text-slate-200 text-sm space-y-1">
                       <li className="flex items-center">
                         <svg className="w-4 h-4 mr-2 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -68,7 +68,7 @@ const UIEnhancementNotification: React.FC = () => {
                           toast.dismiss(t.id)
                           navigate('/brokers')
                         }}
-                        className="px-4 py-2 bg-white text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors"
+                        className="px-4 py-2 bg-white text-slate-700 rounded-lg text-sm font-medium hover:bg-white transition-colors"
                       >
                         Try Broker Creation
                       </button>

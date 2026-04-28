@@ -45,13 +45,9 @@ const UserTable: React.FC<UserTableProps> = ({
 
   if (isLoading) {
     return (
-      <div className={`backdrop-blur-xl rounded-xl border shadow-xl ${
-        false 
-          ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
-          : 'bg-white/80 border-white/60 shadow-blue-500/5'
-      }`}>
+      <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
         {topContent && (
-          <div className="p-3 border-b border-slate-200/80">
+          <div className="p-3 border-b border-slate-300">
             {topContent}
           </div>
         )}
@@ -59,11 +55,11 @@ const UserTable: React.FC<UserTableProps> = ({
           <div className="relative inline-flex">
             <div className={`animate-spin rounded-full h-12 w-12 border-4 ${
               false 
-                ? 'border-slate-700 border-t-blue-500' 
-                : 'border-slate-200 border-t-blue-600'
+                ? 'border-blue-700 border-t-blue-500' 
+                : 'border-slate-300 border-t-blue-600'
             }`}></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="h-6 w-6 rounded-full bg-blue-600/10"></div>
+              <div className="h-6 w-6 rounded-full bg-blue-700/10"></div>
             </div>
           </div>
           <p className="font-semibold mt-4 text-sm text-slate-600">Loading users...</p>
@@ -75,21 +71,17 @@ const UserTable: React.FC<UserTableProps> = ({
 
   if (users.length === 0) {
     return (
-      <div className={`backdrop-blur-xl rounded-xl border shadow-xl ${
-        false 
-          ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
-          : 'bg-white/80 border-white/60 shadow-blue-500/5'
-      }`}>
+      <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
         {topContent && (
-          <div className="p-3 border-b border-slate-200/80">
+          <div className="p-3 border-b border-slate-300">
             {topContent}
           </div>
         )}
         <div className="p-16 text-center">
           <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border ${
             false 
-              ? 'bg-gradient-to-br from-blue-900/30 to-purple-900/30 border-blue-800' 
-              : 'bg-gradient-to-br from-blue-50 to-purple-50 border-blue-100'
+              ? 'bg-blue-7900/30 to-purple-900/30 border-slate-300' 
+              : 'bg-blue-750 to-purple-50 border-slate-300'
           }`}>
             <UserGroupIcon className="w-8 h-8 text-slate-400" />
           </div>
@@ -103,13 +95,9 @@ const UserTable: React.FC<UserTableProps> = ({
   return (
     <>
       {/* Compact Table with Glass Effect */}
-      <div className={`backdrop-blur-xl rounded-xl border shadow-xl overflow-hidden ${
-        false 
-          ? 'bg-slate-800/80 border-slate-700/60 shadow-black/20' 
-          : 'bg-white/80 border-white/60 shadow-blue-500/5'
-      }`}>
+      <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
         {topContent && (
-          <div className="p-3 border-b border-slate-200/80 bg-white/60">
+          <div className="p-3 border-b border-slate-300 bg-white/60">
             {topContent}
           </div>
         )}
@@ -118,8 +106,8 @@ const UserTable: React.FC<UserTableProps> = ({
           <thead>
             <tr className={`border-b ${
               false 
-                ? 'bg-gradient-to-r from-slate-900/50 to-blue-900/20 border-slate-700' 
-                : 'bg-gradient-to-r from-slate-50 to-blue-50/30 border-slate-200'
+                ? 'bg-gradient-to-r from-blue-900/50 to-blue-900/20 border-blue-700' 
+                : 'bg-transparent border-slate-300'
             }`}>
               <th 
                 onClick={() => onSort?.('username')}
@@ -131,7 +119,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 <div className="flex items-center gap-1">
                   <span>User</span>
                   {currentSort?.field === 'username' && (
-                    <span className="text-xs text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    <span className="text-xs text-slate-700">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                   )}
                 </div>
               </th>
@@ -145,7 +133,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 <div className="flex items-center gap-1">
                   <span>Email</span>
                   {currentSort?.field === 'email' && (
-                    <span className="text-xs text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    <span className="text-xs text-slate-700">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                   )}
                 </div>
               </th>
@@ -162,7 +150,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 <div className="flex items-center gap-1">
                   <span>Status</span>
                   {currentSort?.field === 'is_active' && (
-                    <span className="text-xs text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    <span className="text-xs text-slate-700">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                   )}
                 </div>
               </th>
@@ -176,7 +164,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 <div className="flex items-center gap-1">
                   <span>Created</span>
                   {currentSort?.field === 'created_at' && (
-                    <span className="text-xs text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    <span className="text-xs text-slate-700">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                   )}
                 </div>
               </th>
@@ -187,27 +175,13 @@ const UserTable: React.FC<UserTableProps> = ({
           </thead>
           <tbody className={`divide-y ${
             false 
-              ? 'bg-slate-800/50 divide-slate-700/50' 
-              : 'bg-white divide-slate-100'
+              ? 'bg-blue-800/50 divide-blue-700/50' 
+              : 'bg-white divide-slate-200'
           }`}>
-            {users.map((user, index) => (
-              <tr key={user.id} className={`transition-all duration-200 group ${
-                false 
-                  ? 'hover:bg-gradient-to-r hover:from-blue-900/20 hover:to-purple-900/20' 
-                  : 'hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-purple-50/20'
-              }`}>
+            {users.map((user) => (
+              <tr key={user.id} className="group">
                 <td className="px-3 py-2 whitespace-nowrap">
                   <div className="flex items-center gap-2">
-                    <div className="relative">
-                      <img 
-                        src={`https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-${(index % 5) + 1}.jpg`} 
-                        alt="Avatar" 
-                        className="w-7 h-7 rounded-lg border-2 border-white shadow-sm group-hover:scale-110 transition-transform duration-200"
-                      />
-                      {user.is_active && (
-                        <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-yellow-500 border-2 border-white rounded-full"></div>
-                      )}
-                    </div>
                     <div>
                       <div className="text-xs font-semibold text-slate-800">{user.username}</div>
                       <div className="text-[10px] text-slate-500">@{user.username.toLowerCase().replace(/\s+/g, '')}</div>
@@ -222,14 +196,14 @@ const UserTable: React.FC<UserTableProps> = ({
                     {user.roles.slice(0, 2).map((role) => (
                       <span
                         key={role.id}
-                        className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold shadow-sm ${
+                        className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold ${
                           role.name.toLowerCase() === 'admin' 
-                            ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
+                            ? 'bg-blue-700 text-white'
                             : role.name.toLowerCase() === 'editor'
-                            ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-black'
+                            ? 'bg-amber-100 text-amber-800'
                             : role.name.toLowerCase() === 'viewer'
-                            ? 'bg-gradient-to-r from-slate-400 to-slate-500 text-white'
-                            : 'bg-gradient-to-r from-purple-500 to-purple-600 text-white'
+                            ? 'bg-slate-100 text-slate-700'
+                            : 'bg-blue-100 text-blue-800'
                         }`}
                       >
                         {role.name}
@@ -263,7 +237,7 @@ const UserTable: React.FC<UserTableProps> = ({
                         checked={user.is_active}
                         onChange={() => onToggleStatus(user.id)}
                       />
-                      <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all after:shadow-sm peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-blue-600"></div>
+                      <div className="w-9 h-5 bg-blue-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all after:shadow-sm peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-blue-700"></div>
                     </label>
                   </PermissionGate>
                 </td>
@@ -280,7 +254,7 @@ const UserTable: React.FC<UserTableProps> = ({
                     <PermissionGate module={MODULES.USERS} action="edit">
                       <button 
                         onClick={() => onEdit(user)}
-                        className="group/btn relative p-1.5 text-slate-400 hover:text-white rounded-lg bg-slate-100 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/50 hover:scale-110"
+                        className="group/btn relative p-1.5 text-slate-400 hover:text-white rounded-lg bg-blue-100 hover:bg-blue-700 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/50 hover:scale-110"
                         title="Edit user"
                       >
                         <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -291,7 +265,7 @@ const UserTable: React.FC<UserTableProps> = ({
                     <PermissionGate module={MODULES.USERS} action="delete">
                       <button 
                         onClick={() => onDelete(user.id)}
-                        className="group/btn relative p-1.5 text-slate-400 hover:text-white rounded-lg bg-slate-100 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:shadow-red-500/50 hover:scale-110"
+                        className="group/btn relative p-1.5 text-slate-400 hover:text-white rounded-lg bg-blue-100 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:shadow-red-500/50 hover:scale-110"
                         title="Delete user"
                       >
                         <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,7 +284,7 @@ const UserTable: React.FC<UserTableProps> = ({
 
       {/* Pagination */}
       {pagination && pagination.pages > 1 && (
-        <div className="px-4 py-3 border-t border-slate-200">
+        <div className="px-4 py-3 border-t border-slate-300">
           <div className="flex items-center justify-between">
             <div className="text-sm text-slate-600">
               Showing <span className="font-medium">{((currentPage - 1) * pagination.limit) + 1}</span> to{' '}
@@ -321,7 +295,7 @@ const UserTable: React.FC<UserTableProps> = ({
               <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 font-medium text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-white transition-all duration-200 font-medium text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
@@ -335,8 +309,8 @@ const UserTable: React.FC<UserTableProps> = ({
                     onClick={() => onPageChange(page)}
                     className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-all duration-200 ${
                       currentPage === page
-                        ? 'bg-blue-600 text-white'
-                        : 'border border-slate-300 hover:bg-slate-50 text-slate-600'
+                        ? 'bg-blue-700 text-white'
+                        : 'border border-slate-300 hover:bg-white text-slate-600'
                     }`}
                   >
                     {page}
@@ -347,7 +321,7 @@ const UserTable: React.FC<UserTableProps> = ({
               <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === pagination.pages}
-                className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 font-medium text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-white transition-all duration-200 font-medium text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>

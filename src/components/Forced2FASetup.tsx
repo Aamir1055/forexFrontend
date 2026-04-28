@@ -145,34 +145,34 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
 
   if (step === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Setting up Two-Factor Authentication...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-slate-300 mx-auto"></div>
+          <p className="mt-4 text-slate-600">Setting up Two-Factor Authentication...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-2xl w-full"
       >
-        <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-2xl border border-slate-300 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-6">
+          <div className="bg-white border-b border-slate-300 px-8 py-6">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
                 <ShieldCheckIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-slate-900">
                   Two-Factor Authentication Required
                 </h2>
-                <p className="text-blue-100 text-sm mt-1">
+                <p className="text-slate-500 text-sm mt-1">
                   Your account requires 2FA setup for enhanced security
                 </p>
               </div>
@@ -184,22 +184,22 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
               <>
                 {/* Instructions */}
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Setup Instructions</h3>
-                  <ol className="space-y-2 text-sm text-gray-600">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Setup Instructions</h3>
+                  <ol className="space-y-2 text-sm text-slate-600">
                     <li className="flex items-start">
-                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-semibold mr-3">1</span>
+                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-slate-600 rounded-full flex items-center justify-center text-xs font-semibold mr-3">1</span>
                       <span>Install an authenticator app (Google Authenticator, Authy, etc.)</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-semibold mr-3">2</span>
+                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-slate-600 rounded-full flex items-center justify-center text-xs font-semibold mr-3">2</span>
                       <span>Scan the QR code below with your authenticator app</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-semibold mr-3">3</span>
+                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-slate-600 rounded-full flex items-center justify-center text-xs font-semibold mr-3">3</span>
                       <span>Save your backup codes in a secure location</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-semibold mr-3">4</span>
+                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-slate-600 rounded-full flex items-center justify-center text-xs font-semibold mr-3">4</span>
                       <span>Enter the 6-digit code from your app to verify</span>
                     </li>
                   </ol>
@@ -208,8 +208,8 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
                 <div className="grid md:grid-cols-2 gap-6">
                   {/* QR Code */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Scan QR Code</h4>
-                    <div className="bg-white p-4 rounded-xl border-2 border-gray-200">
+                    <h4 className="text-sm font-semibold text-slate-700 mb-3">Scan QR Code</h4>
+                    <div className="bg-white p-4 rounded-xl border-2 border-slate-300">
                       {normalizedQrSrc && !qrLoadError ? (
                         <img
                           src={normalizedQrSrc}
@@ -219,15 +219,15 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
                         />
                       ) : (
                         <div className="text-center py-6">
-                          <p className="text-sm text-gray-600">QR code could not be loaded.</p>
+                          <p className="text-sm text-slate-600">QR code could not be loaded.</p>
                           {normalizedQrSrc ? (
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-slate-500 mt-1">
                               You can
-                              <a href={normalizedQrSrc} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline mx-1">open the QR in a new tab</a>
+                              <a href={normalizedQrSrc} target="_blank" rel="noreferrer" className="text-slate-700 hover:underline mx-1">open the QR in a new tab</a>
                               or use the manual entry key below.
                             </p>
                           ) : (
-                            <p className="text-xs text-gray-500 mt-1">Use the manual entry key below.</p>
+                            <p className="text-xs text-slate-500 mt-1">Use the manual entry key below.</p>
                           )}
                         </div>
                       )}
@@ -238,7 +238,7 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
                           <a
                             href={qrDataUrl || normalizedQrSrc}
                             download={`2fa-qr-${username}.png`}
-                            className="text-xs text-blue-600 hover:text-blue-800"
+                            className="text-xs text-slate-600 hover:text-slate-900"
                           >
                             Download QR
                           </a>
@@ -249,21 +249,21 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
                             <button
                               type="button"
                               onClick={() => { navigator.clipboard.writeText(qrCodeUri); toast.success('otpauth URI copied'); }}
-                              className="text-xs text-gray-600 hover:text-gray-900"
+                              className="text-xs text-slate-600 hover:text-slate-900"
                             >
                               Copy otpauth URI
                             </button>
-                            <span className="text-[10px] text-gray-400 hidden md:inline" title="Most desktop browsers can't open otpauth:// links. Scan the QR or add the key manually.">
+                            <span className="text-[10px] text-slate-400 hidden md:inline" title="Most desktop browsers can't open otpauth:// links. Scan the QR or add the key manually.">
                               otpauth links don't open in browsers
                             </span>
                           </div>
                         )}
                       </div>
                     </div>
-                    <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500 mb-2">Manual Entry Key:</p>
+                    <div className="mt-3 p-3 bg-white rounded-lg">
+                      <p className="text-xs text-slate-500 mb-2">Manual Entry Key:</p>
                       <div className="flex items-center justify-between gap-2">
-                        <code className="text-xs font-mono text-gray-700 bg-white px-3 py-2 rounded border border-gray-200 flex-1 break-all">{secret}</code>
+                        <code className="text-xs font-mono text-slate-700 bg-white px-3 py-2 rounded border border-slate-300 flex-1 break-all">{secret}</code>
                         <button
                           type="button"
                           onClick={(e) => {
@@ -285,7 +285,7 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
                               toast.error('Failed to copy to clipboard')
                             }
                           }}
-                          className="flex items-center gap-1 px-3 py-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors whitespace-nowrap border border-blue-200"
+                          className="flex items-center gap-1 px-3 py-2 text-xs text-slate-600 hover:text-slate-900 hover:bg-blue-100 rounded transition-colors whitespace-nowrap border border-slate-300"
                           title="Copy manual entry key"
                         >
                           <ClipboardDocumentIcon className="w-4 h-4" />
@@ -298,10 +298,10 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
                   {/* Backup Codes */}
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-sm font-semibold text-gray-700">Backup Codes</h4>
+                      <h4 className="text-sm font-semibold text-slate-700">Backup Codes</h4>
                       <button
                         onClick={handleCopyBackupCodes}
-                        className="flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-700"
+                        className="flex items-center space-x-1 text-xs text-slate-600 hover:text-slate-900"
                       >
                         {copiedBackupCodes ? (
                           <>
@@ -322,12 +322,12 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
                         Save these codes securely. Each code can only be used once if you lose access to your authenticator.
                       </p>
                     </div>
-                    <div className="bg-gray-50 rounded-xl p-4 max-h-48 overflow-y-auto">
+                    <div className="bg-white rounded-xl p-4 max-h-48 overflow-y-auto">
                       <div className="grid grid-cols-2 gap-2">
                         {backupCodes.map((code, index) => (
                           <div
                             key={index}
-                            className="font-mono text-xs bg-white px-3 py-2 rounded border border-gray-200"
+                            className="font-mono text-xs bg-white px-3 py-2 rounded border border-slate-300"
                           >
                             {code}
                           </div>
@@ -340,7 +340,7 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
                 {/* Verification Form */}
                 <form onSubmit={handleVerify} className="mt-6">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Enter Verification Code
                     </label>
                     <div className="flex items-center space-x-4">
@@ -350,13 +350,13 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
                         onChange={handleCodeChange}
                         placeholder="000000"
                         maxLength={6}
-                        className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl text-center text-2xl font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="flex-1 px-4 py-3 border-2 border-slate-300 rounded-xl text-center text-2xl font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent"
                         autoFocus
                       />
                       <button
                         type="submit"
                         disabled={verificationCode.length !== 6 || isSubmitting}
-                        className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+                        className="px-6 py-3 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
                       >
                         {isSubmitting ? (
                           <div className="flex items-center space-x-2">
@@ -371,16 +371,16 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
                         )}
                       </button>
                     </div>
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-slate-500 mt-2">
                       Enter the 6-digit code from your authenticator app
                     </p>
                   </div>
                 </form>
 
-                <div className="mt-6 pt-6 border-t border-gray-200">
+                <div className="mt-6 pt-6 border-t border-slate-300">
                   <button
                     onClick={onBack}
-                    className="flex items-center text-sm text-gray-600 hover:text-gray-900"
+                    className="flex items-center text-sm text-slate-600 hover:text-slate-900"
                   >
                     <ArrowLeftIcon className="w-4 h-4 mr-2" />
                     Back to Login
@@ -393,8 +393,8 @@ const Forced2FASetup: React.FC<Forced2FASetupProps> = ({
 
         {/* User Info */}
         <div className="text-center mt-4">
-          <p className="text-sm text-gray-500">
-            Setting up for: <span className="font-medium text-gray-700">{username}</span>
+          <p className="text-sm text-slate-500">
+            Setting up for: <span className="font-medium text-slate-700">{username}</span>
           </p>
         </div>
       </motion.div>

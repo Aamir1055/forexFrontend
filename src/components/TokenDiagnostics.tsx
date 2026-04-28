@@ -51,8 +51,8 @@ export const TokenDiagnostics: React.FC = () => {
   const secondsRemaining = accessPayload?.exp ? accessPayload.exp - Math.floor(Date.now() / 1000) : null
 
   return (
-    <div className="p-4 rounded-lg border border-blue-300 bg-blue-50 text-sm space-y-2">
-      <div className="font-semibold text-blue-800">Token Diagnostics</div>
+    <div className="p-4 rounded-lg border border-slate-300 bg-white text-sm space-y-2">
+      <div className="font-semibold text-slate-800">Token Diagnostics</div>
       <div>Current Time: {formatTs(now)}</div>
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -78,15 +78,15 @@ export const TokenDiagnostics: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="pt-2 border-t border-blue-200">
+      <div className="pt-2 border-t border-slate-300">
         <div className="font-medium">Last Refresh Attempt</div>
         {refreshStatus ? (
           <div className={refreshStatus.ok ? 'text-yellow-700' : 'text-red-700'}>
             {refreshStatus.ok ? 'SUCCESS' : 'FAILED'} at {formatTs(refreshStatus.at)} {refreshStatus.error && `(status: ${refreshStatus.error})`}
           </div>
-        ) : <div className="text-gray-500">None recorded</div>}
+        ) : <div className="text-slate-500">None recorded</div>}
       </div>
-      <div className="text-xs text-blue-700 pt-2">
+      <div className="text-xs text-slate-700 pt-2">
         If network errors persist while access token is valid, inspect backend CORS configuration.
       </div>
     </div>

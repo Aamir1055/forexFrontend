@@ -54,16 +54,12 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
 
   if (isLoading) {
     return (
-      <div className={`backdrop-blur-xl rounded-xl border shadow-lg transition-colors ${
-        false 
-          ? 'bg-slate-800/80 border-slate-700/60' 
-          : 'bg-white/80 border-white/60'
-      }`}>
-        {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
+      <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
+        {topContent && <div className="p-3 border-b border-slate-300">{topContent}</div>}
         <div className="p-6">
           <div className="animate-pulse space-y-4">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-12 rounded bg-gray-200"></div>
+              <div key={i} className="h-12 rounded bg-blue-200"></div>
             ))}
           </div>
         </div>
@@ -72,27 +68,23 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
   }
 
   return (
-    <div className={`backdrop-blur-xl rounded-xl border shadow-lg overflow-hidden transition-colors ${
-      false 
-        ? 'bg-slate-800/80 border-slate-700/60' 
-        : 'bg-white/80 border-white/60'
-    }`}>
-      {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
+    <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
+      {topContent && <div className="p-3 border-b border-slate-300">{topContent}</div>}
       {/* Mobile view */}
       <div className="block sm:hidden">
         <div className="px-4 py-5 sm:p-6">
           <div className="space-y-4">
             {brokers.map((broker) => (
-              <div key={broker.id} className="border border-gray-200 rounded-lg p-4">
+              <div key={broker.id} className="border border-slate-300 rounded-lg p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="text-sm font-medium text-gray-900">{broker.username || 'No Username'}</h3>
-                    <p className="text-sm text-gray-500">{broker.email || 'No email'}</p>
-                    <p className="text-sm text-gray-500">{broker.phone}</p>
-                    <p className="text-sm text-gray-500">Range: {broker.account_range_from} - {broker.account_range_to}</p>
+                    <h3 className="text-sm font-medium text-slate-900">{broker.username || 'No Username'}</h3>
+                    <p className="text-sm text-slate-500">{broker.email || 'No email'}</p>
+                    <p className="text-sm text-slate-500">{broker.phone}</p>
+                    <p className="text-sm text-slate-500">Range: {broker.account_range_from} - {broker.account_range_to}</p>
                     <div className="mt-2 flex items-center space-x-3">
                       <div className="flex items-center space-x-2">
-                        <span className="text-xs font-medium text-gray-600">Status:</span>
+                        <span className="text-xs font-medium text-slate-600">Status:</span>
                         <PermissionGate module={MODULES.BROKERS} action="edit">
                           <label className="relative inline-flex items-center cursor-pointer group/toggle">
                             <input 
@@ -101,11 +93,11 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                               checked={broker.is_active}
                               onChange={() => onToggleStatus(broker.id)}
                             />
-                            <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all after:shadow-sm peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-blue-600"></div>
+                            <div className="w-9 h-5 bg-blue-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all after:shadow-sm peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-blue-700"></div>
                           </label>
                         </PermissionGate>
                       </div>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-slate-800">
                         @{broker.username}
                       </span>
                     </div>
@@ -114,7 +106,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                     <PermissionGate module={MODULES.BROKERS} action="edit">
                       <button
                         onClick={() => onEdit(broker)}
-                        className="p-1 text-gray-400 hover:text-gray-500"
+                        className="p-1 text-slate-400 hover:text-slate-500"
                       >
                         <PencilIcon className="h-5 w-5" />
                       </button>
@@ -136,32 +128,27 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
       </div>
 
       {/* Desktop view */}
-      <div className={`backdrop-blur-xl rounded-xl border shadow-lg overflow-hidden transition-colors ${
-        false 
-          ? 'bg-slate-800/80 border-slate-700/60' 
-          : 'bg-white/80 border-white/60'
-      }`}>
-        <div className="overflow-x-auto">
+      <div className="hidden sm:block overflow-x-auto">
           <table className="w-full">
             <thead className={`border-b transition-colors ${
               false 
-                ? 'bg-slate-700/50 border-slate-600' 
-                : 'bg-slate-50 border-slate-200'
+                ? 'bg-blue-700/50 border-blue-600' 
+                : 'bg-white border-slate-300'
             }`}>
               <tr>
                 <th 
                   onClick={() => onSort('full_name')}
                   className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
                     false 
-                      ? 'text-slate-300 hover:bg-slate-600/50' 
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'text-slate-300 hover:bg-blue-600/50' 
+                      : 'text-slate-600 hover:bg-slate-50'
                   }`}
                   title="Click to sort"
                 >
                   <div className="flex items-center space-x-1">
                     <span>Username</span>
                     {currentSort.field === 'full_name' && (
-                      <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                      <span className="text-slate-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                     )}
                   </div>
                 </th>
@@ -169,34 +156,34 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                   onClick={() => onSort('email')}
                   className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
                     false 
-                      ? 'text-slate-300 hover:bg-slate-600/50' 
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'text-slate-300 hover:bg-blue-600/50' 
+                      : 'text-slate-600 hover:bg-slate-50'
                   }`}
                   title="Click to sort"
                 >
                   <div className="flex items-center space-x-1">
                     <span>Email</span>
                     {currentSort.field === 'email' && (
-                      <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                      <span className="text-slate-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                     )}
                   </div>
                 </th>
                 <th className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide ${
-                  'text-gray-600'
+                  'text-slate-600'
                 }`}>Phone</th>
                 <th 
                   onClick={() => onSort('is_active')}
                   className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
                     false 
-                      ? 'text-slate-300 hover:bg-slate-600/50' 
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'text-slate-300 hover:bg-blue-600/50' 
+                      : 'text-slate-600 hover:bg-slate-50'
                   }`}
                   title="Click to sort"
                 >
                   <div className="flex items-center space-x-1">
                     <span>Status</span>
                     {currentSort.field === 'is_active' && (
-                      <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                      <span className="text-slate-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                     )}
                   </div>
                 </th>
@@ -204,31 +191,15 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                   onClick={() => onSort('clients_count')}
                   className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
                     false 
-                      ? 'text-slate-300 hover:bg-slate-600/50' 
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'text-slate-300 hover:bg-blue-600/50' 
+                      : 'text-slate-600 hover:bg-slate-50'
                   }`}
                   title="Click to sort"
                 >
                   <div className="flex items-center space-x-1">
                     <span>Clients</span>
                     {currentSort.field === 'clients_count' && (
-                      <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
-                    )}
-                  </div>
-                </th>
-                <th 
-                  onClick={() => onSort('group_mappings_count')}
-                  className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
-                    false 
-                      ? 'text-slate-300 hover:bg-slate-600/50' 
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
-                  title="Click to sort"
-                >
-                  <div className="flex items-center space-x-1">
-                    <span>Groups</span>
-                    {currentSort.field === 'group_mappings_count' && (
-                      <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                      <span className="text-slate-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                     )}
                   </div>
                 </th>
@@ -236,40 +207,40 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                   onClick={() => onSort('rights_count')}
                   className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide cursor-pointer transition-colors ${
                     false 
-                      ? 'text-slate-300 hover:bg-slate-600/50' 
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'text-slate-300 hover:bg-blue-600/50' 
+                      : 'text-slate-600 hover:bg-slate-50'
                   }`}
                   title="Click to sort"
                 >
                   <div className="flex items-center space-x-1">
                     <span>Rights</span>
                     {currentSort.field === 'rights_count' && (
-                      <span className="text-blue-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                      <span className="text-slate-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                     )}
                   </div>
                 </th>
                 <th className={`px-2 py-1.5 text-left text-xs font-medium uppercase tracking-wide ${
-                  'text-gray-600'
+                  'text-slate-600'
                 }`}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-200">
               {brokers.map((broker) => (
                 <tr key={broker.id} className={`transition-colors duration-150 ${
-                  false ? 'hover:bg-slate-700/50' : 'hover:bg-gray-50'
+                  false ? 'hover:bg-blue-700/50' : 'hover:bg-white'
                 }`}>
                   <td className="px-2 py-2">
-                    <p className="text-xs font-semibold text-gray-900">
+                    <p className="text-xs font-semibold text-slate-900">
                       {broker.username || 'No Username'}
                     </p>
                   </td>
                   <td className="px-2 py-2">
-                    <p className="text-xs text-gray-700">{broker.email || '-'}</p>
+                    <p className="text-xs text-slate-700">{broker.email || '-'}</p>
                   </td>
                   <td className="px-2 py-2">
-                    <p className="text-xs text-gray-700">{broker.phone || '-'}</p>
+                    <p className="text-xs text-slate-700">{broker.phone || '-'}</p>
                   </td>
-                  <td className="px-2 py-2">
+                  <td className="px-4 py-3">
                     <PermissionGate module={MODULES.BROKERS} action="edit">
                       <label className="relative inline-flex items-center cursor-pointer group/toggle">
                         <input 
@@ -278,31 +249,26 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                           checked={broker.is_active}
                           onChange={() => onToggleStatus(broker.id)}
                         />
-                        <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all after:shadow-sm peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-blue-600"></div>
+                        <div className="w-9 h-5 bg-blue-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all after:shadow-sm peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-blue-700"></div>
                       </label>
                     </PermissionGate>
                   </td>
-                  <td className="px-2 py-2">
-                    <p className="text-xs font-semibold text-blue-600">
+                  <td className="px-4 py-3">
+                    <p className="text-xs font-semibold text-slate-600">
                       {broker.clients_count || 0}
                     </p>
                   </td>
-                  <td className="px-2 py-2">
-                    <p className="text-xs font-semibold text-green-600">
-                      {broker.group_mappings_count || 0}
-                    </p>
-                  </td>
-                  <td className="px-2 py-2">
-                    <p className="text-xs font-semibold text-purple-600">
+                  <td className="px-4 py-3">
+                    <span className="px-2.5 py-1 bg-blue-100 text-slate-700 rounded-full text-xs font-medium border border-slate-300">
                       {getRightsDisplay(broker.id)}
-                    </p>
+                    </span>
                   </td>
-                  <td className="px-2 py-2">
+                  <td className="px-4 py-3">
                     <div className="flex items-center space-x-1">
                       <PermissionGate module={MODULES.BROKERS} action="edit">
                         <button 
                           onClick={() => onEdit(broker)}
-                          className="group relative p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-200 hover:shadow-md hover:scale-105"
+                          className="group relative p-2 text-slate-400 hover:text-white rounded-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-md hover:scale-105"
                           title="Edit broker"
                         >
                           <svg className="w-3.5 h-3.5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -313,7 +279,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                       <PermissionGate module={MODULES.BROKERS} action="delete">
                         <button 
                           onClick={() => onDelete(broker.id)}
-                          className="group relative p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:scale-105"
+                          className="group relative p-2 text-slate-400 hover:text-white rounded-lg hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:scale-105"
                           title="Delete broker"
                         >
                           <svg className="w-3.5 h-3.5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,59 +295,28 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
           </table>
         </div>
 
-        {/* Pagination */}
-        {pagination && pagination.pages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex items-center justify-between">
-            <div className="text-sm text-gray-600 font-medium">
-              Showing <span className="text-blue-600 font-semibold">{(currentPage - 1) * pagination.limit + 1}</span> to <span className="text-blue-600 font-semibold">{Math.min(currentPage * pagination.limit, pagination.total)}</span> of <span className="text-blue-600 font-semibold">{pagination.total}</span> results
-            </div>
-            <div className="flex items-center space-x-1">
-              <button 
-                onClick={() => onPageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="p-2 border border-gray-300 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronLeftIcon className="w-4 h-4" />
-              </button>
-              <button className="px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg shadow-sm font-semibold">
-                {currentPage}
-              </button>
-              <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200 font-medium">2</button>
-              <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200 font-medium">3</button>
-              <button 
-                onClick={() => onPageChange(currentPage + 1)}
-                disabled={currentPage === pagination.pages}
-                className="p-2 border border-gray-300 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronRightIcon className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
       {/* Pagination */}
       {pagination && pagination.pages > 1 && (
-        <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-slate-300 sm:px-6">
           <div className="flex-1 flex justify-between sm:hidden">
             <button
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
             <button
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === pagination.pages}
-              className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
           </div>
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-slate-700">
                 Showing{' '}
                 <span className="font-medium">{(currentPage - 1) * pagination.limit + 1}</span>
                 {' '}to{' '}
@@ -398,7 +333,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                 <button
                   onClick={() => onPageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronLeftIcon className="h-5 w-5" />
                 </button>
@@ -411,7 +346,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                       className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                         page === currentPage
                           ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
-                          : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                          : 'bg-white border-slate-300 text-slate-500 hover:bg-white'
                       }`}
                     >
                       {page}
@@ -421,7 +356,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                 <button
                   onClick={() => onPageChange(currentPage + 1)}
                   disabled={currentPage === pagination.pages}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronRightIcon className="h-5 w-5" />
                 </button>

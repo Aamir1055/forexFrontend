@@ -94,8 +94,8 @@ const QuickLogin: React.FC = () => {
   }
 
   return (
-    <div className="fixed top-4 left-4 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 max-w-sm">
-      <h3 className="text-sm font-semibold text-gray-800 mb-3">Quick Login</h3>
+    <div className="fixed top-4 left-4 bg-white border border-slate-300 rounded-lg shadow-lg p-4 z-50 max-w-sm">
+      <h3 className="text-sm font-semibold text-slate-800 mb-3">Quick Login</h3>
       
       <div className="space-y-2 mb-3">
         <input
@@ -103,14 +103,14 @@ const QuickLogin: React.FC = () => {
           placeholder="Username"
           value={credentials.username}
           onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
-          className="w-full px-2 py-1 text-xs border border-gray-300 rounded"
+          className="w-full px-2 py-1 text-xs border border-slate-300 rounded"
         />
         <input
           type="password"
           placeholder="Password"
           value={credentials.password}
           onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
-          className="w-full px-2 py-1 text-xs border border-gray-300 rounded"
+          className="w-full px-2 py-1 text-xs border border-slate-300 rounded"
         />
       </div>
       
@@ -118,7 +118,7 @@ const QuickLogin: React.FC = () => {
         <button
           onClick={handleQuickLogin}
           disabled={isLoading}
-          className="w-full px-3 py-1.5 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 disabled:opacity-50"
+          className="w-full px-3 py-1.5 bg-white0 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50"
         >
           {isLoading ? 'Logging in...' : 'Login via AuthService'}
         </button>

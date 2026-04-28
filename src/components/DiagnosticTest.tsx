@@ -44,7 +44,7 @@ const DiagnosticTest: React.FC = () => {
         <div>
           <button
             onClick={handleClick}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            className="px-4 py-2 bg-white0 text-white rounded hover:bg-blue-600 transition-colors"
           >
             Test Click (Count: {clickCount})
           </button>
@@ -60,12 +60,12 @@ const DiagnosticTest: React.FC = () => {
         </div>
         
         {message && (
-          <div className="p-3 bg-gray-100 rounded">
+          <div className="p-3 bg-blue-100 rounded">
             Message: {message}
           </div>
         )}
         
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-slate-600">
           Check the browser console (F12) for additional diagnostic messages.
         </div>
       </div>

@@ -70,7 +70,7 @@ const SimpleLoginTest: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-blue-100 p-8">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
         <h1 className="text-2xl font-bold mb-6">🔧 Simple Login Test</h1>
         
@@ -78,7 +78,7 @@ const SimpleLoginTest: React.FC = () => {
           <button
             onClick={testServerHealth}
             disabled={loading}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+            className="bg-white0 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
           >
             {loading ? 'Testing...' : '🌐 Test Server Health'}
           </button>
@@ -92,8 +92,8 @@ const SimpleLoginTest: React.FC = () => {
           </button>
         </div>
 
-        <div className="bg-gray-900 text-yellow-400 p-4 rounded font-mono text-sm min-h-[100px]">
-          <div className="text-gray-400 mb-2">Test Result:</div>
+        <div className="bg-blue-900 text-yellow-400 p-4 rounded font-mono text-sm min-h-[100px]">
+          <div className="text-slate-400 mb-2">Test Result:</div>
           {result || 'Click a button to start testing...'}
         </div>
 
@@ -107,9 +107,9 @@ const SimpleLoginTest: React.FC = () => {
           </ol>
         </div>
 
-        <div className="mt-4 p-4 bg-blue-50 rounded">
-          <h3 className="font-semibold text-blue-900 mb-2">🔍 Browser Console Test:</h3>
-          <p className="text-sm text-blue-800 mb-2">Copy and paste this in browser console (F12):</p>
+        <div className="mt-4 p-4 bg-white rounded">
+          <h3 className="font-semibold text-slate-900 mb-2">🔍 Browser Console Test:</h3>
+          <p className="text-sm text-slate-800 mb-2">Copy and paste this in browser console (F12):</p>
           <div className="bg-blue-100 p-2 rounded text-xs font-mono break-all">
             fetch('http://185.136.159.142:8080/api/auth/login', &#123;method: 'POST', headers: &#123;'Content-Type': 'application/json'&#125;, body: JSON.stringify(&#123;username: 'admin', password: 'admin123'&#125;)&#125;).then(r =&gt; r.json()).then(console.log).catch(console.error)
           </div>

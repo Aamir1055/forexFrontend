@@ -23,10 +23,10 @@ const StatCard: React.FC<StatCardProps> = ({
 }) => {
   const colorClasses = {
     blue: {
-      bg: 'from-blue-500 to-blue-600',
-      light: 'bg-blue-50',
-      text: 'text-blue-600',
-      border: 'border-blue-200'
+      bg: 'from-blue-700 to-blue-900',
+      light: 'bg-white',
+      text: 'text-slate-700',
+      border: 'border-slate-300'
     },
     green: {
       bg: 'from-yellow-500 to-yellow-600',
@@ -81,14 +81,14 @@ const StatCard: React.FC<StatCardProps> = ({
                 </span>
               )}
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+            <h3 className="text-2xl font-bold text-slate-900 mb-1 group-hover:text-slate-700 transition-colors">
               {value}
             </h3>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {title}
             </p>
             {subtitle && (
-              <p className="text-xs text-gray-600 mt-1">
+              <p className="text-xs text-slate-600 mt-1">
                 {subtitle}
               </p>
             )}

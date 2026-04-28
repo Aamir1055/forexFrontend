@@ -49,8 +49,8 @@ const AuthDebug: React.FC = () => {
   const { authToken, refreshToken, user, authUser, isAuthenticated } = debugInfo
 
   return (
-    <div className="fixed bottom-4 left-4 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 max-w-sm">
-      <h3 className="text-sm font-semibold text-gray-800 mb-2">Auth Debug</h3>
+    <div className="fixed bottom-4 left-4 bg-white border border-slate-300 rounded-lg shadow-lg p-4 z-50 max-w-sm">
+      <h3 className="text-sm font-semibold text-slate-800 mb-2">Auth Debug</h3>
       <div className="space-y-1 text-xs">
         <div>
           <span className="font-medium">Auth Token:</span> 
@@ -83,7 +83,7 @@ const AuthDebug: React.FC = () => {
           </span>
         </div>
         {authToken && (
-          <div className="mt-2 p-2 bg-gray-100 rounded text-xs break-all">
+          <div className="mt-2 p-2 bg-blue-100 rounded text-xs break-all">
             <div className="font-medium">Token (first 20 chars):</div>
             <div>{authToken.substring(0, 20)}...</div>
           </div>
@@ -93,7 +93,7 @@ const AuthDebug: React.FC = () => {
             onClick={() => {
               updateDebugInfo()
             }}
-            className="px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+            className="px-2 py-1 bg-white0 text-white text-xs rounded hover:bg-blue-600"
           >
             Refresh
           </button>

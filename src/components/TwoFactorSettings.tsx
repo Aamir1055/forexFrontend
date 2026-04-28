@@ -123,19 +123,19 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
   return (
     <div className="space-y-6">
       {/* 2FA Status */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <div className="bg-white rounded-lg border border-slate-300 shadow-sm p-6">
         <div className="flex items-center space-x-3 mb-4">
-          <ShieldCheckIcon className="w-6 h-6 text-gray-500" />
-          <h3 className="text-lg font-semibold text-gray-900">Two-Factor Authentication</h3>
+          <ShieldCheckIcon className="w-6 h-6 text-slate-500" />
+          <h3 className="text-lg font-semibold text-slate-900">Two-Factor Authentication</h3>
         </div>
         
         {isEnabled ? (
           <div className="space-y-4">
-            <div className="flex items-start space-x-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-              <CheckCircleIcon className="w-5 h-5 text-yellow-600 mt-0.5" />
+            <div className="flex items-start space-x-3 p-4 bg-white rounded-lg border border-slate-300">
+              <CheckCircleIcon className="w-5 h-5 text-slate-500 mt-0.5" />
               <div>
-                <h4 className="text-sm font-medium text-yellow-800">Two-Factor Authentication Enabled</h4>
-                <p className="text-sm text-yellow-700 mt-1">
+                <h4 className="text-sm font-medium text-slate-800">Two-Factor Authentication Enabled</h4>
+                <p className="text-sm text-slate-600 mt-1">
                   Your account is protected with two-factor authentication.
                 </p>
               </div>
@@ -153,7 +153,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
               <button
                 onClick={() => regenerateCodesMutation.mutate()}
                 disabled={regenerateCodesMutation.isLoading}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 text-sm font-medium"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm font-medium"
               >
                 {regenerateCodesMutation.isLoading ? 'Regenerating...' : 'Regenerate Backup Codes'}
               </button>
@@ -161,11 +161,11 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="flex items-start space-x-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-              <ExclamationTriangleIcon className="w-5 h-5 text-yellow-600 mt-0.5" />
+            <div className="flex items-start space-x-3 p-4 bg-white rounded-lg border border-slate-300">
+              <ExclamationTriangleIcon className="w-5 h-5 text-slate-500 mt-0.5" />
               <div>
-                <h4 className="text-sm font-medium text-yellow-800">Two-Factor Authentication Disabled</h4>
-                <p className="text-sm text-yellow-700 mt-1">
+                <h4 className="text-sm font-medium text-slate-800">Two-Factor Authentication Disabled</h4>
+                <p className="text-sm text-slate-600 mt-1">
                   Enable 2FA to add an extra layer of security to your account.
                 </p>
               </div>
@@ -174,7 +174,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
             <button
               onClick={handleSetup2FA}
               disabled={setup2FAMutation.isLoading}
-              className="px-4 py-2 bg-yellow-600 text-black rounded-lg hover:bg-yellow-700 transition-colors disabled:opacity-50 text-sm font-medium"
+              className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-colors disabled:opacity-50 text-sm font-medium"
             >
               {setup2FAMutation.isLoading ? 'Setting up...' : 'Enable 2FA'}
             </button>
@@ -186,8 +186,8 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
       {showDisableForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Disable Two-Factor Authentication</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">Disable Two-Factor Authentication</h3>
+            <p className="text-sm text-slate-600 mb-4">
               Enter your password to disable two-factor authentication.
             </p>
             
@@ -197,7 +197,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
                 placeholder="Enter your password"
                 value={disablePassword}
                 onChange={(e) => setDisablePassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
               
               <div className="flex items-center space-x-3">
@@ -213,7 +213,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
                     setShowDisableForm(false)
                     setDisablePassword('')
                   }}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors text-sm font-medium"
+                  className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors text-sm font-medium"
                 >
                   Cancel
                 </button>
@@ -227,19 +227,19 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
       {showSetup && setupData && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Set up Two-Factor Authentication</h3>
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">Set up Two-Factor Authentication</h3>
             
             <div className="space-y-6">
               {/* Step 1: QR Code */}
               <div>
-                <h4 className="text-md font-medium text-gray-900 mb-3 flex items-center">
+                <h4 className="text-md font-medium text-slate-900 mb-3 flex items-center">
                   <QrCodeIcon className="w-5 h-5 mr-2" />
                   Step 1: Scan QR Code
                 </h4>
-                <p className="text-sm text-gray-600 mb-3">
+                <p className="text-sm text-slate-600 mb-3">
                   Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.):
                 </p>
-                <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gray-200">
+                <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-slate-300">
                   {setupData.qr_code_uri ? (
                     <QRCodeSVG 
                       value={setupData.qr_code_uri}
@@ -255,15 +255,15 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
                       includeMargin={true}
                     />
                   ) : (
-                    <div className="w-48 h-48 flex items-center justify-center bg-gray-100 rounded">
-                      <p className="text-sm text-gray-500">QR Code not available</p>
+                    <div className="w-48 h-48 flex items-center justify-center bg-blue-100 rounded">
+                      <p className="text-sm text-slate-500">QR Code not available</p>
                     </div>
                   )}
                 </div>
-                <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-2">Can't scan? Manual entry key:</p>
+                <div className="mt-2 p-3 bg-white rounded-lg">
+                  <p className="text-xs text-slate-500 mb-2">Can't scan? Manual entry key:</p>
                   <div className="flex items-center justify-between gap-2">
-                    <code className="bg-white px-3 py-2 rounded font-mono text-sm border border-gray-200 flex-1 break-all">{setupData.secret}</code>
+                    <code className="bg-white px-3 py-2 rounded font-mono text-sm border border-slate-300 flex-1 break-all">{setupData.secret}</code>
                     <button
                       type="button"
                       onClick={(e) => {
@@ -285,7 +285,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
                           toast.error('Failed to copy to clipboard')
                         }
                       }}
-                      className="flex items-center gap-1 px-3 py-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors whitespace-nowrap border border-blue-200"
+                      className="flex items-center gap-1 px-3 py-2 text-xs text-slate-700 hover:text-slate-700 hover:bg-white rounded transition-colors whitespace-nowrap border border-slate-300"
                       title="Copy manual entry key"
                     >
                       <DocumentDuplicateIcon className="w-4 h-4" />
@@ -297,7 +297,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
               
               {/* Step 2: Backup Codes */}
               <div>
-                <h4 className="text-md font-medium text-gray-900 mb-3 flex items-center">
+                <h4 className="text-md font-medium text-slate-900 mb-3 flex items-center">
                   <KeyIcon className="w-5 h-5 mr-2" />
                   Step 2: Save Backup Codes
                 </h4>
@@ -309,7 +309,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
                     You can use these codes to access your account if you lose your phone.
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 relative">
+                <div className="bg-white rounded-lg p-4 relative">
                   <div className="grid grid-cols-2 gap-2 text-sm font-mono">
                     {setupData.backup_codes.map((code, index) => (
                       <div key={index} className="bg-white p-2 rounded text-center border">
@@ -319,7 +319,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
                   </div>
                   <button
                     onClick={copyBackupCodes}
-                    className="absolute top-2 right-2 p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                    className="absolute top-2 right-2 p-2 text-slate-500 hover:text-slate-700 transition-colors"
                     title="Copy backup codes"
                   >
                     <DocumentDuplicateIcon className="w-4 h-4" />
@@ -332,10 +332,10 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
               
               {/* Step 3: Verification */}
               <div>
-                <h4 className="text-md font-medium text-gray-900 mb-3">
+                <h4 className="text-md font-medium text-slate-900 mb-3">
                   Step 3: Enter Verification Code
                 </h4>
-                <p className="text-sm text-gray-600 mb-3">
+                <p className="text-sm text-slate-600 mb-3">
                   Enter the 6-digit code from your authenticator app:
                 </p>
                 <input
@@ -343,7 +343,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
                   placeholder="000000"
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg tracking-widest font-mono"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 text-center text-lg tracking-widest font-mono"
                   maxLength={6}
                 />
               </div>
@@ -352,7 +352,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
                 <button
                   onClick={handleEnable2FA}
                   disabled={verificationCode.length !== 6 || enable2FAMutation.isLoading}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm font-medium"
+                  className="flex-1 px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-colors disabled:opacity-50 text-sm font-medium"
                 >
                   {enable2FAMutation.isLoading ? 'Enabling...' : 'Enable 2FA'}
                 </button>
@@ -362,7 +362,7 @@ const TwoFactorSettings: React.FC<TwoFactorSettingsProps> = ({ isEnabled, onStat
                     setSetupData(null)
                     setVerificationCode('')
                   }}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors text-sm font-medium"
+                  className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors text-sm font-medium"
                 >
                   Cancel
                 </button>

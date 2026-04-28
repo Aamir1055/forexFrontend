@@ -29,7 +29,6 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
   isLoading
 }) => {
     const [activeTab, setActiveTab] = useState<'basic' | 'permissions' | 'profiles' | 'rights' | 'groups' | 'account-mapping'>('basic')
-  const [profileSubTab, setProfileSubTab] = useState<'rights' | 'groups'>('rights')
   const [selectedProfile, setSelectedProfile] = useState<number | null>(null)
   const [editableRolePermissions, setEditableRolePermissions] = useState<number[]>([])
   const [editableProfileGroups, setEditableProfileGroups] = useState<number[]>([])
@@ -437,36 +436,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
       newErrors.full_name = 'Full name is required'
     }
 
-    if (!formData.email || !formData.email.trim()) {
-      newErrors.email = 'Email is required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address'
-    }
-
     if (!formData.username || !formData.username.trim()) {
       newErrors.username = 'Username is required'
-    }
-
-    if (!broker && (!formData.password || !formData.password.trim())) {
-      newErrors.password = 'Password is required'
-    } else if (formData.password && formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters'
-    }
-
-    if (!formData.phone || !formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required'
-    }
-
-    if (!formData.account_range_from || formData.account_range_from < 1) {
-      newErrors.account_range_from = 'Account range from is required and must be greater than 0'
-    }
-
-    if (!formData.account_range_to || formData.account_range_to < 1) {
-      newErrors.account_range_to = 'Account range to is required and must be greater than 0'
-    }
-
-    if (formData.account_range_from && formData.account_range_to && formData.account_range_from >= formData.account_range_to) {
-      newErrors.account_range_to = 'Account range to must be greater than account range from'
     }
 
     setErrors(newErrors)
@@ -976,7 +947,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
               }
             `}
           </style>
-          <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="fixed inset-0 z-50 overflow-hidden">
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20">
             {/* Backdrop */}
             <motion.div 
@@ -993,30 +964,35 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", duration: 0.3 }}
-              className="relative bg-white rounded-2xl shadow-2xl transform w-full max-w-3xl mx-4"
+              className="relative w-full max-w-3xl mx-4 transform overflow-hidden rounded-xl bg-white shadow-xl"
             >
               <form onSubmit={handleSubmit}>
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-gray-900">{broker ? 'Edit Broker' : 'Create New Broker'}</h2>
+                <div className="flex items-center justify-between bg-white border-b border-slate-300 px-6 py-4">
+                  <div>
+                    <h2 className="text-xl font-semibold text-slate-900">{broker ? 'Edit Broker' : 'Create New Broker'}</h2>
+                    <p className="mt-0.5 text-xs text-slate-500">
+                      Manage broker details, account mapping, and access settings
+                    </p>
+                  </div>
                   <button 
                     onClick={onClose}
-                    className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                    className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-700"
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>
                 </div>
 
                 {/* Tabs */}
-                <div className="border-b border-gray-200">
-                  <nav className="flex px-4" aria-label="Tabs">
+                <div className="border-b border-slate-300">
+                  <nav className="flex px-4 pt-3 gap-1" aria-label="Tabs">
                     <button
                       type="button"
                       onClick={() => setActiveTab('basic')}
-                      className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
+                      className={`min-w-[140px] text-center rounded-t-lg border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
                         activeTab === 'basic'
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                          ? 'border-blue-700 bg-blue-100 text-slate-900'
+                          : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-white'
                       }`}
                     >
                       Basic Information
@@ -1024,10 +1000,10 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                     <button
                       type="button"
                       onClick={() => setActiveTab('account-mapping')}
-                      className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
+                      className={`min-w-[140px] text-center rounded-t-lg border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
                         activeTab === 'account-mapping'
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                          ? 'border-blue-700 bg-blue-100 text-slate-900'
+                          : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-white'
                       }`}
                     >
                       Add Account Mapping
@@ -1038,26 +1014,13 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                       <button
                         type="button"
                         onClick={() => setActiveTab('rights')}
-                        className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
+                        className={`min-w-[140px] text-center rounded-t-lg border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
                           activeTab === 'rights'
-                            ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                            ? 'border-blue-700 bg-blue-100 text-slate-900'
+                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-white'
                         }`}
                       >
                         Rights
-                      </button>
-                    )}
-                    {broker && (
-                      <button
-                        type="button"
-                        onClick={() => setActiveTab('groups')}
-                        className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
-                          activeTab === 'groups'
-                            ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
-                        }`}
-                      >
-                        Groups
                       </button>
                     )}
                     
@@ -1066,10 +1029,10 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                       <button
                         type="button"
                         onClick={() => setActiveTab('profiles')}
-                        className={`py-3 px-3 border-b-2 font-medium text-sm transition-colors ${
+                        className={`min-w-[140px] text-center rounded-t-lg border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
                           activeTab === 'profiles'
-                            ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                            ? 'border-blue-700 bg-blue-100 text-slate-900'
+                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-white'
                         }`}
                       >
                         Assign Profile
@@ -1079,7 +1042,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                 </div>
 
                 {/* Content */}
-                <div className="p-6 max-h-[60vh] overflow-y-auto">
+                <div className="p-6">
                   {/* Tab Content */}
                   <AnimatePresence mode="wait">
                     {activeTab === 'basic' && (
@@ -1121,73 +1084,17 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                           </div>
 
                           <div>
-                            <label className="form-label">Email *</label>
-                            <input
-                              type="email"
-                              name="email"
-                              value={formData.email}
-                              onChange={handleInputChange}
-                              className="form-input ${errors.email ? 'form-input-error' : ''}"
-                              placeholder="Enter email"
-                              required
-                            />
-                            {errors.email && <p className="form-error-text">{errors.email}</p>}
-                          </div>
-
-                          <div>
-                            <label className="form-label">Phone *</label>
-                            <input
-                              type="tel"
-                              name="phone"
-                              value={formData.phone}
-                              onChange={handleInputChange}
-                              className="form-input ${errors.phone ? 'form-input-error' : ''}"
-                              placeholder="Enter phone"
-                              required
-                            />
-                            {errors.phone && <p className="form-error-text">{errors.phone}</p>}
-                          </div>
-
-                          <div>
-                            <label className="form-label">{broker ? 'New Password' : 'Password *'}</label>
+                            <label className="form-label">Password {broker ? '(leave blank to keep current)' : '*'}</label>
                             <input
                               type="password"
                               name="password"
-                              value={formData.password || ''}
+                              value={formData.password}
                               onChange={handleInputChange}
-                              className="form-input ${errors.password ? 'form-input-error' : ''}"
-                              placeholder={broker ? 'Leave blank to keep current' : 'Enter password'}
+                              className="form-input"
+                              placeholder={broker ? 'Enter new password to change' : 'Enter password'}
                               required={!broker}
                             />
                             {errors.password && <p className="form-error-text">{errors.password}</p>}
-                          </div>
-
-                          <div>
-                            <label className="form-label">Account Range From *</label>
-                            <input
-                              type="number"
-                              name="account_range_from"
-                              value={formData.account_range_from}
-                              onChange={handleInputChange}
-                              className="form-input ${errors.account_range_from ? 'form-input-error' : ''}"
-                              placeholder="1000"
-                              required
-                            />
-                            {errors.account_range_from && <p className="form-error-text">{errors.account_range_from}</p>}
-                          </div>
-
-                          <div>
-                            <label className="form-label">Account Range To *</label>
-                            <input
-                              type="number"
-                              name="account_range_to"
-                              value={formData.account_range_to}
-                              onChange={handleInputChange}
-                              className="form-input ${errors.account_range_to ? 'form-input-error' : ''}"
-                              placeholder="2000"
-                              required
-                            />
-                            {errors.account_range_to && <p className="form-error-text">{errors.account_range_to}</p>}
                           </div>
 
                           <div>
@@ -1246,9 +1153,9 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         <div className="max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">
                           <div className="mb-4">
                           <div className="mb-3">
-                            <h3 className="text-base font-semibold text-gray-900 mb-1">Assign Profile</h3>
-                            <p className="text-xs text-gray-600">
-                              Select a profile and customize its rights and groups before assigning to this broker.
+                            <h3 className="text-base font-semibold text-slate-900 mb-1">Assign Profile</h3>
+                            <p className="text-xs text-slate-600">
+                              Select a profile and customize its rights before assigning to this broker.
                             </p>
                           </div>
                           
@@ -1259,7 +1166,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                               <div className="relative">
                                 <input
                                   type="text"
-                                  placeholder="Search rights, groups..."
+                                  placeholder="Search rights..."
                                   value={profileSearchQuery}
                                   onChange={(e) => setProfileSearchQuery(e.target.value)}
                                   onKeyDown={(e) => {
@@ -1267,11 +1174,11 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                       e.preventDefault()
                                     }
                                   }}
-                                  className="w-full px-2 py-1.5 pl-8 text-xs border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white"
+                                  className="w-full px-2 py-1.5 pl-8 text-xs border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-400 focus:border-slate-300 bg-white"
                                   disabled={profilesLoading}
                                 />
                                 <svg
-                                  className="absolute left-2 top-2 h-3.5 w-3.5 text-gray-400"
+                                  className="absolute left-2 top-2 h-3.5 w-3.5 text-slate-400"
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"
@@ -1287,7 +1194,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                   <button
                                     type="button"
                                     onClick={() => setProfileSearchQuery('')}
-                                    className="absolute right-2 top-2 text-gray-400 hover:text-gray-600"
+                                    className="absolute right-2 top-2 text-slate-400 hover:text-slate-600"
                                   >
                                     <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1312,7 +1219,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                     setEditableProfileGroups([])
                                   }
                                 }}
-                                className="w-full px-2 py-1.5 text-xs border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white"
+                                className="w-full px-2 py-1.5 text-xs border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-400 focus:border-slate-300 bg-white"
                                 disabled={profilesLoading}
                               >
                                 <option value="">-- Select Profile --</option>
@@ -1329,293 +1236,117 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         {/* Profile Loading State */}
                         {profilesLoading && (
                           <div className="flex items-center justify-center py-12">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-300"></div>
                           </div>
                         )}
 
                         {/* No Profiles Message */}
                         {!profilesLoading && brokerProfiles?.profiles?.length === 0 && (
-                          <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                            <svg className="w-12 h-12 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="text-center py-12 bg-white rounded-lg border-2 border-dashed border-slate-300">
+                            <svg className="w-12 h-12 mx-auto text-slate-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <p className="text-sm text-gray-500">No profiles available. Create profiles in the Broker Profiles section first.</p>
+                            <p className="text-sm text-slate-500">No profiles available. Create profiles in the Broker Profiles section first.</p>
                           </div>
                         )}
 
                         {/* Show content when profile is selected */}
                         {selectedProfile && !profilesLoading && (
                           <div>
-                            {/* Sub-tabs for Rights and Groups */}
-                            <div className="border-b border-gray-200 mb-4">
+                            {/* Rights */}
+                            <div className="border-b border-slate-300 mb-4">
                               <nav className="flex space-x-6">
-                                <button
-                                  type="button"
-                                  onClick={() => setProfileSubTab('rights')}
-                                  className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                                    profileSubTab === 'rights'
-                                      ? 'border-blue-500 text-blue-600'
-                                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                  }`}
-                                >
+                                <div className="py-2 px-1 border-b-2 border-blue-700 font-medium text-sm text-slate-900">
                                   Rights ({editableRolePermissions.length})
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setProfileSubTab('groups')}
-                                  className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                                    profileSubTab === 'groups'
-                                      ? 'border-blue-500 text-blue-600'
-                                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                  }`}
-                                >
-                                  Groups ({editableProfileGroups.length})
-                                </button>
+                                </div>
                               </nav>
                             </div>
 
-                            {/* Rights Sub-Tab Content */}
-                            {profileSubTab === 'rights' && (
-                              <div>
-                                {allRightsLoading ? (
-                                  <div className="flex items-center justify-center py-12">
-                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                                  </div>
-                                ) : allBrokerRights && allBrokerRights.length > 0 ? (
-                                  (() => {
-                                    // Filter rights based on search query
-                                    const filteredRights = profileSearchQuery 
-                                      ? allBrokerRights.filter(right => 
-                                          (right.description || right.name).toLowerCase().includes(profileSearchQuery.toLowerCase()) ||
-                                          (right.category || '').toLowerCase().includes(profileSearchQuery.toLowerCase())
-                                        )
-                                      : allBrokerRights
+                            <div>
+                              {allRightsLoading ? (
+                                <div className="flex items-center justify-center py-12">
+                                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-300"></div>
+                                </div>
+                              ) : allBrokerRights && allBrokerRights.length > 0 ? (
+                                (() => {
+                                  // Filter rights based on search query
+                                  const filteredRights = profileSearchQuery 
+                                    ? allBrokerRights.filter(right => 
+                                        (right.description || right.name).toLowerCase().includes(profileSearchQuery.toLowerCase()) ||
+                                        (right.category || '').toLowerCase().includes(profileSearchQuery.toLowerCase())
+                                      )
+                                    : allBrokerRights
 
-                                    return filteredRights.length > 0 ? (
-                                      <div className="bg-white rounded-lg border border-gray-200 p-3">
-                                        <div className="mb-2 pb-2 border-b border-gray-200">
-                                          <h4 className="text-sm font-semibold text-gray-900">
-                                            Rights ({editableRolePermissions.length} selected)
-                                            {profileSearchQuery && ` - ${filteredRights.length} match${filteredRights.length !== 1 ? 'es' : ''}`}
-                                          </h4>
-                                        </div>
-                                        <div className="space-y-2 pr-2">
-                                          {Object.entries(
-                                            filteredRights.reduce((acc, right) => {
-                                              const category = right.category || 'Other'
-                                              if (!acc[category]) acc[category] = []
-                                              acc[category].push(right)
-                                              return acc
-                                            }, {} as Record<string, typeof allBrokerRights>)
-                                          ).map(([category, categoryRights]) => (
-                                            <div key={category} className="bg-gray-50 rounded-md p-2.5 border border-gray-200">
-                                              <h5 className="font-semibold text-xs text-gray-800 mb-2 uppercase tracking-wide">{category}</h5>
-                                              <div className="space-y-1">
-                                                {categoryRights.map((right) => (
-                                                  <label 
-                                                    key={right.id} 
-                                                    className={`flex items-center cursor-pointer px-2 py-1.5 rounded-md transition-all ${
-                                                      editableRolePermissions.includes(right.id) 
-                                                        ? 'bg-blue-50 border border-blue-200' 
-                                                        : 'bg-white border border-transparent hover:border-gray-300'
-                                                    }`}
-                                                  >
-                                                    <input
-                                                      type="checkbox"
-                                                      checked={editableRolePermissions.includes(right.id)}
-                                                      onChange={() => handleRolePermissionToggle(right.id)}
-                                                      className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                                    />
-                                                    <span className={`ml-2.5 text-xs ${
-                                                      editableRolePermissions.includes(right.id) ? 'text-blue-900 font-medium' : 'text-gray-700'
-                                                    }`}>
-                                                      {right.description || right.name}
-                                                    </span>
-                                                  </label>
-                                                ))}
-                                              </div>
-                                            </div>
-                                          ))}
-                                        </div>
+                                  return filteredRights.length > 0 ? (
+                                    <div className="bg-white rounded-lg border border-slate-300 p-3">
+                                      <div className="mb-2 pb-2 border-b border-slate-300">
+                                        <h4 className="text-sm font-semibold text-slate-900">
+                                          Rights ({editableRolePermissions.length} selected)
+                                          {profileSearchQuery && ` - ${filteredRights.length} match${filteredRights.length !== 1 ? 'es' : ''}`}
+                                        </h4>
                                       </div>
-                                    ) : (
-                                      <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                                        <p className="text-sm text-gray-500">No rights found matching "{profileSearchQuery}"</p>
-                                      </div>
-                                    )
-                                  })()
-                                ) : (
-                                  <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                                    <p className="text-sm text-gray-500">No rights available.</p>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Groups Sub-Tab Content */}
-                            {profileSubTab === 'groups' && (
-                              <div>
-                                {groupsLoading ? (
-                                  <div className="flex items-center justify-center py-12">
-                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                                  </div>
-                                ) : groupsData?.groups && groupsData.groups.length > 0 ? (
-                                  <div className="bg-white rounded-lg border border-gray-200 p-3">
-                                    {(() => {
-                                      // Filter out inactive groups and apply search filter
-                                      const activeGroups = groupsData.groups.filter(g => g.is_active)
-                                      const filteredGroups = profileSearchQuery
-                                        ? activeGroups.filter(group =>
-                                            group.broker_view_group.toLowerCase().includes(profileSearchQuery.toLowerCase()) ||
-                                            group.mt5_group.toLowerCase().includes(profileSearchQuery.toLowerCase())
-                                          )
-                                        : activeGroups
-                                      
-                                      const startIndex = (groupsPage - 1) * groupsPerPage
-                                      const endIndex = startIndex + groupsPerPage
-                                      const paginatedGroups = filteredGroups.slice(startIndex, endIndex)
-                                      const totalPages = Math.ceil(filteredGroups.length / groupsPerPage)
-
-                                      return (
-                                        <>
-                                          <div className="mb-3 pb-2 border-b border-gray-200">
-                                            <h4 className="text-sm font-semibold text-gray-900">
-                                              Groups ({editableProfileGroups.length} selected)
-                                              {profileSearchQuery && ` - ${filteredGroups.length} match${filteredGroups.length !== 1 ? 'es' : ''}`}
-                                            </h4>
-                                          </div>
-
-                                          <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
-                                            <div className="text-xs text-gray-600">
-                                              Showing {startIndex + 1}-{Math.min(endIndex, filteredGroups.length)} of {filteredGroups.length}
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                              <div className="flex items-center gap-1.5">
-                                                <label className="text-xs text-gray-600">Show:</label>
-                                                <select
-                                                  value={groupsPerPage}
-                                                  onChange={(e) => {
-                                                    setGroupsPerPage(Number(e.target.value))
-                                                    setGroupsPage(1)
-                                                  }}
-                                                  className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer"
+                                      <div className="space-y-2 pr-2">
+                                        {Object.entries(
+                                          filteredRights.reduce((acc, right) => {
+                                            const category = right.category || 'Other'
+                                            if (!acc[category]) acc[category] = []
+                                            acc[category].push(right)
+                                            return acc
+                                          }, {} as Record<string, typeof allBrokerRights>)
+                                        ).map(([category, categoryRights]) => (
+                                          <div key={category} className="bg-white rounded-md p-2.5 border border-slate-300">
+                                            <h5 className="font-semibold text-xs text-slate-800 mb-2 uppercase tracking-wide">{category}</h5>
+                                            <div className="space-y-1">
+                                              {categoryRights.map((right) => (
+                                                <label 
+                                                  key={right.id} 
+                                                  className={`flex items-center cursor-pointer px-2 py-1.5 rounded-md transition-all ${
+                                                    editableRolePermissions.includes(right.id) 
+                                                      ? 'bg-blue-100 border border-slate-300' 
+                                                      : 'bg-white border border-transparent hover:border-slate-300'
+                                                  }`}
                                                 >
-                                                  <option value={5}>5</option>
-                                                  <option value={10}>10</option>
-                                                  <option value={25}>25</option>
-                                                  <option value={50}>50</option>
-                                                  <option value={100}>100</option>
-                                                </select>
-                                              </div>
-
-                                              {totalPages > 1 && (
-                                                <>
-                                                  <button
-                                                    type="button"
-                                                    onClick={() => setGroupsPage(Math.max(1, groupsPage - 1))}
-                                                    disabled={groupsPage === 1}
-                                                    className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                                  >
-                                                    Previous
-                                                  </button>
-
-                                                  <button
-                                                    type="button"
-                                                    onClick={() => setGroupsPage(Math.min(totalPages, groupsPage + 1))}
-                                                    disabled={groupsPage === totalPages}
-                                                    className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                                  >
-                                                    Next
-                                                  </button>
-                                                </>
-                                              )}
-                                            </div>
-                                          </div>
-
-                                          <div className="space-y-1.5 pr-2">
-                                            {paginatedGroups.length > 0 ? paginatedGroups.map((group) => (
-                                              <details 
-                                                key={group.id}
-                                                open
-                                                className={`group border rounded-md transition-all ${
-                                                  editableProfileGroups.includes(group.id) 
-                                                    ? 'bg-blue-50 border-blue-200' 
-                                                    : 'bg-white border-gray-200 hover:border-blue-300'
-                                                }`}
-                                              >
-                                                <summary className="flex items-center cursor-pointer px-2.5 py-2 list-none">
                                                   <input
                                                     type="checkbox"
-                                                    checked={editableProfileGroups.includes(group.id)}
-                                                    onChange={(e) => {
-                                                      e.stopPropagation()
-                                                      handleProfileGroupToggle(group.id)
-                                                    }}
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                                    checked={editableRolePermissions.includes(right.id)}
+                                                    onChange={() => handleRolePermissionToggle(right.id)}
+                                                    className="w-3.5 h-3.5 text-slate-600 border-slate-300 rounded focus:ring-slate-400"
                                                   />
-                                                  <div className="ml-2.5 flex-1">
-                                                    <div className={`text-xs font-semibold ${
-                                                      editableProfileGroups.includes(group.id) ? 'text-blue-900' : 'text-gray-900'
-                                                    }`}>
-                                                      {group.broker_view_group}
-                                                    </div>
-                                                  </div>
-                                                  <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                                                    group.is_active ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                                                  <span className={`ml-2.5 text-xs ${
+                                                    editableRolePermissions.includes(right.id) ? 'text-slate-900 font-medium' : 'text-slate-700'
                                                   }`}>
-                                                    {group.is_active ? 'Active' : 'Inactive'}
+                                                    {right.description || right.name}
                                                   </span>
-                                                  <svg 
-                                                    className="ml-2 w-4 h-4 text-gray-500 transition-transform group-open:rotate-180" 
-                                                    fill="none" 
-                                                    stroke="currentColor" 
-                                                    viewBox="0 0 24 24"
-                                                  >
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                                  </svg>
-                                                </summary>
-                                                <div className="px-2.5 pb-2 pt-1 border-t border-gray-200 bg-gray-50/50">
-                                                  <div className="text-[11px] text-gray-600">
-                                                    <div className="flex items-center justify-between py-1">
-                                                      <span className="font-medium text-gray-700">MT5 Group:</span>
-                                                      <span className="text-gray-900 font-mono">{group.mt5_group}</span>
-                                                    </div>
-                                                    <div className="flex items-center justify-between py-1">
-                                                      <span className="font-medium text-gray-700">Group ID:</span>
-                                                      <span className="text-gray-900">#{group.id}</span>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </details>
-                                            )) : (
-                                              <div className="text-center py-8 text-gray-500 text-sm">
-                                                No groups found matching "{profileSearchQuery}"
-                                              </div>
-                                            )}
+                                                </label>
+                                              ))}
+                                            </div>
                                           </div>
-                                        </>
-                                      )
-                                    })()}
-                                  </div>
-                                ) : (
-                                  <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                                    <p className="text-sm text-gray-500">No groups available.</p>
-                                  </div>
-                                )}
-                              </div>
-                            )}
+                                        ))}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="text-center py-12 bg-white rounded-lg border-2 border-dashed border-slate-300">
+                                      <p className="text-sm text-slate-500">No rights found matching "{profileSearchQuery}"</p>
+                                    </div>
+                                  )
+                                })()
+                              ) : (
+                                <div className="text-center py-12 bg-white rounded-lg border-2 border-dashed border-slate-300">
+                                  <p className="text-sm text-slate-500">No rights available.</p>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         )}
 
                         {/* Show message when no profile selected */}
                         {!selectedProfile && !profilesLoading && brokerProfiles?.profiles && brokerProfiles.profiles.length > 0 && (
-                          <div className="text-center py-16 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                            <svg className="w-16 h-16 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="text-center py-16 bg-white rounded-lg border-2 border-dashed border-slate-300">
+                            <svg className="w-16 h-16 mx-auto text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <p className="text-sm text-gray-600 font-medium mb-1">No Profile Selected</p>
-                            <p className="text-xs text-gray-500">Select a profile from the dropdown above to view and edit its rights and groups.</p>
+                            <p className="text-sm text-slate-600 font-medium mb-1">No Profile Selected</p>
+                            <p className="text-xs text-slate-500">Select a profile from the dropdown above to view and edit its rights.</p>
                           </div>
                         )}
                           {/* Close scrollable container for Assign Profile tab */}
@@ -1635,15 +1366,15 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         <div className="mb-4">
                           <div className="flex items-center justify-between mb-2">
                             <div>
-                              <h3 className="text-base font-semibold text-gray-900 mb-1">Broker Rights</h3>
-                              <p className="text-xs text-gray-600">Select the rights assigned to this broker.</p>
+                              <h3 className="text-base font-semibold text-slate-900 mb-1">Broker Rights</h3>
+                              <p className="text-xs text-slate-600">Select the rights assigned to this broker.</p>
                             </div>
                             <div className="flex items-center gap-2">
                               <button
                                 type="button"
                                 onClick={handleSelectAllRights}
                                 disabled={!allBrokerRights || allBrokerRights.length === 0}
-                                className="px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+                                className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-white transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -1654,7 +1385,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                 type="button"
                                 onClick={handleDeselectAllRights}
                                 disabled={selectedRights.length === 0}
-                                className="px-4 py-2 text-xs font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+                                className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border-2 border-slate-300 rounded-lg hover:bg-white hover:border-slate-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1667,12 +1398,12 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
 
                         {allRightsLoading ? (
                           <div className="flex items-center justify-center py-12">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-300"></div>
                           </div>
                         ) : allBrokerRights && allBrokerRights.length > 0 ? (
-                          <div className="bg-white rounded-lg border border-gray-200 p-3">
-                            <div className="mb-2 pb-2 border-b border-gray-200">
-                              <h4 className="text-sm font-semibold text-gray-900">
+                          <div className="bg-white rounded-lg border border-slate-300 p-3">
+                            <div className="mb-2 pb-2 border-b border-slate-300">
+                              <h4 className="text-sm font-semibold text-slate-900">
                                 Rights ({selectedRights.length} selected)
                               </h4>
                             </div>
@@ -1686,26 +1417,26 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                   return acc
                                 }, {} as Record<string, typeof allBrokerRights>)
                               ).map(([category, categoryRights]) => (
-                                <div key={category} className="bg-gray-50 rounded-md p-2.5 border border-gray-200">
-                                  <h5 className="font-semibold text-xs text-gray-800 mb-2 uppercase tracking-wide">{category}</h5>
+                                <div key={category} className="bg-white rounded-md p-2.5 border border-slate-300">
+                                  <h5 className="font-semibold text-xs text-slate-800 mb-2 uppercase tracking-wide">{category}</h5>
                                   <div className="space-y-1">
                                     {categoryRights.map((right) => (
                                       <label 
                                         key={right.id} 
                                         className={`flex items-center cursor-pointer px-2 py-1.5 rounded-md transition-all ${
                                           selectedRights.includes(right.id) 
-                                            ? 'bg-blue-50 border border-blue-200' 
-                                            : 'bg-white border border-transparent hover:border-gray-300'
+                                            ? 'bg-blue-100 border border-slate-300' 
+                                            : 'bg-white border border-transparent hover:border-slate-300'
                                         }`}
                                       >
                                         <input
                                           type="checkbox"
                                           checked={selectedRights.includes(right.id)}
                                           onChange={() => handleRightToggle(right.id)}
-                                          className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                          className="w-3.5 h-3.5 text-slate-600 border-slate-300 rounded focus:ring-slate-400"
                                         />
                                         <span className={`ml-2.5 text-xs ${
-                                          selectedRights.includes(right.id) ? 'text-blue-900 font-medium' : 'text-gray-700'
+                                          selectedRights.includes(right.id) ? 'text-slate-900 font-medium' : 'text-slate-700'
                                         }`}>
                                           {right.description || right.name}
                                         </span>
@@ -1717,168 +1448,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                             </div>
                           </div>
                         ) : (
-                          <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                            <p className="text-sm text-gray-500">No rights available.</p>
-                          </div>
-                        )}
-                      </motion.div>
-                    )}
-
-                    {/* Groups Tab */}
-                    {activeTab === 'groups' && (
-                      <motion.div
-                        key="groups"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="mb-4">
-                          <h3 className="text-base font-semibold text-gray-900 mb-1">Broker Groups</h3>
-                          <p className="text-xs text-gray-600">Select the groups assigned to this broker.</p>
-                        </div>
-
-                        {groupsLoading ? (
-                          <div className="flex items-center justify-center py-12">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                          </div>
-                        ) : groupsData?.groups && groupsData.groups.length > 0 ? (
-                          <div className="bg-white rounded-lg border border-gray-200 p-3">
-                            {(() => {
-                              // Filter out inactive groups
-                              const activeGroups = groupsData.groups.filter(g => g.is_active)
-                              const startIndex = (groupsPage - 1) * groupsPerPage
-                              const endIndex = startIndex + groupsPerPage
-                              const paginatedGroups = activeGroups.slice(startIndex, endIndex)
-                              const totalPages = Math.ceil(activeGroups.length / groupsPerPage)
-
-                              return (
-                                <>
-                                  {/* Header with Selection Count */}
-                                  <div className="mb-3 pb-2 border-b border-gray-200">
-                                    <h4 className="text-sm font-semibold text-gray-900">
-                                      Groups ({selectedGroups.length} selected)
-                                    </h4>
-                                  </div>
-
-                                  {/* Pagination Controls at Top */}
-                                  <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
-                                    <div className="text-xs text-gray-600">
-                                      Showing {startIndex + 1}-{Math.min(endIndex, activeGroups.length)} of {activeGroups.length}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      {/* Items Per Page Dropdown */}
-                                      <div className="flex items-center gap-1.5">
-                                        <label className="text-xs text-gray-600">Show:</label>
-                                        <select
-                                          value={groupsPerPage}
-                                          onChange={(e) => {
-                                            setGroupsPerPage(Number(e.target.value))
-                                            setGroupsPage(1)
-                                          }}
-                                          className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer"
-                                        >
-                                          <option value={5}>5</option>
-                                          <option value={10}>10</option>
-                                          <option value={25}>25</option>
-                                          <option value={50}>50</option>
-                                          <option value={100}>100</option>
-                                        </select>
-                                      </div>
-
-                                      {totalPages > 1 && (
-                                        <>
-                                          <button
-                                            type="button"
-                                            onClick={() => setGroupsPage(Math.max(1, groupsPage - 1))}
-                                            disabled={groupsPage === 1}
-                                            className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                          >
-                                            Previous
-                                          </button>
-
-                                          <button
-                                            type="button"
-                                            onClick={() => setGroupsPage(Math.min(totalPages, groupsPage + 1))}
-                                            disabled={groupsPage === totalPages}
-                                            className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                          >
-                                            Next
-                                          </button>
-                                        </>
-                                      )}
-                                    </div>
-                                  </div>
-
-                                  {/* Groups as Dropdown/Accordion Style */}
-                                  <div className="space-y-1.5 pr-2">
-                                    {paginatedGroups.map((group) => {
-                                      const isSelected = selectedGroups.includes(group.id)
-                                      return (
-                                        <details
-                                          key={group.id}
-                                          open
-                                          className={`group border rounded-md transition-all ${
-                                            isSelected
-                                              ? 'bg-blue-50 border-blue-200' 
-                                              : 'bg-white border-gray-200 hover:border-blue-300'
-                                          }`}
-                                        >
-                                          <summary className="flex items-center cursor-pointer px-2.5 py-2 list-none">
-                                            <input
-                                              type="checkbox"
-                                              checked={isSelected}
-                                              onChange={(e) => {
-                                                e.stopPropagation()
-                                                handleGroupToggle(group.id)
-                                              }}
-                                              onClick={(e) => e.stopPropagation()}
-                                              className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                            />
-                                            <div className="ml-2.5 flex-1">
-                                              <div className={`text-xs font-semibold ${
-                                                isSelected ? 'text-blue-900' : 'text-gray-900'
-                                              }`}>
-                                                {group.broker_view_group}
-                                              </div>
-                                            </div>
-                                            <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                                              group.is_active ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
-                                            }`}>
-                                              {group.is_active ? 'Active' : 'Inactive'}
-                                            </span>
-                                            <svg 
-                                              className="ml-2 w-4 h-4 text-gray-500 transition-transform group-open:rotate-180" 
-                                              fill="none" 
-                                              stroke="currentColor" 
-                                              viewBox="0 0 24 24"
-                                            >
-                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                          </summary>
-                                          <div className="px-2.5 pb-2 pt-1 border-t border-gray-200 bg-gray-50/50">
-                                            <div className="text-[11px] text-gray-600">
-                                              <div className="flex items-center justify-between py-1">
-                                                <span className="font-medium text-gray-700">MT5 Group:</span>
-                                                <span className="text-gray-900 font-mono">{group.mt5_group}</span>
-                                              </div>
-                                              <div className="flex items-center justify-between py-1">
-                                                <span className="font-medium text-gray-700">Group ID:</span>
-                                                <span className="text-gray-900">#{group.id}</span>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </details>
-                                      )
-                                    })}
-                                  </div>
-                                </>
-                              )
-                            })()}
-                          </div>
-                        ) : (
-                          <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                            <p className="text-sm text-gray-500">No groups available.</p>
+                          <div className="text-center py-12 bg-white rounded-lg border-2 border-dashed border-slate-300">
+                            <p className="text-sm text-slate-500">No rights available.</p>
                           </div>
                         )}
                       </motion.div>
@@ -1897,18 +1468,18 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         <div className="max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">
                         <div className="flex items-start justify-between mb-4">
                           <div>
-                            <h3 className="text-base font-semibold text-gray-900 mb-1">Account Mappings</h3>
-                            <p className="text-xs text-gray-600">Configure field mapping conditions for this broker.</p>
+                            <h3 className="text-base font-semibold text-slate-900 mb-1">Account Mappings</h3>
+                            <p className="text-xs text-slate-600">Configure field mapping conditions for this broker.</p>
                           </div>
                           
                           {/* Match All Condition Toggle */}
                           <div className="flex items-center space-x-2">
-                            <span className="text-xs font-medium text-gray-700">Match All</span>
+                            <span className="text-xs font-medium text-slate-700">Match All</span>
                             <button
                               type="button"
                               onClick={() => handleMatchAllConditionToggle()}
-                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1 ${
-                                formData.match_all_condition === true ? 'bg-blue-600' : 'bg-gray-300'
+                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-1 focus:ring-slate-400 focus:ring-offset-1 ${
+                                formData.match_all_condition === true ? 'bg-blue-700' : 'bg-blue-300'
                               }`}
                             >
                               <span
@@ -1917,7 +1488,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                 }`}
                               />
                             </button>
-                            <span className="text-[10px] text-gray-500 uppercase font-semibold">
+                            <span className="text-[10px] text-slate-500 uppercase font-semibold">
                               {formData.match_all_condition === true ? 'ON' : 'OFF'}
                             </span>
                           </div>
@@ -1927,12 +1498,12 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         {accountMappingsLoading && broker?.id && (
                           <div className="mb-3">
                             <div className="flex items-center justify-between mb-2">
-                              <h4 className="text-xs font-medium text-gray-700">Loading Mappings...</h4>
+                              <h4 className="text-xs font-medium text-slate-700">Loading Mappings...</h4>
                             </div>
                             <div className="space-y-2">
                               {[...Array(2)].map((_, i) => (
-                                <div key={i} className="p-2.5 bg-gray-100 rounded-md animate-pulse">
-                                  <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+                                <div key={i} className="p-2.5 bg-blue-100 rounded-md animate-pulse">
+                                  <div className="h-3 bg-blue-300 rounded w-3/4"></div>
                                 </div>
                               ))}
                             </div>
@@ -1943,19 +1514,19 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         {!accountMappingsLoading && accountMappings && accountMappings.length > 0 && (
                           <div className="mb-3">
                             <div className="flex items-center justify-between mb-2">
-                              <h4 className="text-xs font-semibold text-gray-700">Current Mappings <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px]">{accountMappings.length}</span></h4>
+                              <h4 className="text-xs font-semibold text-slate-700">Current Mappings <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-slate-700 rounded text-[10px]">{accountMappings.length}</span></h4>
                             </div>
                             <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                               {accountMappings.filter(mapping => mapping && mapping.field_name).map((mapping) => (
-                                <div key={mapping.id} className="flex items-center justify-between p-2.5 bg-white rounded-md border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+                                <div key={mapping.id} className="flex items-center justify-between p-2.5 bg-white rounded-md border border-slate-300 hover:border-slate-300 hover:shadow-sm transition-all">
                                   <div className="flex-1">
-                                    <span className="text-xs text-gray-700">
-                                      <strong className="text-blue-600">{mapping.field_name}</strong> 
-                                      <span className="mx-1.5 px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-[10px] font-semibold">{mapping.operator_type}</span> 
+                                    <span className="text-xs text-slate-700">
+                                      <strong className="text-slate-900">{mapping.field_name}</strong> 
+                                      <span className="mx-1.5 px-1.5 py-0.5 bg-blue-100 text-slate-800 rounded text-[10px] font-semibold">{mapping.operator_type}</span> 
                                       <strong className="text-green-600">{mapping.field_value}</strong>
                                     </span>
                                     {mapping.created_at && (
-                                      <div className="text-[10px] text-gray-500 mt-0.5">
+                                      <div className="text-[10px] text-slate-500 mt-0.5">
                                         {new Date(mapping.created_at).toLocaleDateString()}
                                       </div>
                                     )}
@@ -1984,16 +1555,16 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         {!broker && pendingMappings.length > 0 && (
                           <div className="mb-3">
                             <div className="flex items-center justify-between mb-2">
-                              <h4 className="text-xs font-semibold text-gray-700">Pending <span className="ml-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">{pendingMappings.length}</span></h4>
+                              <h4 className="text-xs font-semibold text-slate-700">Pending <span className="ml-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px]">{pendingMappings.length}</span></h4>
                               <span className="text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">Saved with broker</span>
                             </div>
                             <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                               {pendingMappings.map((mapping) => (
                                 <div key={mapping.id} className="flex items-center justify-between p-2.5 bg-amber-50 rounded-md border border-amber-200 hover:border-amber-300 hover:shadow-sm transition-all">
                                   <div className="flex-1">
-                                    <span className="text-xs text-gray-700">
-                                      <strong className="text-blue-600">{mapping.field_name}</strong> 
-                                      <span className="mx-1.5 px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-[10px] font-semibold">{mapping.operator_type}</span> 
+                                    <span className="text-xs text-slate-700">
+                                      <strong className="text-slate-900">{mapping.field_name}</strong> 
+                                      <span className="mx-1.5 px-1.5 py-0.5 bg-blue-100 text-slate-800 rounded text-[10px] font-semibold">{mapping.operator_type}</span> 
                                       <strong className="text-green-600">{mapping.field_value}</strong>
                                     </span>
                                   </div>
@@ -2013,14 +1584,14 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         )}
 
                         {/* Add New Mapping Form */}
-                        <div className="border border-gray-200 rounded-lg p-3.5 bg-gradient-to-br from-gray-50 to-white shadow-sm">
+                        <div className="border border-slate-300 rounded-lg p-3.5 bg-gradient-to-br from-white to-white shadow-sm">
                           <div className="flex items-center justify-between mb-3">
-                            <h4 className="text-xs font-semibold text-gray-800">Add New Mapping</h4>
+                            <h4 className="text-xs font-semibold text-slate-800">Add New Mapping</h4>
                             <button
                               type="button"
                               onClick={broker?.id ? handleAccountMappingSubmit : handleAddPendingMapping}
                               disabled={createAccountMappingMutation.isLoading}
-                              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                              className="inline-flex items-center px-3 py-1.5 border border-slate-300 text-xs font-semibold rounded-md text-slate-700 bg-white hover:bg-white focus:outline-none focus:ring-1 focus:ring-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                             >
                               {createAccountMappingMutation.isLoading ? (
                                 <>
@@ -2040,7 +1611,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
 
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                             <div>
-                              <label className="block text-xs font-medium text-gray-700 mb-1">
+                              <label className="block text-xs font-medium text-slate-700 mb-1">
                                 Field Name *
                               </label>
                               <select
@@ -2058,8 +1629,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                     setAccountMappingErrors(prev => ({ ...prev, field_name: '' }))
                                   }
                                 }}
-                                className={`w-full px-2.5 py-2 text-xs border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${
-                                  accountMappingErrors.field_name ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                                className={`w-full px-2.5 py-2 text-xs border rounded-md focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-300 ${
+                                  accountMappingErrors.field_name ? 'border-red-300 bg-red-50' : 'border-slate-300'
                                 }`}
                               >
                                 <option value="">-- Select Field --</option>
@@ -2091,14 +1662,14 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                             </div>
 
                             <div>
-                              <label className="block text-xs font-medium text-gray-700 mb-1">
+                              <label className="block text-xs font-medium text-slate-700 mb-1">
                                 Operator Type
                               </label>
                               <select
                                 name="operator_type"
                                 value={accountMappingData.operator_type}
                                 onChange={(e) => setAccountMappingData(prev => ({ ...prev, operator_type: e.target.value }))}
-                                className="w-full px-2.5 py-2 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-2.5 py-2 text-xs border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-300"
                                 disabled={!accountMappingData.field_name}
                               >
                                 {/* Account field operators */}
@@ -2132,7 +1703,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                             </div>
 
                             <div className="relative">
-                              <label className="block text-xs font-medium text-gray-700 mb-1">
+                              <label className="block text-xs font-medium text-slate-700 mb-1">
                                 Field Value *
                               </label>
                               <input
@@ -2155,8 +1726,8 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                 }}
                                 onFocus={() => setShowSuggestions(true)}
                                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                                className={`w-full px-2.5 py-2 text-xs border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${
-                                  accountMappingErrors.field_value ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                                className={`w-full px-2.5 py-2 text-xs border rounded-md focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-300 ${
+                                  accountMappingErrors.field_value ? 'border-red-300 bg-red-50' : 'border-slate-300'
                                 }`}
                                 placeholder={accountMappingData.field_name ? `Select or type ${accountMappingData.field_name.toLowerCase()}` : "Select field first"}
                                 disabled={!accountMappingData.field_name}
@@ -2168,7 +1739,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                               
                               {/* Suggestions Dropdown */}
                               {showSuggestions && mt5Suggestions.length > 0 && accountMappingData.field_name && (
-                                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                                <div className="absolute z-50 w-full mt-1 bg-white border border-slate-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
                                   {mt5Suggestions.map((suggestion, index) => (
                                     <div
                                       key={index}
@@ -2176,9 +1747,9 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                                         setAccountMappingData(prev => ({ ...prev, field_value: suggestion }))
                                         setShowSuggestions(false)
                                       }}
-                                      className="px-3 py-2 text-xs cursor-pointer hover:bg-blue-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                                      className="px-3 py-2 text-xs cursor-pointer hover:bg-white border-b border-slate-300 last:border-b-0 transition-colors"
                                     >
-                                      <span className="text-gray-700">{suggestion}</span>
+                                      <span className="text-slate-700">{suggestion}</span>
                                     </div>
                                   ))}
                                 </div>
@@ -2187,51 +1758,51 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                           </div>
 
                           {/* Field Reference Table */}
-                          <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
-                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-2 py-1.5 border-b border-gray-200">
-                              <h5 className="text-[10px] font-semibold text-gray-800 uppercase tracking-wide">Available Fields & Operators</h5>
+                          <div className="bg-white rounded-md border border-slate-300 overflow-hidden">
+                            <div className="bg-white px-2 py-1.5 border-b border-slate-300">
+                              <h5 className="text-[10px] font-semibold text-slate-800 uppercase tracking-wide">Available Fields & Operators</h5>
                             </div>
                             <div className="overflow-x-auto">
                               <table className="w-full text-[10px]">
-                                <thead className="bg-gray-50">
+                                <thead className="bg-white">
                                   <tr>
-                                    <th className="px-2 py-1.5 text-left font-semibold text-gray-700 border-b border-gray-200">Field</th>
-                                    <th className="px-2 py-1.5 text-left font-semibold text-gray-700 border-b border-gray-200">Operators</th>
-                                    <th className="px-2 py-1.5 text-left font-semibold text-gray-700 border-b border-gray-200">Example Values</th>
+                                    <th className="px-2 py-1.5 text-left font-semibold text-slate-700 border-b border-slate-300">Field</th>
+                                    <th className="px-2 py-1.5 text-left font-semibold text-slate-700 border-b border-slate-300">Operators</th>
+                                    <th className="px-2 py-1.5 text-left font-semibold text-slate-700 border-b border-slate-300">Example Values</th>
                                   </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                  <tr className="hover:bg-blue-50 transition-colors">
-                                    <td className="px-2 py-1.5 text-gray-700 font-medium">Account</td>
-                                    <td className="px-2 py-1.5 text-gray-600">=, &lt;, &gt;, &gt;=, &lt;=, IN, Range</td>
-                                    <td className="px-2 py-1.5 text-gray-600">1234, 1234-2000, 1234,4343,2144</td>
+                                <tbody className="divide-y divide-slate-200">
+                                  <tr className="hover:bg-white transition-colors">
+                                    <td className="px-2 py-1.5 text-slate-700 font-medium">Account</td>
+                                    <td className="px-2 py-1.5 text-slate-600">=, &lt;, &gt;, &gt;=, &lt;=, IN, Range</td>
+                                    <td className="px-2 py-1.5 text-slate-600">1234, 1234-2000, 1234,4343,2144</td>
                                   </tr>
-                                  <tr className="hover:bg-blue-50 transition-colors">
-                                    <td className="px-2 py-1.5 text-gray-700 font-medium">Group</td>
-                                    <td className="px-2 py-1.5 text-gray-600">=</td>
-                                    <td className="px-2 py-1.5 text-gray-600">Aamir</td>
+                                  <tr className="hover:bg-white transition-colors">
+                                    <td className="px-2 py-1.5 text-slate-700 font-medium">Group</td>
+                                    <td className="px-2 py-1.5 text-slate-600">=</td>
+                                    <td className="px-2 py-1.5 text-slate-600">Aamir</td>
                                   </tr>
-                                  <tr className="hover:bg-blue-50 transition-colors">
-                                    <td className="px-2 py-1.5 text-gray-700 font-medium">Name, Email, Phone, etc.</td>
-                                    <td className="px-2 py-1.5 text-gray-600">LIKE, STARTS_WITH, CONTAINS, ENDS_WITH, NOT_CONTAINS</td>
-                                    <td className="px-2 py-1.5 text-gray-600">Aam%, Aam, ami, mir, am</td>
+                                  <tr className="hover:bg-white transition-colors">
+                                    <td className="px-2 py-1.5 text-slate-700 font-medium">Name, Email, Phone, etc.</td>
+                                    <td className="px-2 py-1.5 text-slate-600">LIKE, STARTS_WITH, CONTAINS, ENDS_WITH, NOT_CONTAINS</td>
+                                    <td className="px-2 py-1.5 text-slate-600">Aam%, Aam, ami, mir, am</td>
                                   </tr>
-                                  <tr className="hover:bg-blue-50 transition-colors">
-                                    <td className="px-2 py-1.5 text-gray-700 font-medium" colSpan={3}>
+                                  <tr className="hover:bg-white transition-colors">
+                                    <td className="px-2 py-1.5 text-slate-700 font-medium" colSpan={3}>
                                       <div className="flex flex-wrap gap-1">
-                                        <span className="text-gray-500">Text Fields:</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">LastName</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">MiddleName</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">Company</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">Status</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">LeadCampaign</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">LeadSource</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">Country</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">State</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">City</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">ZipCode</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">Address</span>
-                                        <span className="px-1 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px]">Comment</span>
+                                        <span className="text-slate-500">Text Fields:</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">LastName</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">MiddleName</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">Company</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">Status</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">LeadCampaign</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">LeadSource</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">Country</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">State</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">City</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">ZipCode</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">Address</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 text-slate-700 rounded text-[9px]">Comment</span>
                                       </div>
                                     </td>
                                   </tr>
@@ -2248,14 +1819,14 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                 </div>
 
                 {/* Form Actions */}
-                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-end space-x-4">
+                <div className="flex items-center justify-end space-x-4 border-t border-slate-300 bg-white px-6 py-4">
                   <div className="flex space-x-3">
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       type="button"
                       onClick={onClose}
-                      className="px-4 py-2 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                      className="px-4 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                       disabled={isLoading}
                     >
                       Cancel
@@ -2266,7 +1837,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         whileTap={{ scale: 0.98 }}
                         type="button"
                         onClick={() => setActiveTab('basic')}
-                        className="px-4 py-2 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                        className="px-4 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-colors"
                         disabled={isLoading}
                       >
                         Back to Basic Info
@@ -2285,7 +1856,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                             setActiveTab('account-mapping')
                           }
                         }}
-                        className="px-4 py-2 text-xs font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-sm hover:shadow-md flex items-center"
+                        className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-all shadow-sm hover:shadow-md flex items-center"
                       >
                         Next: Account Mapping
                         <svg className="w-3.5 h-3.5 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2299,7 +1870,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                           whileTap={{ scale: 0.98 }}
                           type="button"
                           onClick={() => setActiveTab(broker ? 'rights' : 'profiles')}
-                          className="px-4 py-2 text-xs font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-sm hover:shadow-md flex items-center"
+                          className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-all shadow-sm hover:shadow-md flex items-center"
                         >
                           Next: {broker ? 'Rights' : 'Assign Profile'}
                           <svg className="w-3.5 h-3.5 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2310,33 +1881,33 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           type="submit"
-                          className="px-4 py-2 text-xs font-semibold text-black bg-yellow-600 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
-                          disabled={isLoading || syncRightsMutation.isLoading}
-                        >
-                          {isLoading || syncRightsMutation.isLoading ? (
-                            <div className="flex items-center">
-                              <svg className="animate-spin -ml-1 mr-2 h-3.5 w-3.5 text-black" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                              {broker ? 'Updating...' : 'Creating...'}
-                            </div>
-                          ) : (
-                            <>
-                              <svg className="w-3.5 h-3.5 mr-1.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                              {broker ? 'Update Broker' : 'Create Broker'}
-                            </>
-                          )}
-                        </motion.button>
+                        className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+                        disabled={isLoading || syncRightsMutation.isLoading}
+                      >
+                        {isLoading || syncRightsMutation.isLoading ? (
+                          <div className="flex items-center">
+                            <svg className="animate-spin -ml-1 mr-2 h-3.5 w-3.5 text-slate-700" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            {broker ? 'Updating...' : 'Creating...'}
+                          </div>
+                        ) : (
+                          <>
+                            <svg className="w-3.5 h-3.5 mr-1.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            {broker ? 'Update Broker' : 'Create Broker'}
+                          </>
+                        )}
+                      </motion.button>
                       </div>
                     ) : (
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         type="submit"
-                        className="px-4 py-2 text-xs font-semibold text-black bg-yellow-600 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+                        className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
                         disabled={isLoading || syncRightsMutation.isLoading}
                       >
                         {isLoading || syncRightsMutation.isLoading ? (

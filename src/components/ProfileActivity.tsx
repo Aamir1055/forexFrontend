@@ -49,11 +49,11 @@ const ProfileActivity: React.FC = () => {
     if (action.includes('login')) {
       return <ClockIcon className="w-4 h-4 text-yellow-500" />
     } else if (action.includes('logout')) {
-      return <ClockIcon className="w-4 h-4 text-gray-500" />
+      return <ClockIcon className="w-4 h-4 text-slate-500" />
     } else if (action.includes('update') || action.includes('change')) {
-      return <InformationCircleIcon className="w-4 h-4 text-blue-500" />
+      return <InformationCircleIcon className="w-4 h-4 text-slate-600" />
     } else {
-      return <InformationCircleIcon className="w-4 h-4 text-gray-500" />
+      return <InformationCircleIcon className="w-4 h-4 text-slate-500" />
     }
   }
 
@@ -82,15 +82,15 @@ const ProfileActivity: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Tab Navigation */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-        <div className="border-b border-gray-200">
+      <div className="bg-white rounded-lg border border-slate-300 shadow-sm">
+        <div className="border-b border-slate-300">
           <nav className="flex space-x-8 px-6">
             <button
               onClick={() => setActiveTab('activity')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'activity'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-slate-300 text-slate-700'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
               }`}
             >
               Activity Logs
@@ -99,8 +99,8 @@ const ProfileActivity: React.FC = () => {
               onClick={() => setActiveTab('security')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'security'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-slate-300 text-slate-700'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
               }`}
             >
               Security Events
@@ -111,32 +111,32 @@ const ProfileActivity: React.FC = () => {
         <div className="p-6">
           {activeTab === 'activity' && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Recent Activity</h3>
               
               {activityLoading ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                  <p className="text-gray-600">Loading activity logs...</p>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-300 mx-auto mb-4"></div>
+                  <p className="text-slate-600">Loading activity logs...</p>
                 </div>
               ) : activityData?.activities.length === 0 ? (
                 <div className="text-center py-8">
-                  <ClockIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600">No activity logs found</p>
+                  <ClockIcon className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+                  <p className="text-slate-600">No activity logs found</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {activityData?.activities.map((activity: ActivityLog) => (
-                    <div key={activity.id} className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+                    <div key={activity.id} className="flex items-start space-x-3 p-4 bg-white rounded-lg">
                       <div className="flex-shrink-0 mt-1">
                         {getActivityIcon(activity.action)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-medium text-gray-900">{activity.action}</h4>
-                          <span className="text-xs text-gray-500">{formatDate(activity.created_at)}</span>
+                          <h4 className="text-sm font-medium text-slate-900">{activity.action}</h4>
+                          <span className="text-xs text-slate-500">{formatDate(activity.created_at)}</span>
                         </div>
-                        <p className="text-sm text-gray-600 mt-1">{activity.description}</p>
-                        <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                        <p className="text-sm text-slate-600 mt-1">{activity.description}</p>
+                        <div className="flex items-center space-x-4 mt-2 text-xs text-slate-500">
                           <span>IP: {activity.ip_address}</span>
                           {activity.location && <span>Location: {activity.location}</span>}
                         </div>
@@ -147,24 +147,24 @@ const ProfileActivity: React.FC = () => {
                   {/* Pagination */}
                   {activityData && activityData.pagination.pages > 1 && (
                     <div className="flex items-center justify-between pt-4">
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-slate-600">
                         Showing {((activityPage - 1) * 10) + 1} to {Math.min(activityPage * 10, activityData.pagination.total)} of {activityData.pagination.total} results
                       </div>
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setActivityPage(activityPage - 1)}
                           disabled={activityPage === 1}
-                          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Previous
                         </button>
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-slate-600">
                           Page {activityPage} of {activityData.pagination.pages}
                         </span>
                         <button
                           onClick={() => setActivityPage(activityPage + 1)}
                           disabled={activityPage === activityData.pagination.pages}
-                          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Next
                         </button>
@@ -178,39 +178,39 @@ const ProfileActivity: React.FC = () => {
 
           {activeTab === 'security' && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Security Events</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Security Events</h3>
               
               {securityLoading ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                  <p className="text-gray-600">Loading security events...</p>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-300 mx-auto mb-4"></div>
+                  <p className="text-slate-600">Loading security events...</p>
                 </div>
               ) : securityData?.events.length === 0 ? (
                 <div className="text-center py-8">
-                  <ShieldExclamationIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600">No security events found</p>
+                  <ShieldExclamationIcon className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+                  <p className="text-slate-600">No security events found</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {securityData?.events.map((event: SecurityEvent) => (
-                    <div key={event.id} className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+                    <div key={event.id} className="flex items-start space-x-3 p-4 bg-white rounded-lg">
                       <div className="flex-shrink-0 mt-1">
                         {getSecurityIcon(event.risk_level)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
-                            <h4 className="text-sm font-medium text-gray-900 capitalize">
+                            <h4 className="text-sm font-medium text-slate-900 capitalize">
                               {event.event_type.replace('_', ' ')}
                             </h4>
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getRiskLevelColor(event.risk_level)}">
                               {event.risk_level} risk
                             </span>
                           </div>
-                          <span className="text-xs text-gray-500">{formatDate(event.created_at)}</span>
+                          <span className="text-xs text-slate-500">{formatDate(event.created_at)}</span>
                         </div>
-                        <p className="text-sm text-gray-600 mt-1">{event.description}</p>
-                        <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                        <p className="text-sm text-slate-600 mt-1">{event.description}</p>
+                        <div className="flex items-center space-x-4 mt-2 text-xs text-slate-500">
                           <span>IP: {event.ip_address}</span>
                           {event.location && <span>Location: {event.location}</span>}
                           <span>Device: {event.device_info}</span>
@@ -222,24 +222,24 @@ const ProfileActivity: React.FC = () => {
                   {/* Pagination */}
                   {securityData && securityData.pagination.pages > 1 && (
                     <div className="flex items-center justify-between pt-4">
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-slate-600">
                         Showing {((securityPage - 1) * 10) + 1} to {Math.min(securityPage * 10, securityData.pagination.total)} of {securityData.pagination.total} results
                       </div>
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setSecurityPage(securityPage - 1)}
                           disabled={securityPage === 1}
-                          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Previous
                         </button>
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-slate-600">
                           Page {securityPage} of {securityData.pagination.pages}
                         </span>
                         <button
                           onClick={() => setSecurityPage(securityPage + 1)}
                           disabled={securityPage === securityData.pagination.pages}
-                          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Next
                         </button>

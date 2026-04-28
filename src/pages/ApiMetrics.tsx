@@ -94,12 +94,12 @@ export default function ApiMetrics() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-white to-white">
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white shadow-lg mb-4">
-            <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-4 border-slate-300 border-t-transparent"></div>
           </div>
-          <p className="text-gray-600 font-medium">Loading metrics...</p>
+          <p className="text-slate-600 font-medium">Loading metrics...</p>
         </div>
       </div>
     )
@@ -108,18 +108,15 @@ export default function ApiMetrics() {
   const stats = getTotalStats()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
+    <div className="min-h-screen bg-gradient-to-br from-white via-white to-white">
       <PageHeaderShell>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-700">
                 <ChartBarIcon className="w-5 h-5 text-white" />
-              </div>
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
             </div>
             <div>
-              <h1 className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+              <h1 className="text-lg font-bold text-slate-900">
                 API Metrics
               </h1>
               <p className="text-xs font-medium text-slate-500">
@@ -139,20 +136,22 @@ export default function ApiMetrics() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-3 border border-gray-100 hover:border-blue-200"
+          className="group rounded-2xl border border-slate-300 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
         >
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-300">
-              <ServerIcon className="w-4 h-4 text-white" />
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">API Calls</div>
+              <div className="text-2xl font-bold tracking-tight text-slate-900">
+                {stats.totalCalls.toLocaleString()}
+              </div>
+              <p className="mt-3 text-xs text-slate-500">Total requests processed</p>
             </div>
-            <span className="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Total</span>
-          </div>
-          <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-0.5">API Calls</div>
-          <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-            {stats.totalCalls.toLocaleString()}
-          </div>
-          <div className="mt-2 pt-2 border-t border-gray-100">
-            <p className="text-[10px] text-gray-500">Total requests processed</p>
+            <div className="flex flex-col items-end gap-3">
+              <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-700 ring-1 ring-blue-200">Total</span>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-slate-600 ring-1 ring-blue-200 transition-transform duration-300 group-hover:scale-105">
+                <ServerIcon className="h-5 w-5 text-slate-600" />
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -160,20 +159,22 @@ export default function ApiMetrics() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-3 border border-gray-100 hover:border-purple-200"
+          className="group rounded-2xl border border-slate-300 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
         >
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-300">
-              <ClockIcon className="w-4 h-4 text-white" />
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Response Time</div>
+              <div className="text-2xl font-bold tracking-tight text-slate-900">
+                {formatTime(stats.avgResponseTime)}
+              </div>
+              <p className="mt-3 text-xs text-slate-500">Average across all endpoints</p>
             </div>
-            <span className="text-[10px] font-semibold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">Avg</span>
-          </div>
-          <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Response Time</div>
-          <div className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">
-            {formatTime(stats.avgResponseTime)}
-          </div>
-          <div className="mt-2 pt-2 border-t border-gray-100">
-            <p className="text-[10px] text-gray-500">Average across all endpoints</p>
+            <div className="flex flex-col items-end gap-3">
+              <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-700 ring-1 ring-blue-200">Avg</span>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-slate-600 ring-1 ring-blue-200 transition-transform duration-300 group-hover:scale-105">
+                <ClockIcon className="h-5 w-5 text-slate-600" />
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -181,20 +182,22 @@ export default function ApiMetrics() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-3 border border-gray-100 hover:border-yellow-200"
+          className="group rounded-2xl border border-slate-300 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
         >
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-500 to-yellow-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-300">
-              <ArrowsRightLeftIcon className="w-4 h-4 text-white rotate-90" />
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Data Sent</div>
+              <div className="text-2xl font-bold tracking-tight text-slate-900">
+                {formatBytes(stats.totalSent)}
+              </div>
+              <p className="mt-3 text-xs text-slate-500">Total outbound traffic</p>
             </div>
-            <span className="text-[10px] font-semibold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full">Sent</span>
-          </div>
-          <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Data Sent</div>
-          <div className="text-xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-700 bg-clip-text text-transparent">
-            {formatBytes(stats.totalSent)}
-          </div>
-          <div className="mt-2 pt-2 border-t border-gray-100">
-            <p className="text-[10px] text-gray-500">Total outbound traffic</p>
+            <div className="flex flex-col items-end gap-3">
+              <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-700 ring-1 ring-blue-200">Sent</span>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-slate-600 ring-1 ring-blue-200 transition-transform duration-300 group-hover:scale-105">
+                <ArrowsRightLeftIcon className="h-5 w-5 rotate-90 text-slate-600" />
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -202,20 +205,22 @@ export default function ApiMetrics() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-3 border border-gray-100 hover:border-orange-200"
+          className="group rounded-2xl border border-slate-300 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
         >
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-300">
-              <ArrowsRightLeftIcon className="w-4 h-4 text-white -rotate-90" />
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Data Received</div>
+              <div className="text-2xl font-bold tracking-tight text-slate-900">
+                {formatBytes(stats.totalReceived)}
+              </div>
+              <p className="mt-3 text-xs text-slate-500">Total inbound traffic</p>
             </div>
-            <span className="text-[10px] font-semibold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">Received</span>
-          </div>
-          <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Data Received</div>
-          <div className="text-xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
-            {formatBytes(stats.totalReceived)}
-          </div>
-          <div className="mt-2 pt-2 border-t border-gray-100">
-            <p className="text-[10px] text-gray-500">Total inbound traffic</p>
+            <div className="flex flex-col items-end gap-3">
+              <span className="rounded-full bg-blue-100 px-2.5 py-1 text-[10px] font-semibold text-slate-700 ring-1 ring-blue-200">Received</span>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-slate-700 ring-1 ring-blue-200 transition-transform duration-300 group-hover:scale-105">
+                <ArrowsRightLeftIcon className="h-5 w-5 -rotate-90 text-slate-700" />
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -225,16 +230,16 @@ export default function ApiMetrics() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.5 }}
-        className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+        className="overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm"
       >
-        <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-slate-300 bg-white/80 px-6 py-5">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">Endpoint Performance</h2>
-            <p className="text-sm text-gray-500 mt-1">Detailed metrics for each API endpoint</p>
+            <h2 className="text-lg font-bold text-slate-900">Endpoint Performance</h2>
+            <p className="mt-1 text-sm text-slate-500">Detailed metrics for each API endpoint</p>
           </div>
           <button
             onClick={fetchMetrics}
-            className="px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 font-semibold text-xs group"
+            className="group flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-white border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-all duration-200 hover:bg-white"
             title="Refresh API metrics"
           >
             <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -244,12 +249,12 @@ export default function ApiMetrics() {
           </button>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gradient-to-r from-gray-50 via-blue-50/30 to-indigo-50/20">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="bg-white">
               <tr>
                 <th
                   onClick={() => handleSort('path')}
-                  className="group px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-blue-50 transition-colors duration-150"
+                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
                   <div className="flex items-center space-x-2">
                     <span>API Path</span>
@@ -258,7 +263,7 @@ export default function ApiMetrics() {
                 </th>
                 <th
                   onClick={() => handleSort('total_calls')}
-                  className="group px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-blue-50 transition-colors duration-150"
+                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
                   <div className="flex items-center space-x-2">
                     <span>Calls</span>
@@ -267,7 +272,7 @@ export default function ApiMetrics() {
                 </th>
                 <th
                   onClick={() => handleSort('avg_time_ms')}
-                  className="group px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-blue-50 transition-colors duration-150"
+                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
                   <div className="flex items-center space-x-2">
                     <span>Avg Time</span>
@@ -276,7 +281,7 @@ export default function ApiMetrics() {
                 </th>
                 <th
                   onClick={() => handleSort('min_time_ms')}
-                  className="group px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-blue-50 transition-colors duration-150"
+                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
                   <div className="flex items-center space-x-2">
                     <span>Min Time</span>
@@ -285,7 +290,7 @@ export default function ApiMetrics() {
                 </th>
                 <th
                   onClick={() => handleSort('max_time_ms')}
-                  className="group px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-blue-50 transition-colors duration-150"
+                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
                   <div className="flex items-center space-x-2">
                     <span>Max Time</span>
@@ -294,7 +299,7 @@ export default function ApiMetrics() {
                 </th>
                 <th
                   onClick={() => handleSort('total_sent_bytes')}
-                  className="group px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-blue-50 transition-colors duration-150"
+                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
                   <div className="flex items-center space-x-2">
                     <span>Data Sent</span>
@@ -303,7 +308,7 @@ export default function ApiMetrics() {
                 </th>
                 <th
                   onClick={() => handleSort('total_received_bytes')}
-                  className="group px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-blue-50 transition-colors duration-150"
+                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
                   <div className="flex items-center space-x-2">
                     <span>Data Received</span>
@@ -312,32 +317,32 @@ export default function ApiMetrics() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-200 bg-white">
               {sortedMetrics.map((metric, index) => (
-                <tr key={index} className="hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-indigo-50/30 transition-all duration-150 group">
-                  <td className="px-6 py-4 text-sm font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
-                    <code className="bg-gray-100 group-hover:bg-blue-100 px-3 py-1.5 rounded-lg font-mono text-xs transition-colors">
+                <tr key={index} className="group transition-colors duration-150 hover:bg-white/80">
+                  <td className="px-6 py-4 text-sm font-semibold text-slate-900 transition-colors group-hover:text-slate-950">
+                    <code className="rounded-lg bg-blue-100 px-3 py-1.5 font-mono text-xs text-slate-700 transition-colors group-hover:bg-blue-200">
                       {metric.path}
                     </code>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-blue-200">
                       {metric.total_calls.toLocaleString()}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-700">
                     {formatTime(metric.avg_time_ms)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-600 font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-amber-600">
                     {formatTime(metric.min_time_ms)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-orange-600 font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-rose-600">
                     {formatTime(metric.max_time_ms)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-700">
                     {formatBytes(metric.total_sent_bytes)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-700">
                     {formatBytes(metric.total_received_bytes)}
                   </td>
                 </tr>
@@ -348,11 +353,11 @@ export default function ApiMetrics() {
 
         {metrics.length === 0 && (
           <div className="text-center py-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-              <ChartBarIcon className="w-8 h-8 text-gray-400" />
+            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
+              <ChartBarIcon className="w-8 h-8 text-slate-400" />
             </div>
-            <p className="text-gray-500 font-medium">No metrics data available</p>
-            <p className="text-sm text-gray-400 mt-1">Data will appear here once API calls are made</p>
+            <p className="font-medium text-slate-500">No metrics data available</p>
+            <p className="mt-1 text-sm text-slate-400">Data will appear here once API calls are made</p>
           </div>
         )}
       </motion.div>

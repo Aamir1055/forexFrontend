@@ -164,24 +164,24 @@ const Logs: React.FC = () => {
   // Show Access Denied UI if 403 error
   if (accessDenied) {
     return (
-      <div className="h-screen bg-gray-50 font-sans flex items-center justify-center">
+      <div className="h-screen bg-white font-sans flex items-center justify-center">
         <div className="text-center">
           <div className="mb-4 flex justify-center">
             <svg className="w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Access Denied</h2>
+          <p className="text-slate-600 mb-6">
             You don't have permission to access system logs.
             <br />
-            This module requires the <span className="font-semibold text-gray-900">system.admin</span> permission.
+            This module requires the <span className="font-semibold text-slate-900">system.admin</span> permission.
             <br />
             Please contact your administrator to request access.
           </p>
           <button
             onClick={() => window.history.back()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Go Back
           </button>
@@ -191,17 +191,17 @@ const Logs: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-screen bg-white font-sans">
       {/* Header */}
       <PageHeaderShell sticky>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center">
                   <DocumentTextIcon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">System Logs</h1>
-                  <p className="text-sm text-gray-500">View and search system and MT5 log files</p>
+                  <h1 className="text-xl font-bold text-slate-900">System Logs</h1>
+                  <p className="text-sm text-slate-500">View and search system and MT5 log files</p>
                 </div>
               </div>
 
@@ -212,20 +212,20 @@ const Logs: React.FC = () => {
       {/* Main Content */}
       <main className="px-2 pt-3 pb-4">
         {/* Controls Card */}
-        <div className="mt-4 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="mt-4 bg-white rounded-xl shadow-sm border border-slate-300 p-6">
 
           <div className="space-y-4">
             {/* Row 1: Log file + tabs/actions */}
             <div className="grid grid-cols-1 lg:grid-cols-[minmax(280px,360px)_1fr] gap-3 items-end">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Log File</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Log File</label>
                 <select
                   value={selectedFile}
                   onChange={(e) => {
                     setSelectedFile(e.target.value)
                     setOffset(0)
                   }}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white"
+                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-1 focus:ring-slate-400 focus:border-transparent bg-white"
                   disabled={isLoadingFiles}
                 >
                   <option value="">-- Select File --</option>
@@ -242,8 +242,8 @@ const Logs: React.FC = () => {
                   onClick={() => handleTabChange('system')}
                   className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors whitespace-nowrap ${
                     activeTab === 'system'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-white border border-slate-300 text-slate-700 shadow-sm'
+                      : 'bg-white border border-slate-300 text-slate-500 hover:bg-white'
                   }`}
                 >
                   System ({logFiles?.system_logs?.length || 0})
@@ -252,15 +252,15 @@ const Logs: React.FC = () => {
                   onClick={() => handleTabChange('mt5')}
                   className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors whitespace-nowrap ${
                     activeTab === 'mt5'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-white border border-slate-300 text-slate-700 shadow-sm'
+                      : 'bg-white border border-slate-300 text-slate-500 hover:bg-white'
                   }`}
                 >
                   MT5 ({logFiles?.mt5_logs?.length || 0})
                 </button>
                 <button
                   onClick={handleRefresh}
-                  className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 font-medium text-sm group"
+                  className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-sm hover:bg-white font-medium text-sm group"
                   title="Refresh logs"
                 >
                   <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
@@ -272,7 +272,7 @@ const Logs: React.FC = () => {
             {/* Row 2: Search + options */}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3 items-end">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Search Logs</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Search Logs</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -280,9 +280,9 @@ const Logs: React.FC = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                     placeholder="Search logs..."
-                    className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-1 focus:ring-slate-400 focus:border-transparent"
                   />
-                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
                 </div>
               </div>
 
@@ -292,23 +292,23 @@ const Logs: React.FC = () => {
                     type="checkbox"
                     checked={isRegex}
                     onChange={(e) => setIsRegex(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-slate-700 border-slate-300 rounded focus:ring-slate-400"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Regex</span>
+                  <span className="ml-2 text-sm text-slate-700">Regex</span>
                 </label>
                 <label className="flex items-center cursor-pointer">
                   <input
                     type="checkbox"
                     checked={isTailMode}
                     onChange={(e) => setIsTailMode(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-slate-700 border-slate-300 rounded focus:ring-slate-400"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Tail</span>
+                  <span className="ml-2 text-sm text-slate-700">Tail</span>
                 </label>
                 <button
                   onClick={handleSearch}
                   disabled={isLoadingContent}
-                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 whitespace-nowrap"
+                  className="px-4 py-2 text-sm bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-colors shadow-sm disabled:opacity-50 whitespace-nowrap"
                 >
                   Search
                 </button>
@@ -319,14 +319,14 @@ const Logs: React.FC = () => {
 
         {/* Pagination Controls */}
         {!isTailMode && logContent && logContent.total_lines > 0 && (
-          <div className="mt-4 bg-white rounded-lg shadow-sm border border-gray-200 px-6 py-3">
+          <div className="mt-4 bg-white rounded-lg shadow-sm border border-slate-300 px-6 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span className="text-xs text-gray-600">Lines per page:</span>
+                <span className="text-xs text-slate-600">Lines per page:</span>
                 <select
                   value={limit}
                   onChange={(e) => handleLimitChange(Number(e.target.value))}
-                  className="px-3 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-xs"
+                  className="px-3 py-1.5 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent bg-white text-xs"
                 >
                   {paginationOptions.map((option) => (
                     <option key={option} value={option}>
@@ -336,7 +336,7 @@ const Logs: React.FC = () => {
                 </select>
               </div>
               
-              <div className="text-xs text-gray-700">
+              <div className="text-xs text-slate-700">
                 Showing {offset + 1} to {Math.min(offset + logContent.returned_lines, logContent.total_lines)} of {logContent.total_lines} lines
               </div>
               
@@ -345,19 +345,19 @@ const Logs: React.FC = () => {
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1 || isLoadingContent}
-                    className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-2 py-1 border border-slate-300 rounded-md hover:bg-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
-                  <span className="text-xs text-gray-700">
+                  <span className="text-xs text-slate-700">
                     Page {currentPage} of {Math.ceil(logContent.total_lines / limit)}
                   </span>
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === Math.ceil(logContent.total_lines / limit) || isLoadingContent}
-                    className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-2 py-1 border border-slate-300 rounded-md hover:bg-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -370,26 +370,26 @@ const Logs: React.FC = () => {
         )}
 
         {/* Log Content */}
-        <div className="mt-4 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="bg-gray-900 rounded-lg p-4 min-h-[600px] max-h-[600px] overflow-auto">
+        <div className="mt-4 bg-white rounded-xl shadow-sm border border-slate-300 p-6">
+          <div className="bg-blue-900 rounded-lg p-4 min-h-[600px] max-h-[600px] overflow-auto">
             {isLoadingContent ? (
               <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-300"></div>
               </div>
             ) : logContent && logContent.lines.length > 0 ? (
               <pre className="text-xs text-yellow-400 font-mono leading-relaxed whitespace-pre-wrap break-all">
                 {logContent.lines.map((line, index) => (
-                  <div key={index} className="hover:bg-gray-800 transition-colors">
+                  <div key={index} className="hover:bg-blue-800 transition-colors">
                     {line}
                   </div>
                 ))}
               </pre>
             ) : selectedFile ? (
-              <div className="flex items-center justify-center h-64 text-gray-500">
+              <div className="flex items-center justify-center h-64 text-slate-500">
                 No log content available
               </div>
             ) : (
-              <div className="flex items-center justify-center h-64 text-gray-500">
+              <div className="flex items-center justify-center h-64 text-slate-500">
                 Select a log file to view its content
               </div>
             )}

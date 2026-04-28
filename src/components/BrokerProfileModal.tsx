@@ -226,83 +226,82 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
+            className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-200 bg-gradient-to-r from-blue-500 to-blue-600">
-              <h2 className="text-base font-bold text-white">
-                {profile ? 'Edit Profile' : 'Create New Profile'}
-              </h2>
-              <button
-                onClick={onClose}
-                className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
-              >
-                <XMarkIcon className="w-4 h-4 text-white" />
-              </button>
+            <div className="px-6 py-4 bg-white border-b border-slate-300">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900">
+                    {profile ? 'Edit Profile' : 'Create New Profile'}
+                  </h2>
+                  <p className="text-slate-500 text-xs mt-0.5">
+                    {profile ? 'Update profile details and rights settings' : 'Manage profile details and rights settings'}
+                  </p>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors text-slate-400 hover:text-slate-700"
+                >
+                  <XMarkIcon className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-gray-200 bg-gray-50">
+            <div className="border-b border-slate-300">
+              <nav className="flex px-4 pt-3 gap-1">
               <button
                 onClick={() => setActiveTab('basic')}
-                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
+                className={`min-w-[140px] text-center rounded-t-lg border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
                   activeTab === 'basic'
-                    ? 'text-blue-600 border-b-2 border-blue-600 bg-white'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-slate-900 border-blue-700 bg-blue-100'
+                    : 'text-slate-500 border-transparent hover:text-slate-700 hover:bg-white'
                 }`}
               >
                 Basic Info
               </button>
               <button
                 onClick={() => setActiveTab('rights')}
-                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
+                className={`min-w-[140px] text-center rounded-t-lg border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
                   activeTab === 'rights'
-                    ? 'text-blue-600 border-b-2 border-blue-600 bg-white'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-slate-900 border-blue-700 bg-blue-100'
+                    : 'text-slate-500 border-transparent hover:text-slate-700 hover:bg-white'
                 }`}
               >
                 Rights ({formData.selectedRights.length})
               </button>
-              <button
-                onClick={() => setActiveTab('groups')}
-                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
-                  activeTab === 'groups'
-                    ? 'text-blue-600 border-b-2 border-blue-600 bg-white'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Groups ({formData.selectedGroups.length})
-              </button>
+              </nav>
             </div>
 
             <form onSubmit={handleSubmit}>
               {/* Tab Content */}
-              <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 200px)' }}>
+              <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(75vh - 120px)' }}>
                 {/* Basic Info Tab */}
                 {activeTab === 'basic' && (
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-medium text-slate-700 mb-1">
                         Profile Name *
                       </label>
                       <input
                         type="text"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-400 focus:border-transparent"
                         placeholder="Enter profile name"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-medium text-slate-700 mb-1">
                         Description *
                       </label>
                       <textarea
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-400 focus:border-transparent"
                         placeholder="Enter profile description"
                         rows={3}
                         required
@@ -315,19 +314,19 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
                 {activeTab === 'rights' && (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-sm font-semibold text-gray-900">Select Rights</h3>
+                      <h3 className="text-sm font-semibold text-slate-900">Select Rights</h3>
                       <div className="flex gap-1.5">
                         <button
                           type="button"
                           onClick={selectAllRights}
-                          className="px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="px-2 py-1 text-xs text-slate-700 hover:bg-blue-100 rounded-lg transition-colors"
                         >
                           Select All
                         </button>
                         <button
                           type="button"
                           onClick={deselectAllRights}
-                          className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                          className="px-2 py-1 text-xs text-slate-600 hover:bg-blue-100 rounded-lg transition-colors"
                         >
                           Deselect All
                         </button>
@@ -336,24 +335,24 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
 
                     {loadingRights ? (
                       <div className="flex items-center justify-center py-8">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-300"></div>
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {allRights?.map((right: Right) => (
                           <label
                             key={right.id}
-                            className="flex items-start p-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                            className="flex items-start p-2.5 border border-slate-300 rounded-lg hover:bg-white cursor-pointer transition-colors"
                           >
                             <input
                               type="checkbox"
                               checked={formData.selectedRights.includes(right.id)}
                               onChange={() => handleRightToggle(right.id)}
-                              className="mt-0.5 w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              className="mt-0.5 w-3.5 h-3.5 text-slate-600 border-slate-300 rounded focus:ring-slate-400"
                             />
                             <div className="ml-2">
-                              <div className="text-xs font-medium text-gray-900">{right.name}</div>
-                              <div className="text-[10px] text-gray-500 leading-tight">{right.description}</div>
+                              <div className="text-xs font-medium text-slate-900">{right.name}</div>
+                              <div className="text-[10px] text-slate-500 leading-tight">{right.description}</div>
                             </div>
                           </label>
                         ))}
@@ -362,23 +361,23 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
                   </div>
                 )}
 
-                {/* Groups Tab */}
-                {activeTab === 'groups' && (
+                {/* Groups Tab removed */}
+                {false && (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-sm font-semibold text-gray-900">Select Groups</h3>
+                      <h3 className="text-sm font-semibold text-slate-900">Select Groups</h3>
                       <div className="flex gap-1.5">
                         <button
                           type="button"
                           onClick={selectAllGroups}
-                          className="px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="px-2 py-1 text-xs text-slate-700 hover:bg-blue-100 rounded-lg transition-colors"
                         >
                           Select All
                         </button>
                         <button
                           type="button"
                           onClick={deselectAllGroups}
-                          className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                          className="px-2 py-1 text-xs text-slate-600 hover:bg-blue-100 rounded-lg transition-colors"
                         >
                           Deselect All
                         </button>
@@ -392,28 +391,28 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
                         value={groupSearchTerm}
                         onChange={(e) => handleGroupSearchChange(e.target.value)}
                         placeholder="Search groups..."
-                        className="w-full pl-8 pr-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-400 focus:border-transparent"
                       />
-                      <svg className="w-3.5 h-3.5 absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3.5 h-3.5 absolute left-2.5 top-1/2 transform -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                     </div>
 
                     {loadingGroups ? (
                       <div className="flex items-center justify-center py-8">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-300"></div>
                       </div>
                     ) : (
                       <>
                         {/* Pagination Controls */}
                         {filteredGroups.length > 0 && (
-                          <div className="flex items-center justify-between pb-2 mb-2 border-b border-gray-200">
+                          <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-300">
                             <div className="flex items-center gap-1.5">
-                              <span className="text-[10px] text-gray-600">Show:</span>
+                              <span className="text-[10px] text-slate-600">Show:</span>
                               <select
                                 value={groupsPerPage}
                                 onChange={(e) => handleGroupsPerPageChange(Number(e.target.value))}
-                                className="px-2 py-0.5 text-[10px] border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent bg-white"
+                                className="px-2 py-0.5 text-[10px] border border-slate-300 rounded focus:ring-1 focus:ring-slate-400 focus:border-transparent bg-white"
                               >
                                 {groupPaginationOptions.map((option) => (
                                   <option key={option} value={option}>
@@ -423,7 +422,7 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
                               </select>
                             </div>
 
-                            <div className="text-[10px] text-gray-700">
+                            <div className="text-[10px] text-slate-700">
                               Showing {((currentGroupPage - 1) * groupsPerPage) + 1} to {Math.min(currentGroupPage * groupsPerPage, filteredGroups.length)} of {filteredGroups.length}
                             </div>
 
@@ -433,20 +432,20 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
                                   type="button"
                                   onClick={() => setCurrentGroupPage(prev => Math.max(1, prev - 1))}
                                   disabled={currentGroupPage === 1}
-                                  className="px-1.5 py-0.5 border border-gray-300 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="px-1.5 py-0.5 border border-slate-300 rounded hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                   <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                   </svg>
                                 </button>
-                                <span className="text-[10px] text-gray-700">
+                                <span className="text-[10px] text-slate-700">
                                   Page {currentGroupPage} of {totalGroupPages}
                                 </span>
                                 <button
                                   type="button"
                                   onClick={() => setCurrentGroupPage(prev => Math.min(totalGroupPages, prev + 1))}
                                   disabled={currentGroupPage === totalGroupPages}
-                                  className="px-1.5 py-0.5 border border-gray-300 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="px-1.5 py-0.5 border border-slate-300 rounded hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                   <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -463,32 +462,32 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
                             paginatedGroups.map((group: Group) => (
                               <label
                                 key={group.id}
-                                className="flex items-start p-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                                className="flex items-start p-2.5 border border-slate-300 rounded-lg hover:bg-white cursor-pointer transition-colors"
                               >
                                 <input
                                   type="checkbox"
                                   checked={formData.selectedGroups.includes(group.id)}
                                   onChange={() => handleGroupToggle(group.id)}
-                                  className="mt-0.5 w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                  className="mt-0.5 w-3.5 h-3.5 text-slate-600 border-slate-300 rounded focus:ring-slate-400"
                                 />
                                 <div className="ml-2 flex-1">
                                   <div className="flex items-center justify-between">
-                                    <div className="text-xs font-medium text-gray-900">{group.broker_view_group}</div>
+                                    <div className="text-xs font-medium text-slate-900">{group.broker_view_group}</div>
                                     <span className={`px-1.5 py-0.5 text-[10px] rounded-full ${
-                                      group.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                      group.is_active ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-slate-800'
                                     }`}>
                                       {group.is_active ? 'Active' : 'Inactive'}
                                     </span>
                                   </div>
-                                  <div className="text-[10px] text-gray-500 mt-0.5">MT5: {group.mt5_group}</div>
+                                  <div className="text-[10px] text-slate-500 mt-0.5">MT5: {group.mt5_group}</div>
                                   {group.description && (
-                                    <div className="text-[10px] text-gray-500 mt-0.5 leading-tight">{group.description}</div>
+                                    <div className="text-[10px] text-slate-500 mt-0.5 leading-tight">{group.description}</div>
                                   )}
                                 </div>
                               </label>
                             ))
                           ) : (
-                            <div className="text-center py-8 text-xs text-gray-500">
+                            <div className="text-center py-8 text-xs text-slate-500">
                               {groupSearchTerm ? 'No groups found matching your search' : 'No groups available'}
                             </div>
                           )}
@@ -500,11 +499,11 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-end gap-2 px-4 py-2.5 border-t border-gray-200 bg-gray-50">
+              <div className="flex items-center justify-end gap-2 px-4 py-2.5 border-t border-slate-300 bg-white">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs text-slate-700 hover:bg-blue-200 rounded-lg transition-colors"
                   disabled={isLoading}
                 >
                   Cancel
@@ -512,7 +511,7 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="px-4 py-1.5 text-xs bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-1.5 text-xs bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Saving...' : profile ? 'Update Profile' : 'Create Profile'}
                 </button>

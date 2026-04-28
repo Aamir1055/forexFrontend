@@ -32,12 +32,12 @@ const RuleTable: React.FC<RuleTableProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
+      <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
+        {topContent && <div className="p-3 border-b border-slate-300">{topContent}</div>}
         <div className="flex items-center justify-center py-12">
           <div className="flex flex-col items-center gap-3">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="text-sm text-gray-500">Loading rules...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-300"></div>
+            <p className="text-sm text-slate-500">Loading rules...</p>
           </div>
         </div>
       </div>
@@ -46,11 +46,11 @@ const RuleTable: React.FC<RuleTableProps> = ({
 
   if (rules.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
+      <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
+        {topContent && <div className="p-3 border-b border-slate-300">{topContent}</div>}
         <div className="text-center py-12">
         <svg
-          className="mx-auto h-12 w-12 text-gray-400"
+          className="mx-auto h-12 w-12 text-slate-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -62,16 +62,16 @@ const RuleTable: React.FC<RuleTableProps> = ({
             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
           />
         </svg>
-        <h3 className="mt-2 text-sm font-medium text-gray-900">No rules found</h3>
-        <p className="mt-1 text-sm text-gray-500">Get started by creating a new rule.</p>
+        <h3 className="mt-2 text-sm font-medium text-slate-900">No rules found</h3>
+        <p className="mt-1 text-sm text-slate-500">Get started by creating a new rule.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-      {topContent && <div className="p-3 border-b border-slate-200/80">{topContent}</div>}
+    <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
+      {topContent && <div className="p-3 border-b border-slate-300">{topContent}</div>}
       {/* Mobile view */}
       <div className="lg:hidden space-y-3">
         {rules.map((rule, index) => (
@@ -80,38 +80,38 @@ const RuleTable: React.FC<RuleTableProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white rounded-xl border border-slate-300 p-4 shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 text-sm">{rule.rule_name}</h3>
-                <p className="text-xs text-gray-500 font-mono mt-0.5">{rule.rule_code}</p>
+                <h3 className="font-semibold text-slate-900 text-sm">{rule.rule_name}</h3>
+                <p className="text-xs text-slate-500 font-mono mt-0.5">{rule.rule_code}</p>
               </div>
               <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                   rule.is_active
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-red-100 text-red-800'
+                    ? 'bg-blue-100 text-slate-700 border-slate-300'
+                    : 'bg-white text-slate-400 border-slate-300'
                 }`}
               >
                 {rule.is_active ? 'Active' : 'Inactive'}
               </span>
             </div>
 
-            <p className="text-xs text-gray-600 mb-3">{rule.description}</p>
+            <p className="text-xs text-slate-600 mb-3">{rule.description}</p>
 
             <div className="space-y-2 mb-3">
               <div className="flex items-center text-xs">
-                <span className="text-gray-500 w-24">MT5 Field:</span>
-                <span className="text-gray-900 font-medium">{rule.mt5_field}</span>
+                <span className="text-slate-500 w-24">MT5 Field:</span>
+                <span className="text-slate-900 font-medium">{rule.mt5_field}</span>
               </div>
               <div className="flex items-center text-xs">
-                <span className="text-gray-500 w-24">Value:</span>
-                <span className="text-gray-900 font-mono text-[11px]">{rule.mt5_value_template}</span>
+                <span className="text-slate-500 w-24">Value:</span>
+                <span className="text-slate-900 font-mono text-[11px]">{rule.mt5_value_template}</span>
               </div>
               {rule.requires_time_parameter && (
                 <div className="flex items-center text-xs">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-medium">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-white text-slate-700 font-medium">
                     Requires Time
                   </span>
                 </div>
@@ -119,14 +119,14 @@ const RuleTable: React.FC<RuleTableProps> = ({
             </div>
 
             <div className="flex items-center justify-between pt-3 border-t">
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-slate-500">
                 Created {formatDate(rule.created_at)}
               </span>
               <div className="flex items-center gap-1">
                 <PermissionGate module={MODULES.RULES} action="edit">
                   <button
                     onClick={() => onEdit(rule)}
-                    className="group relative p-2.5 text-gray-400 hover:text-white rounded-xl hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-200 hover:shadow-lg hover:scale-105"
+                    className="group relative p-2.5 text-slate-400 hover:text-white rounded-xl hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:scale-105"
                     title="Edit"
                   >
                     <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,7 +137,7 @@ const RuleTable: React.FC<RuleTableProps> = ({
                 <PermissionGate module={MODULES.RULES} action="edit">
                   <button
                     onClick={() => onToggleStatus(rule)}
-                    className={`group relative p-2.5 text-gray-400 hover:text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-105 ${
+                    className={`group relative p-2.5 text-slate-400 hover:text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-105 ${
                       rule.is_active
                         ? 'hover:bg-gradient-to-r hover:from-orange-500 hover:to-orange-600'
                         : 'hover:bg-gradient-to-r hover:from-green-500 hover:to-green-600'
@@ -150,7 +150,7 @@ const RuleTable: React.FC<RuleTableProps> = ({
                 <PermissionGate module={MODULES.RULES} action="delete">
                   <button
                     onClick={() => onDelete(rule.id)}
-                    className="group relative p-2.5 text-gray-400 hover:text-white rounded-xl hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-lg hover:scale-105"
+                    className="group relative p-2.5 text-slate-400 hover:text-white rounded-xl hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-lg hover:scale-105"
                     title="Delete"
                   >
                     <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -165,74 +165,74 @@ const RuleTable: React.FC<RuleTableProps> = ({
       </div>
 
       {/* Desktop view */}
-      <div className="hidden lg:block overflow-hidden rounded-xl border border-gray-200 shadow-sm bg-white">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="hidden lg:block overflow-x-auto">
+        <table className="min-w-full divide-y divide-slate-200">
+          <thead className="bg-white">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Rule Name
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Code
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Description
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 MT5 Field
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Value Template
               </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
+          <tbody className="divide-y divide-slate-200 bg-white">
             {rules.map((rule, index) => (
               <motion.tr
                 key={rule.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.03 }}
-                className="hover:bg-gray-50 transition-colors"
+                className="hover:bg-white transition-colors"
               >
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{rule.rule_name}</div>
+                  <div className="text-sm font-medium text-slate-900">{rule.rule_name}</div>
                   {rule.requires_time_parameter && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-blue-50 text-blue-700 mt-1">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-white text-slate-700 mt-1">
                       Requires Time
                     </span>
                   )}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <span className="text-xs font-mono text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                  <span className="text-xs font-mono text-slate-600 bg-blue-100 px-2 py-1 rounded">
                     {rule.rule_code}
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <div className="text-sm text-gray-600 max-w-xs truncate" title={rule.description}>
+                  <div className="text-sm text-slate-600 max-w-xs truncate" title={rule.description}>
                     {rule.description}
                   </div>
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <span className="text-sm text-gray-900">{rule.mt5_field}</span>
+                  <span className="text-sm text-slate-900">{rule.mt5_field}</span>
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <span className="text-xs font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                  <span className="text-xs font-mono text-slate-600 bg-white px-2 py-1 rounded">
                     {rule.mt5_value_template}
                   </span>
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-center">
                   <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                       rule.is_active
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
+                        ? 'bg-blue-100 text-slate-700 border-slate-300'
+                        : 'bg-white text-slate-400 border-slate-300'
                     }`}
                   >
                     {rule.is_active ? 'Active' : 'Inactive'}
@@ -243,7 +243,7 @@ const RuleTable: React.FC<RuleTableProps> = ({
                     <PermissionGate module={MODULES.RULES} action="edit">
                       <button
                         onClick={() => onEdit(rule)}
-                        className="group relative p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-200 hover:shadow-md hover:scale-105"
+                        className="group relative p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-md hover:scale-105"
                         title="Edit"
                       >
                         <svg className="w-3.5 h-3.5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,7 +254,7 @@ const RuleTable: React.FC<RuleTableProps> = ({
                     <PermissionGate module={MODULES.RULES} action="edit">
                       <button
                         onClick={() => onToggleStatus(rule)}
-                        className={`group relative p-1.5 text-gray-400 hover:text-white rounded-lg transition-all duration-200 hover:shadow-md hover:scale-105 ${
+                        className={`group relative p-1.5 text-slate-400 hover:text-white rounded-lg transition-all duration-200 hover:shadow-md hover:scale-105 ${
                           rule.is_active
                             ? 'hover:bg-gradient-to-r hover:from-orange-500 hover:to-orange-600'
                             : 'hover:bg-gradient-to-r hover:from-green-500 hover:to-green-600'
@@ -267,7 +267,7 @@ const RuleTable: React.FC<RuleTableProps> = ({
                     <PermissionGate module={MODULES.RULES} action="delete">
                       <button
                         onClick={() => onDelete(rule.id)}
-                        className="group relative p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:scale-105"
+                        className="group relative p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:scale-105"
                         title="Delete"
                       >
                         <svg className="w-3.5 h-3.5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">

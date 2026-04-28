@@ -2,22 +2,23 @@ import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  LayoutDashboard, 
-  Users,
-  Shield, 
-  Building2, 
-  FileText,
-  Layers,
-  Settings,
   X,
   ChevronRight,
   LogOut,
   Sparkles,
-  ClipboardList,
-  FileSpreadsheet,
-  ScrollText,
-  Activity
 } from 'lucide-react'
+import {
+  ChartBarIcon,
+  UserGroupIcon,
+  DocumentTextIcon,
+  Squares2X2Icon,
+} from '@heroicons/react/24/outline'
+import {
+  ShieldCheckIcon,
+  BuildingOfficeIcon,
+  ClipboardDocumentListIcon,
+  Cog6ToothIcon,
+} from '@heroicons/react/24/solid'
 import { cn } from '../lib/utils'
 import { useAuth } from '../contexts/AuthContext'
 import { usePermissions } from '../contexts/PermissionContext'
@@ -37,17 +38,17 @@ interface NavigationItem {
 }
 
 const allNavigation: NavigationItem[] = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard, module: MODULES.DASHBOARD },
-  { name: 'Users', href: '/users', icon: Users, module: MODULES.USERS },
-  { name: 'Roles', href: '/roles', icon: Shield, module: MODULES.ROLES },
-  { name: 'Brokers', href: '/brokers', icon: Building2, module: MODULES.BROKERS },
-  { name: 'Broker Profiles', href: '/broker-profiles', icon: FileText, module: MODULES.BROKER_PROFILES },
-  { name: 'Groups', href: '/groups', icon: Layers, module: MODULES.GROUPS },
-  { name: 'Rules', href: '/rules', icon: ScrollText, module: MODULES.RULES },
-  { name: 'Audit Logs', href: '/audit-logs', icon: ClipboardList, module: MODULES.AUDIT_LOGS },
-  { name: 'Logs', href: '/logs', icon: FileSpreadsheet, module: MODULES.LOGS },
-  { name: 'API Metrics', href: '/api-metrics', icon: Activity },
-  { name: 'Settings', href: '/settings', icon: Settings, module: MODULES.PROFILE },
+  { name: 'Dashboard', href: '/', icon: Squares2X2Icon, module: MODULES.DASHBOARD },
+  { name: 'Users', href: '/users', icon: UserGroupIcon, module: MODULES.USERS },
+  { name: 'Roles', href: '/roles', icon: ShieldCheckIcon, module: MODULES.ROLES },
+  { name: 'Brokers', href: '/brokers', icon: BuildingOfficeIcon, module: MODULES.BROKERS },
+  { name: 'Broker Profiles', href: '/broker-profiles', icon: DocumentTextIcon, module: MODULES.BROKER_PROFILES },
+  // { name: 'Groups', href: '/groups', icon: Layers, module: MODULES.GROUPS },
+  { name: 'Rules', href: '/rules', icon: DocumentTextIcon, module: MODULES.RULES },
+  { name: 'Audit Logs', href: '/audit-logs', icon: ClipboardDocumentListIcon, module: MODULES.AUDIT_LOGS },
+  { name: 'Logs', href: '/logs', icon: DocumentTextIcon, module: MODULES.LOGS },
+  { name: 'API Metrics', href: '/api-metrics', icon: ChartBarIcon },
+  { name: 'Settings', href: '/settings', icon: Cog6ToothIcon, module: MODULES.PROFILE },
 ]
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
@@ -93,17 +94,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     <>
       {/* Desktop sidebar */}
       <motion.div 
-        className="hidden lg:flex lg:flex-shrink-0"
-        animate={{ width: isCollapsed ? '2.7rem' : '13.50rem' }}
+        className="hidden lg:flex lg:flex-shrink-0 relative z-0"
+        animate={{ width: isCollapsed ? '4.5rem' : '13.50rem' }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex flex-col h-screen bg-white shadow-xl border-r border-gray-200 relative">
+        <div className="relative z-0 flex h-screen flex-col border-r border-slate-200 bg-white shadow-xl">
           {/* Background decoration */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-white0"></div>
           {/* Header */}
           <div className={cn(
-            "border-b border-gray-200 bg-white flex-shrink-0",
-            isCollapsed ? "px-1 py-2 flex items-center justify-center" : "p-6 flex items-center"
+            "border-b border-slate-200 bg-white flex-shrink-0",
+            isCollapsed ? "flex items-center justify-center px-3 py-6" : "p-6 flex items-center"
           )}>
             <AnimatePresence initial={false}>
               {isCollapsed ? (
@@ -112,9 +113,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center shadow"
+                  className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-700 shadow-lg"
                 >
-                  <Sparkles className="w-4 h-4 text-white" />
+                  <Sparkles className="h-5 w-5 text-white" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -124,14 +125,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   exit={{ opacity: 0, x: -20 }}
                   className="flex items-center space-x-3"
                 >
-                  <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <div className="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg">
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold text-gray-900">
+                    <h1 className="text-xl font-bold text-slate-900">
                       UserAdmin
                     </h1>
-                    <p className="text-xs text-gray-500 font-medium">Management Pro</p>
+                    <p className="text-xs text-slate-500 font-medium">Management Pro</p>
                   </div>
                 </motion.div>
               )}
@@ -142,8 +143,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className={cn(
-              "absolute z-20 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 border border-blue-500 shadow-md hover:shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 text-white flex items-center justify-center",
-              isCollapsed ? "right-0 top-12 translate-x-1/2 w-7 h-7" : "right-0 top-12 translate-x-1/2 w-8 h-8"
+              "absolute z-10 rounded-full bg-blue-700 border border-blue-600 shadow-md hover:shadow-lg hover:bg-blue-800 transition-all duration-200 text-white flex items-center justify-center",
+              isCollapsed ? "right-0 top-14 translate-x-1/2 h-8 w-8" : "right-0 top-12 translate-x-1/2 w-8 h-8"
             )}
             title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -157,9 +158,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           {/* Navigation */}
           <div className={cn(
             "flex-1 overflow-y-auto",
-            isCollapsed ? "px-1 pt-10 pb-6" : "px-4 py-6"
+            isCollapsed ? "px-3 pt-8 pb-6" : "px-4 py-6"
           )}>
-            <nav className="space-y-1">
+            <nav className={cn(isCollapsed ? "space-y-4" : "space-y-1")}>
               {navigation.map((item, index) => {
                 const Icon = item.icon
                 const isActive = location.pathname === item.href
@@ -175,18 +176,24 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                       to={item.href}
                       className={cn(
                         "flex items-center rounded-lg transition-all duration-200 group relative",
-                        isCollapsed ? "justify-center px-0 py-3" : "space-x-3 p-3",
+                        isCollapsed ? "justify-center rounded-2xl px-0 py-3.5" : "space-x-3 p-3",
                         isActive
                           ? isCollapsed
-                            ? "bg-blue-50 text-blue-700"
-                            : "bg-blue-50 text-blue-700 border-l-4 border-blue-600"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                            ? "bg-blue-700 text-white shadow-lg shadow-blue-500/25"
+                            : "bg-blue-100 text-slate-900 border-l-4 border-blue-700"
+                          : isCollapsed
+                            ? "text-slate-500 hover:bg-white hover:text-slate-900"
+                            : "text-slate-600 hover:bg-white hover:text-slate-900"
                       )}
                     >
                       <Icon className={cn(
                         "w-5 h-5 transition-all duration-200 flex-shrink-0",
                         "group-hover:scale-105",
-                        isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"
+                        isActive
+                          ? isCollapsed
+                            ? "text-white"
+                            : "text-slate-600"
+                          : "text-slate-400 group-hover:text-slate-600"
                       )} />
                       
                       <AnimatePresence>
@@ -209,11 +216,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </div>
           
           {/* Logout Button */}
-          <div className="p-4 border-t border-gray-200 bg-gray-50 flex-shrink-0">
+          <div className="p-4 border-t border-slate-200 bg-white flex-shrink-0">
             <button
               onClick={handleLogout}
               className={cn(
-                "w-full flex items-center rounded-lg transition-all duration-200 group text-gray-600 hover:bg-red-50 hover:text-red-600",
+                "w-full flex items-center rounded-lg transition-all duration-200 group text-slate-600 hover:bg-red-50 hover:text-red-600",
                 isCollapsed ? "justify-center px-0 py-3" : "space-x-3 p-3"
               )}
             >
@@ -258,21 +265,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             >
               <div className="flex flex-col h-full">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white">
+                <div className="flex items-center justify-between p-6 border-b border-slate-200 bg-white">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <div className="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg">
                       <Sparkles className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h1 className="text-xl font-bold text-gray-900">
+                      <h1 className="text-xl font-bold text-slate-900">
                         UserAdmin
                       </h1>
-                      <p className="text-xs text-gray-500 font-medium">Management Pro</p>
+                      <p className="text-xs text-slate-500 font-medium">Management Pro</p>
                     </div>
                   </div>
                   <button
                     onClick={onClose}
-                    className="p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 text-gray-400 hover:text-gray-600"
+                    className="p-2 rounded-lg hover:bg-blue-100 transition-all duration-200 text-slate-400 hover:text-slate-600"
                   >
                     <X className="w-6 h-6" />
                   </button>
@@ -298,14 +305,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                             className={cn(
                               "flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 group relative",
                               isActive
-                                ? "bg-blue-50 text-blue-700 border-l-4 border-blue-600"
-                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                                ? "bg-blue-100 text-slate-900 border-l-4 border-blue-700"
+                                : "text-slate-600 hover:bg-white hover:text-slate-900"
                             )}
                           >
                             <Icon className={cn(
                               "w-5 h-5 transition-transform duration-200",
                               "group-hover:scale-105",
-                              isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"
+                              isActive ? "text-slate-700" : "text-slate-400 group-hover:text-slate-600"
                             )} />
                             
                             <span className="font-medium">{item.name}</span>
@@ -317,13 +324,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 </div>
                 
                 {/* Mobile Logout Button */}
-                <div className="p-4 border-t border-gray-200 bg-gray-50">
+                <div className="p-4 border-t border-slate-200 bg-white">
                   <button
                     onClick={() => {
                       onClose()
                       handleLogout()
                     }}
-                    className="w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 text-gray-600 hover:bg-red-50 hover:text-red-600"
+                    className="w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 text-slate-600 hover:bg-red-50 hover:text-red-600"
                   >
                     <LogOut className="w-5 h-5" />
                     <span className="font-medium">Sign Out</span>

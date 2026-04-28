@@ -155,24 +155,24 @@ const Rules: React.FC = () => {
   // Access Denied UI
   if (accessDenied) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
         <div className="text-center max-w-md">
           <div className="mb-4 flex justify-center">
             <svg className="w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Access Denied</h2>
+          <p className="text-slate-600 mb-6">
             You don't have permission to access rule definitions.
             <br />
-            This module requires the <span className="font-semibold text-gray-900">rules.view</span> permission.
+            This module requires the <span className="font-semibold text-slate-900">rules.view</span> permission.
             <br />
             Please contact your administrator to request access.
           </p>
           <button
             onClick={() => window.history.back()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-colors"
           >
             Go Back
           </button>
@@ -182,19 +182,19 @@ const Rules: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-screen bg-white font-sans">
       {/* Header */}
       <PageHeaderShell>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center">
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Rule Definitions</h1>
-                  <p className="text-sm text-gray-500">
+                  <h1 className="text-xl font-bold text-slate-900">Rule Definitions</h1>
+                  <p className="text-sm text-slate-500">
                     Manage trading rules and MT5 configurations ({totalCount} rules)
                   </p>
                 </div>
@@ -214,19 +214,19 @@ const Rules: React.FC = () => {
           onToggleStatus={handleToggleStatus}
           topContent={
             <div className="flex w-full flex-wrap items-center justify-end gap-2">
-              <label className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors whitespace-nowrap">
+              <label className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-white cursor-pointer transition-colors whitespace-nowrap">
                 <input
                   type="checkbox"
                   checked={showActiveOnly}
                   onChange={(e) => setShowActiveOnly(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+                  className="h-4 w-4 rounded border-slate-300 text-slate-700 focus:ring-2 focus:ring-slate-400/20"
                 />
                 <span>Active Only</span>
               </label>
               <button
                 onClick={handleRefresh}
                 disabled={isLoading}
-                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-blue-500/30 font-semibold text-xs group disabled:opacity-50 whitespace-nowrap"
+                className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-sm font-semibold text-xs group disabled:opacity-50 whitespace-nowrap hover:bg-white"
               >
                 <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
                 <span>Refresh</span>
@@ -234,7 +234,7 @@ const Rules: React.FC = () => {
               <PermissionGate module={MODULES.RULES} action="create">
                 <button
                   onClick={handleCreateRule}
-                  className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-lg shadow-blue-500/30 font-semibold text-xs group whitespace-nowrap"
+                  className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg transition-all duration-200 flex items-center gap-1.5 shadow-sm font-semibold text-xs group whitespace-nowrap hover:bg-white"
                 >
                   <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
                   <span>Create Rule</span>

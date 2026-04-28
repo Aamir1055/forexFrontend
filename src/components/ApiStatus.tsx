@@ -29,7 +29,7 @@ const ApiStatus: React.FC = () => {
     switch (status) {
       case 'connected': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
       case 'disconnected': return 'bg-red-100 text-red-800 border-red-200'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'
+      default: return 'bg-blue-100 text-slate-800 border-slate-300'
     }
   }
 
@@ -37,7 +37,7 @@ const ApiStatus: React.FC = () => {
     switch (status) {
       case 'connected': return <CheckCircleIcon className="h-4 w-4" />
       case 'disconnected': return <ExclamationTriangleIcon className="h-4 w-4" />
-      default: return <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600"></div>
+      default: return <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600"></div>
     }
   }
 

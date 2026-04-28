@@ -14,7 +14,7 @@ const ModalTest: React.FC = () => {
   return (
     <div className="p-8 space-y-4">
       <h2 className="text-2xl font-bold">Modal Test Page</h2>
-      <p className="text-gray-600">Click the button below to test the enhanced modal:</p>
+      <p className="text-slate-600">Click the button below to test the enhanced modal:</p>
       
       <div className="space-x-4">
         <button

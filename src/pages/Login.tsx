@@ -170,37 +170,37 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Login Form */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-white">
         <div className="w-full max-w-md">
           {/* Logo and Header */}
           <div className="text-center mb-8">
-            <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl flex items-center justify-center shadow-2xl mb-6 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 opacity-20"></div>
+            <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-700 to-blue-900 rounded-3xl flex items-center justify-center shadow-2xl mb-6 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white0 to-blue-700 opacity-20"></div>
               <svg className="w-10 h-10 text-white relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">
               Welcome Back
             </h1>
-            <p className="text-gray-600">
+            <p className="text-slate-600">
               Please sign in to your account
             </p>
           </div>
           
           {/* Form Card */}
-          <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-blue-800"></div>
+          <div className="bg-white rounded-3xl shadow-2xl border border-slate-300 p-8 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-700 to-blue-900"></div>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Username */}
               <div>
-                <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-3">
+                <label htmlFor="username" className="block text-sm font-semibold text-slate-700 mb-3">
                   Username
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5 text-slate-400 group-focus-within:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </div>
@@ -211,7 +211,7 @@ const Login: React.FC = () => {
                     required
                     value={formData.username}
                     onChange={handleInputChange}
-                    className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white hover:border-gray-300"
+                    className="w-full pl-12 pr-4 py-4 border border-slate-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all bg-white focus:bg-white hover:border-slate-300"
                     placeholder="Enter your username"
                   />
                 </div>
@@ -219,12 +219,12 @@ const Login: React.FC = () => {
 
               {/* Password */}
               <div>
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-3">
+                <label htmlFor="password" className="block text-sm font-semibold text-slate-700 mb-3">
                   Password
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5 text-slate-400 group-focus-within:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                   </div>
@@ -235,13 +235,13 @@ const Login: React.FC = () => {
                     required
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="w-full pl-12 pr-14 py-4 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white hover:border-gray-300"
+                    className="w-full pl-12 pr-14 py-4 border border-slate-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all bg-white focus:bg-white hover:border-slate-300"
                     placeholder="Enter your password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-500 transition-colors"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     {showPassword ? (
                       <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -266,13 +266,13 @@ const Login: React.FC = () => {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                    className="w-4 h-4 text-slate-600 bg-blue-100 border-slate-300 rounded focus:ring-slate-400 focus:ring-2"
                   />
-                  <span className="ml-2 text-sm text-gray-600">Remember me</span>
+                  <span className="ml-2 text-sm text-slate-600">Remember me</span>
                 </label>
                 <button
                   type="button"
-                  className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                  className="text-sm text-slate-700 hover:text-slate-900 font-medium transition-colors"
                 >
                   Forgot password?
                 </button>
@@ -282,9 +282,9 @@ const Login: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-sm font-semibold rounded-2xl hover:from-blue-700 hover:to-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl relative overflow-hidden"
+                className="w-full py-4 px-6 bg-gradient-to-r from-blue-700 to-blue-900 text-white text-sm font-semibold rounded-2xl hover:from-blue-800 hover:to-blue-950 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl relative overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 opacity-0 hover:opacity-20 transition-opacity"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-white0 to-blue-700 opacity-0 hover:opacity-20 transition-opacity"></div>
                 {isLoading ? (
                   <div className="flex items-center justify-center relative z-10">
                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
@@ -331,7 +331,7 @@ const Login: React.FC = () => {
       </div>
 
       {/* Right Side - Information Panel */}
-      <div className="hidden lg:flex lg:flex-1 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 relative overflow-hidden">
+      <div className="hidden lg:flex lg:flex-1 bg-gradient-to-br from-blue-700 via-blue-800 to-blue-900 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-32 h-32 bg-white rounded-full"></div>
@@ -345,7 +345,7 @@ const Login: React.FC = () => {
             <h2 className="text-4xl font-bold text-white mb-6">
               Secure Access Portal
             </h2>
-            <p className="text-xl text-blue-100 mb-12 leading-relaxed">
+            <p className="text-xl text-slate-200 mb-12 leading-relaxed">
               Your gateway to a comprehensive user management system with 
               advanced security features and intuitive controls.
             </p>
@@ -361,7 +361,7 @@ const Login: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-white">Secure Authentication</h3>
-                <p className="text-blue-200 text-sm">Multi-factor authentication and advanced security</p>
+                <p className="text-slate-300 text-sm">Multi-factor authentication and advanced security</p>
               </div>
             </div>
 
@@ -373,7 +373,7 @@ const Login: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-white">User Management</h3>
-                <p className="text-blue-200 text-sm">Complete control over users, roles, and permissions</p>
+                <p className="text-slate-300 text-sm">Complete control over users, roles, and permissions</p>
               </div>
             </div>
 
@@ -386,7 +386,7 @@ const Login: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-white">Role-Based Access</h3>
-                <p className="text-blue-200 text-sm">Granular permissions and access control</p>
+                <p className="text-slate-300 text-sm">Granular permissions and access control</p>
               </div>
             </div>
 
@@ -398,7 +398,7 @@ const Login: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-white">Analytics Dashboard</h3>
-                <p className="text-blue-200 text-sm">Real-time insights and comprehensive reporting</p>
+                <p className="text-slate-300 text-sm">Real-time insights and comprehensive reporting</p>
               </div>
             </div>
           </div>

@@ -4,19 +4,19 @@
 // 2) Hardcoded production API URL with SSL
 
 export function getApiBaseUrl(): string {
-  const envBase = (import.meta as any).env?.VITE_API_BASE_URL as string | undefined
-  // Use environment variable if set, otherwise use hardcoded SSL API domain
-  // Empty string means "use relative URLs" (for Vite proxy in development)
-  if (envBase !== undefined && envBase.trim().length === 0) return ''
-  const base = (envBase && envBase.trim().length > 0) ? envBase.trim() : 'https://api.brokereye.app'
-  // Normalize by removing trailing slash
-  return base.endsWith('/') ? base.slice(0, -1) : base
+ const envBase = (import.meta as any).env?.VITE_API_BASE_URL as string | undefined
+ // Use environment variable if set, otherwise use hardcoded SSL API domain
+ // Empty string means "use relative URLs" (for Vite proxy in development)
+ if (envBase !== undefined && envBase.trim().length === 0) return ''
+ const base = (envBase && envBase.trim().length > 0) ? envBase.trim() : 'https://api.brokereye.app'
+ // Normalize by removing trailing slash
+ return base.endsWith('/') ? base.slice(0, -1) : base
 }
 
 export function buildApiUrl(path: string): string {
-  const base = getApiBaseUrl()
-  // Ensure single slash between base and path
-  if (!path.startsWith('/')) return `${base}/${path}`
-  return `${base}${path}`
+ const base = getApiBaseUrl()
+ // Ensure single slash between base and path
+ if (!path.startsWith('/')) return `${base}/${path}`
+ return `${base}${path}`
 }
 

@@ -25,23 +25,23 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
       className="space-y-2"
     >
       {label && (
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-slate-700">
           {label}
         </label>
       )}
       <div className="relative">
         {icon && (
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">
             {icon}
           </div>
         )}
         <input
           ref={ref}
           className={cn(
-            "w-full px-4 py-3 rounded-xl border border-gray-300 bg-white/50 backdrop-blur-sm",
-            "focus:ring-2 focus:ring-blue-500 focus:border-transparent",
-            "transition-all duration-200 placeholder-gray-400",
-            "hover:border-gray-400 hover:bg-white/70",
+            "w-full px-4 py-3 rounded-xl border border-slate-300 bg-white/50 backdrop-blur-sm",
+            "focus:ring-2 focus:ring-slate-400 focus:border-transparent",
+            "transition-all duration-200 placeholder-slate-400",
+            "hover:border-slate-300 hover:bg-white/70",
             icon && "pl-10",
             rightIcon && "pr-10",
             error && "border-red-500 focus:ring-red-500",
@@ -50,7 +50,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           {...props}
         />
         {rightIcon && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400">
             {rightIcon}
           </div>
         )}

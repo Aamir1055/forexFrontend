@@ -101,12 +101,12 @@ export const Button: React.FC<ButtonProps> = ({
   const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
   
   const variants = {
-    primary: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 focus:ring-blue-500 shadow-lg hover:shadow-xl',
-    secondary: 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-gray-500',
+    primary: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 focus:ring-slate-400 shadow-lg hover:shadow-xl',
+    secondary: 'bg-white text-slate-700 border border-slate-300 hover:bg-white focus:ring-blue-500',
     success: 'bg-gradient-to-r from-yellow-600 to-yellow-700 text-black hover:from-yellow-700 hover:to-yellow-800 focus:ring-yellow-500 shadow-lg hover:shadow-xl',
     warning: 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600 focus:ring-yellow-500 shadow-lg hover:shadow-xl',
     error: 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 focus:ring-red-500 shadow-lg hover:shadow-xl',
-    ghost: 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:ring-gray-500'
+    ghost: 'text-slate-600 hover:text-slate-900 hover:bg-blue-100 focus:ring-blue-500'
   }
   
   const sizes = {
@@ -158,7 +158,7 @@ export const Card: React.FC<CardProps> = ({
   return (
     <motion.div
       whileHover={hover ? { y: -2, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' } : {}}
-      className={`bg-white rounded-xl shadow-sm border border-gray-200 ${paddings[padding]} ${hover ? 'transition-all duration-200' : ''} ${className}`}
+      className={`bg-white rounded-xl shadow-sm border border-slate-300 ${paddings[padding]} ${hover ? 'transition-all duration-200' : ''} ${className}`}
     >
       {children}
     </motion.div>
@@ -192,7 +192,7 @@ export const Input: React.FC<InputProps> = ({
   return (
     <div className={className}>
       {label && (
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-slate-700 mb-2">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
@@ -208,8 +208,8 @@ export const Input: React.FC<InputProps> = ({
           onChange={onChange}
           required={required}
           placeholder={placeholder}
-          className={`w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white ${
-            error ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
+          className={`w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all bg-white ${
+            error ? 'border-red-300 focus:ring-red-500' : 'border-slate-300'
           }`}
         />
       </div>
@@ -238,11 +238,11 @@ export const Badge: React.FC<BadgeProps> = ({
   size = 'md'
 }) => {
   const variants = {
-    primary: 'bg-blue-100 text-blue-800 border-blue-200',
+    primary: 'bg-blue-100 text-slate-800 border-slate-300',
     success: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     error: 'bg-red-100 text-red-800 border-red-200',
-    gray: 'bg-gray-100 text-gray-800 border-gray-200'
+    gray: 'bg-blue-100 text-slate-800 border-slate-300'
   }
   
   const sizes = {
@@ -277,7 +277,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   color = 'blue'
 }) => {
   const colors = {
-    blue: 'bg-blue-100 text-blue-600',
+    blue: 'bg-blue-100 text-slate-700',
     green: 'bg-yellow-100 text-yellow-600',
     purple: 'bg-purple-100 text-purple-600',
     orange: 'bg-orange-100 text-orange-600',
@@ -293,8 +293,8 @@ export const StatsCard: React.FC<StatsCardProps> = ({
           </div>
         </div>
         <div className="ml-4 flex-1">
-          <div className="text-sm font-medium text-gray-600">{title}</div>
-          <div className="text-2xl font-bold text-gray-900">{value}</div>
+          <div className="text-sm font-medium text-slate-600">{title}</div>
+          <div className="text-2xl font-bold text-slate-900">{value}</div>
           {trend && (
             <div className={`text-sm flex items-center mt-1 ${trend.isPositive ? 'text-yellow-600' : 'text-red-600'}`}>
               <svg className={`w-4 h-4 mr-1 ${trend.isPositive ? '' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -319,7 +319,7 @@ export const LoadingSpinner: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size =
   
   return (
     <div className="flex items-center justify-center">
-      <svg className={`animate-spin ${sizes[size]} text-blue-600`} fill="none" viewBox="0 0 24 24">
+      <svg className={`animate-spin ${sizes[size]} text-slate-700`} fill="none" viewBox="0 0 24 24">
         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>

@@ -148,16 +148,16 @@ const LoginDebug: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-screen bg-white py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">🔧 Login Debug Tool</h1>
+          <h1 className="text-2xl font-bold text-slate-900 mb-6">🔧 Login Debug Tool</h1>
           
           <div className="space-y-4 mb-6">
             <button
               onClick={testAPIConnectivity}
               disabled={isLoading}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              className="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-600 disabled:opacity-50"
             >
               {isLoading ? 'Testing...' : '🧪 Test API & Default Login'}
             </button>
@@ -180,16 +180,16 @@ const LoginDebug: React.FC = () => {
             
             <button
               onClick={clearResults}
-              className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 ml-4"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 ml-4"
             >
               🗑️ Clear Results
             </button>
           </div>
 
-          <div className="bg-gray-900 text-green-400 p-4 rounded-md font-mono text-sm max-h-96 overflow-y-auto">
-            <div className="mb-2 text-gray-400">Debug Console:</div>
+          <div className="bg-blue-900 text-green-400 p-4 rounded-md font-mono text-sm max-h-96 overflow-y-auto">
+            <div className="mb-2 text-slate-400">Debug Console:</div>
             {testResults.length === 0 ? (
-              <div className="text-gray-500">Click a test button to start debugging...</div>
+              <div className="text-slate-500">Click a test button to start debugging...</div>
             ) : (
               testResults.map((result, index) => (
                 <div key={index} className="mb-1">
@@ -199,9 +199,9 @@ const LoginDebug: React.FC = () => {
             )}
           </div>
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-md">
-            <h3 className="font-semibold text-blue-900 mb-2">💡 Common Login Issues:</h3>
-            <ul className="text-sm text-blue-800 space-y-1">
+          <div className="mt-6 p-4 bg-white rounded-md">
+            <h3 className="font-semibold text-slate-900 mb-2">💡 Common Login Issues:</h3>
+            <ul className="text-sm text-slate-800 space-y-1">
               <li>• <strong>Wrong credentials:</strong> Try admin/admin123 or admin/password</li>
               <li>• <strong>2FA enabled:</strong> Contact admin to disable 2FA for testing</li>
               <li>• <strong>Server down:</strong> Check if API server is running</li>

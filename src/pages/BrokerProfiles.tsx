@@ -180,17 +180,17 @@ const BrokerProfiles: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-50 font-sans">
+    <div className="bg-white font-sans">
       {/* Header */}
       <PageHeaderShell sticky>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center">
                   <DocumentTextIcon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Broker Profiles</h1>
-                  <p className="text-sm text-gray-500">Manage broker permission profiles</p>
+                  <h1 className="text-xl font-bold text-slate-900">Broker Profiles</h1>
+                  <p className="text-sm text-slate-500">Manage broker permission profiles</p>
                 </div>
               </div>
               <div />
@@ -204,9 +204,9 @@ const BrokerProfiles: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
             {/* Top controls */}
-            <div className="p-3 border-b border-slate-200/80 flex flex-col gap-3">
+            <div className="p-3 border-b border-slate-300 flex flex-col gap-3">
               {/* Row 1: search + actions */}
               <div className="flex flex-wrap items-center gap-2">
                 <div className="relative flex-1 min-w-[220px]">
@@ -215,13 +215,13 @@ const BrokerProfiles: React.FC = () => {
                     placeholder="Search profiles..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent text-sm"
                   />
-                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
                 </div>
                 <button
                   onClick={handleRefresh}
-                  className="px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 font-semibold text-xs group"
+                  className="px-3 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-sm font-semibold text-xs group hover:bg-white"
                   title="Refresh profiles list"
                 >
                   <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
@@ -229,7 +229,7 @@ const BrokerProfiles: React.FC = () => {
                 </button>
                 <button
                   onClick={handleCreateProfile}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm text-xs font-semibold"
+                  className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm text-xs font-semibold"
                 >
                   <PlusIcon className="w-4 h-4" />
                   <span>Create Profile</span>
@@ -238,11 +238,11 @@ const BrokerProfiles: React.FC = () => {
               {/* Row 2: show entries + page info + pagination */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-1.5">
-                  <span className="text-xs text-gray-600">Show</span>
+                  <span className="text-xs text-slate-600">Show</span>
                   <select
                     value={itemsPerPage}
                     onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                    className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white text-xs"
+                    className="px-2 py-1 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-400 bg-white text-xs"
                   >
                     {paginationOptions.map(option => (
                       <option key={option} value={option}>
@@ -250,9 +250,9 @@ const BrokerProfiles: React.FC = () => {
                       </option>
                     ))}
                   </select>
-                  <span className="text-xs text-gray-600">entries</span>
+                  <span className="text-xs text-slate-600">entries</span>
                 </div>
-                <div className="text-xs text-gray-700">
+                <div className="text-xs text-slate-700">
                   Showing {totalItems === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} results
                 </div>
                 {totalPages > 1 && (
@@ -260,17 +260,17 @@ const BrokerProfiles: React.FC = () => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                       disabled={currentPage === 1}
-                      className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-2 py-1 border border-slate-300 rounded-md hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
-                    <span className="text-xs text-gray-700">Page {currentPage} of {totalPages}</span>
+                    <span className="text-xs text-slate-700">Page {currentPage} of {totalPages}</span>
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                       disabled={currentPage === totalPages}
-                      className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-2 py-1 border border-slate-300 rounded-md hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -282,73 +282,61 @@ const BrokerProfiles: React.FC = () => {
             </div>
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-300"></div>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50 border-b border-gray-200">
+                    <thead className="bg-white border-b border-slate-300">
                       <tr>
                         <th 
                           onClick={() => handleSort('name')}
-                          className="px-3 py-2 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          className="px-3 py-2 text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-50 transition-colors"
                           title="Click to sort"
                         >
                           <div className="flex items-center space-x-1">
                             <span>Profile Name</span>
                             {sortField === 'name' && (
-                              <span className="text-blue-600">{sortOrder === 'ASC' ? '↑' : '↓'}</span>
+                              <span className="text-slate-600">{sortOrder === 'ASC' ? '↑' : '↓'}</span>
                             )}
                           </div>
                         </th>
-                        <th className="px-3 py-2 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 py-2 text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                           Description
                         </th>
                         <th 
                           onClick={() => handleSort('rightsCount')}
-                          className="px-3 py-2 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          className="px-3 py-2 text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-50 transition-colors"
                           title="Click to sort"
                         >
                           <div className="flex items-center space-x-1">
                             <span>Rights</span>
                             {sortField === 'rightsCount' && (
-                              <span className="text-blue-600">{sortOrder === 'ASC' ? '↑' : '↓'}</span>
-                            )}
-                          </div>
-                        </th>
-                        <th 
-                          onClick={() => handleSort('groupsCount')}
-                          className="px-3 py-2 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          title="Click to sort"
-                        >
-                          <div className="flex items-center space-x-1">
-                            <span>Groups</span>
-                            {sortField === 'groupsCount' && (
-                              <span className="text-blue-600">{sortOrder === 'ASC' ? '↑' : '↓'}</span>
+                              <span className="text-slate-600">{sortOrder === 'ASC' ? '↑' : '↓'}</span>
                             )}
                           </div>
                         </th>
                         <th 
                           onClick={() => handleSort('createdAt')}
-                          className="px-3 py-2 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          className="px-3 py-2 text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-50 transition-colors"
                           title="Click to sort"
                         >
                           <div className="flex items-center space-x-1">
                             <span>Created At</span>
                             {sortField === 'createdAt' && (
-                              <span className="text-blue-600">{sortOrder === 'ASC' ? '↑' : '↓'}</span>
+                              <span className="text-slate-600">{sortOrder === 'ASC' ? '↑' : '↓'}</span>
                             )}
                           </div>
                         </th>
-                        <th className="px-3 py-2 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+                        <th className="px-3 py-2 text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className="divide-y divide-slate-200">
                       {paginatedProfiles?.length === 0 ? (
                         <tr>
-                          <td colSpan={6} className="px-4 py-12 text-center text-gray-500">
+                          <td colSpan={5} className="px-4 py-12 text-center text-slate-500">
                             {searchTerm ? 'No profiles found matching your search.' : 'No profiles found. Create your first profile to get started.'}
                           </td>
                         </tr>
@@ -358,26 +346,21 @@ const BrokerProfiles: React.FC = () => {
                             key={profile.id}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="hover:bg-gray-50 transition-colors duration-150"
+                            className="hover:bg-white transition-colors duration-150"
                           >
                             <td className="px-3 py-2">
-                              <div className="text-xs font-medium text-gray-900">{profile.name}</div>
+                              <div className="text-xs font-medium text-slate-900">{profile.name}</div>
                             </td>
                             <td className="px-3 py-2">
-                              <div className="text-xs text-gray-700">{profile.description || 'No description'}</div>
+                              <div className="text-xs text-slate-700">{profile.description || 'No description'}</div>
                             </td>
                             <td className="px-3 py-2">
-                              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-[10px] font-medium">
+                              <span className="px-2 py-0.5 bg-blue-100 text-slate-700 rounded-full text-[10px] font-medium">
                                 {profile.rightsCount} rights
                               </span>
                             </td>
                             <td className="px-3 py-2">
-                              <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-[10px] font-medium">
-                                {profile.groupsCount} groups
-                              </span>
-                            </td>
-                            <td className="px-3 py-2">
-                              <div className="text-xs text-gray-700">
+                              <div className="text-xs text-slate-700">
                                 {new Date(profile.createdAt).toLocaleDateString()}
                               </div>
                             </td>
@@ -385,7 +368,7 @@ const BrokerProfiles: React.FC = () => {
                               <div className="flex items-center space-x-0.5">
                                 <button
                                   onClick={() => handleEditProfile(profile)}
-                                  className="group relative p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 transition-all duration-200 hover:shadow-md hover:scale-105"
+                                  className="group relative p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-gradient-to-r hover:bg-blue-700 transition-all duration-200 hover:shadow-md hover:scale-105"
                                   title="Edit Profile"
                                 >
                                   <svg className="w-3.5 h-3.5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -394,7 +377,7 @@ const BrokerProfiles: React.FC = () => {
                                 </button>
                                 <button
                                   onClick={() => handleDeleteProfile(profile.id)}
-                                  className="group relative p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:scale-105"
+                                  className="group relative p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:scale-105"
                                   title="Delete Profile"
                                 >
                                   <svg className="w-3.5 h-3.5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">

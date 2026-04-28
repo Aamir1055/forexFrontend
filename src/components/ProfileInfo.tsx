@@ -111,11 +111,11 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
   return (
     <div className="space-y-6">
       {/* Avatar Section */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Picture</h3>
+      <div className="bg-white rounded-lg border border-slate-300 shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">Profile Picture</h3>
         <div className="flex items-center space-x-6">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200">
+            <div className="w-24 h-24 rounded-full overflow-hidden bg-blue-100 border-2 border-slate-300">
               {profile.avatar ? (
                 <img
                   src={profile.avatar}
@@ -123,8 +123,8 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
-                  <span className="text-2xl font-bold text-white">
+                <div className="w-full h-full flex items-center justify-center bg-blue-100">
+                  <span className="text-2xl font-bold text-slate-500">
                     {profile.first_name?.[0] || profile.username[0].toUpperCase()}
                   </span>
                 </div>
@@ -132,25 +132,25 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
             </div>
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute -bottom-1 -right-1 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors shadow-lg"
+              className="absolute -bottom-1 -right-1 w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors shadow-lg"
               disabled={uploadAvatarMutation.isLoading}
             >
               <CameraIcon className="w-4 h-4" />
             </button>
           </div>
           <div className="flex-1">
-            <h4 className="text-lg font-medium text-gray-900">
+            <h4 className="text-lg font-medium text-slate-900">
               {profile.first_name && profile.last_name 
                 ? `${profile.first_name} ${profile.last_name}`
                 : profile.username
               }
             </h4>
-            <p className="text-gray-500">{profile.email}</p>
+            <p className="text-slate-500">{profile.email}</p>
             <div className="flex items-center space-x-4 mt-2">
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadAvatarMutation.isLoading}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="text-sm text-slate-700 hover:text-slate-700 font-medium"
               >
                 {uploadAvatarMutation.isLoading ? 'Uploading...' : 'Change Photo'}
               </button>
@@ -176,12 +176,12 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
       </div>
 
       {/* Personal Information */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <div className="bg-white rounded-lg border border-slate-300 shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
+          <h3 className="text-lg font-semibold text-slate-900">Personal Information</h3>
           <button
             onClick={() => setIsEditing(!isEditing)}
-            className="flex items-center space-x-2 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="flex items-center space-x-2 px-3 py-1.5 text-sm text-slate-700 hover:text-slate-700 font-medium"
           >
             <PencilIcon className="w-4 h-4" />
             <span>{isEditing ? 'Cancel' : 'Edit'}</span>
@@ -192,7 +192,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
                   First Name
                 </label>
                 <input
@@ -200,11 +200,11 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                   name="first_name"
                   value={formData.first_name}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
                   Last Name
                 </label>
                 <input
@@ -212,11 +212,11 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                   name="last_name"
                   value={formData.last_name}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
                   Phone
                 </label>
                 <input
@@ -224,11 +224,11 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
                   Location
                 </label>
                 <input
@@ -236,11 +236,11 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
                   Website
                 </label>
                 <input
@@ -248,11 +248,11 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                   name="website"
                   value={formData.website}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
                   Company
                 </label>
                 <input
@@ -260,11 +260,11 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                   name="company"
                   value={formData.company}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
                   Job Title
                 </label>
                 <input
@@ -272,18 +272,18 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                   name="job_title"
                   value={formData.job_title}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
                   Language
                 </label>
                 <select
                   name="language"
                   value={formData.language}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
                 >
                   <option value="en">English</option>
                   <option value="es">Spanish</option>
@@ -295,7 +295,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Bio
               </label>
               <textarea
@@ -303,7 +303,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                 value={formData.bio}
                 onChange={handleInputChange}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
                 placeholder="Tell us about yourself..."
               />
             </div>
@@ -311,14 +311,14 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
               <button
                 type="submit"
                 disabled={updateProfileMutation.isLoading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
               >
                 {updateProfileMutation.isLoading ? 'Saving...' : 'Save Changes'}
               </button>
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors"
               >
                 Cancel
               </button>
@@ -328,17 +328,17 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-500">First Name</label>
-                <p className="text-gray-900">{profile.first_name || 'Not provided'}</p>
+                <label className="block text-sm font-medium text-slate-500">First Name</label>
+                <p className="text-slate-900">{profile.first_name || 'Not provided'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Last Name</label>
-                <p className="text-gray-900">{profile.last_name || 'Not provided'}</p>
+                <label className="block text-sm font-medium text-slate-500">Last Name</label>
+                <p className="text-slate-900">{profile.last_name || 'Not provided'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Phone</label>
+                <label className="block text-sm font-medium text-slate-500">Phone</label>
                 <div className="flex items-center space-x-2">
-                  <p className="text-gray-900">{profile.phone || 'Not provided'}</p>
+                  <p className="text-slate-900">{profile.phone || 'Not provided'}</p>
                   {profile.phone_verified ? (
                     <CheckCircleIcon className="w-4 h-4 text-yellow-500" />
                   ) : (
@@ -347,14 +347,14 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Location</label>
-                <p className="text-gray-900">{profile.location || 'Not provided'}</p>
+                <label className="block text-sm font-medium text-slate-500">Location</label>
+                <p className="text-slate-900">{profile.location || 'Not provided'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Website</label>
-                <p className="text-gray-900">
+                <label className="block text-sm font-medium text-slate-500">Website</label>
+                <p className="text-slate-900">
                   {profile.website ? (
-                    <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">
+                    <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-slate-700 hover:text-slate-700">
                       {profile.website}
                     </a>
                   ) : (
@@ -363,22 +363,22 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Company</label>
-                <p className="text-gray-900">{profile.company || 'Not provided'}</p>
+                <label className="block text-sm font-medium text-slate-500">Company</label>
+                <p className="text-slate-900">{profile.company || 'Not provided'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Job Title</label>
-                <p className="text-gray-900">{profile.job_title || 'Not provided'}</p>
+                <label className="block text-sm font-medium text-slate-500">Job Title</label>
+                <p className="text-slate-900">{profile.job_title || 'Not provided'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-500">Language</label>
-                <p className="text-gray-900">{profile.language || 'English'}</p>
+                <label className="block text-sm font-medium text-slate-500">Language</label>
+                <p className="text-slate-900">{profile.language || 'English'}</p>
               </div>
             </div>
             {profile.bio && (
               <div>
-                <label className="block text-sm font-medium text-gray-500">Bio</label>
-                <p className="text-gray-900">{profile.bio}</p>
+                <label className="block text-sm font-medium text-slate-500">Bio</label>
+                <p className="text-slate-900">{profile.bio}</p>
               </div>
             )}
           </div>
@@ -386,17 +386,17 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
       </div>
 
       {/* Account Information */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
+      <div className="bg-white rounded-lg border border-slate-300 shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">Account Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-500">Username</label>
-            <p className="text-gray-900">{profile.username}</p>
+            <label className="block text-sm font-medium text-slate-500">Username</label>
+            <p className="text-slate-900">{profile.username}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-500">Email</label>
+            <label className="block text-sm font-medium text-slate-500">Email</label>
             <div className="flex items-center space-x-2">
-              <p className="text-gray-900">{profile.email}</p>
+              <p className="text-slate-900">{profile.email}</p>
               {profile.email_verified ? (
                 <CheckCircleIcon className="w-4 h-4 text-green-500" />
               ) : (
@@ -405,21 +405,21 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-500">Member Since</label>
-            <p className="text-gray-900">{formatDate(profile.created_at)}</p>
+            <label className="block text-sm font-medium text-slate-500">Member Since</label>
+            <p className="text-slate-900">{formatDate(profile.created_at)}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-500">Last Login</label>
-            <p className="text-gray-900">
+            <label className="block text-sm font-medium text-slate-500">Last Login</label>
+            <p className="text-slate-900">
               {profile.last_login ? formatDate(profile.last_login) : 'Never'}
             </p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-500">Login Count</label>
-            <p className="text-gray-900">{profile.login_count}</p>
+            <label className="block text-sm font-medium text-slate-500">Login Count</label>
+            <p className="text-slate-900">{profile.login_count}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-500">Account Status</label>
+            <label className="block text-sm font-medium text-slate-500">Account Status</label>
             <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
               profile.is_active 
                 ? 'bg-yellow-100 text-yellow-700' 

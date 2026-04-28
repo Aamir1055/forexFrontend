@@ -128,14 +128,14 @@ const GroupModal: React.FC<GroupModalProps> = ({
               <form onSubmit={handleSubmit}>
                 {/* Header */}
                 <div className={`flex items-center justify-between px-4 py-3 border-b ${
-                  'border-gray-200'
+                  'border-slate-300'
                 }`}>
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+                    <div className="w-8 h-8 bg-blue-700 rounded-md flex items-center justify-center">
                       <ServerIcon className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-lg font-semibold text-gray-900">
+                      <h2 className="text-lg font-semibold text-slate-900">
                         {group ? 'Edit Group' : 'Create Group'}
                       </h2>
                     </div>
@@ -145,8 +145,8 @@ const GroupModal: React.FC<GroupModalProps> = ({
                     onClick={onClose}
                     className={`p-1.5 rounded transition-colors ${
                       false 
-                        ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-700' 
-                        : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
+                        ? 'text-slate-400 hover:text-slate-200 hover:bg-blue-700' 
+                        : 'text-slate-400 hover:text-slate-600 hover:bg-blue-100'
                     }`}
                   >
                     <XMarkIcon className="w-4 h-4" />
@@ -158,7 +158,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                   {/* MT5 Group */}
                   <div>
                     <label className={`block text-sm font-medium mb-1 ${
-                      'text-gray-700'
+                      'text-slate-700'
                     }`}>
                       MT5 Group *
                     </label>
@@ -167,14 +167,14 @@ const GroupModal: React.FC<GroupModalProps> = ({
                       name="mt5_group"
                       value={formData.mt5_group}
                       onChange={handleInputChange}
-                      className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                      className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-transparent transition-colors ${
                         false 
                           ? errors.mt5_group 
                             ? 'border-red-600 bg-red-900/20 text-slate-200' 
-                            : 'border-slate-600 bg-slate-700 text-slate-200'
+                            : 'border-blue-600 bg-blue-700 text-slate-200'
                           : errors.mt5_group 
                             ? 'border-red-300 bg-red-50' 
-                            : 'border-gray-300'
+                            : 'border-slate-300'
                       }`}
                       placeholder="e.g., demo\\standard"
                     />
@@ -184,7 +184,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                     
                     {/* Suggestions */}
                     <div className="mt-2">
-                      <p className="text-xs mb-1 text-gray-500">Common patterns:</p>
+                      <p className="text-xs mb-1 text-slate-500">Common patterns:</p>
                       <div className="flex flex-wrap gap-1">
                         {suggestedMT5Groups.map((suggestion) => (
                           <button
@@ -193,8 +193,8 @@ const GroupModal: React.FC<GroupModalProps> = ({
                             onClick={() => setFormData(prev => ({ ...prev, mt5_group: suggestion }))}
                             className={`px-2 py-0.5 text-xs rounded transition-colors ${
                               false 
-                                ? 'bg-slate-700 hover:bg-blue-900/50 text-slate-300 hover:text-blue-300' 
-                                : 'bg-gray-100 hover:bg-blue-100 text-gray-700 hover:text-blue-700'
+                                ? 'bg-blue-700 hover:bg-blue-600 text-slate-300 hover:text-white' 
+                                : 'bg-blue-100 hover:bg-blue-200 text-slate-700 hover:text-slate-900'
                             }`}
                           >
                             {suggestion}
@@ -207,7 +207,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                   {/* Broker View Group */}
                   <div>
                     <label className={`block text-sm font-medium mb-1 ${
-                      'text-gray-700'
+                      'text-slate-700'
                     }`}>
                       Broker View Group *
                     </label>
@@ -216,21 +216,21 @@ const GroupModal: React.FC<GroupModalProps> = ({
                       name="broker_view_group"
                       value={formData.broker_view_group}
                       onChange={handleInputChange}
-                      className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                      className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-transparent transition-colors ${
                         false 
                           ? errors.broker_view_group 
                             ? 'border-red-600 bg-red-900/20 text-slate-200' 
-                            : 'border-slate-600 bg-slate-700 text-slate-200'
+                            : 'border-blue-600 bg-blue-700 text-slate-200'
                           : errors.broker_view_group 
                             ? 'border-red-300 bg-red-50' 
-                            : 'border-gray-300'
+                            : 'border-slate-300'
                       }`}
                       placeholder="e.g., Standard Demo"
                     />
                     {errors.broker_view_group && (
                       <p className="mt-1 text-xs text-red-600">{errors.broker_view_group}</p>
                     )}
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-slate-500">
                       Display name shown to brokers
                     </p>
                   </div>
@@ -238,7 +238,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                   {/* Description */}
                   <div>
                     <label className={`block text-sm font-medium mb-1 ${
-                      'text-gray-700'
+                      'text-slate-700'
                     }`}>
                       Description *
                     </label>
@@ -247,14 +247,14 @@ const GroupModal: React.FC<GroupModalProps> = ({
                       value={formData.description}
                       onChange={handleInputChange}
                       rows={2}
-                      className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors resize-none ${
+                      className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-transparent transition-colors resize-none ${
                         false 
                           ? errors.description 
                             ? 'border-red-600 bg-red-900/20 text-slate-200' 
-                            : 'border-slate-600 bg-slate-700 text-slate-200'
+                            : 'border-blue-600 bg-blue-700 text-slate-200'
                           : errors.description 
                             ? 'border-red-300 bg-red-50' 
-                            : 'border-gray-300'
+                            : 'border-slate-300'
                       }`}
                       placeholder="Describe the group purpose..."
                     />
@@ -266,7 +266,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                   {/* Status */}
                   <div>
                     <label className={`block text-sm font-medium mb-1 ${
-                      'text-gray-700'
+                      'text-slate-700'
                     }`}>
                       Status
                     </label>
@@ -274,10 +274,10 @@ const GroupModal: React.FC<GroupModalProps> = ({
                       name="is_active"
                       value={formData.is_active ? 'active' : 'inactive'}
                       onChange={(e) => setFormData(prev => ({ ...prev, is_active: e.target.value === 'active' }))}
-                      className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                      className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-transparent transition-colors ${
                         false 
-                          ? 'border-slate-600 bg-slate-700 text-slate-200' 
-                          : 'border-gray-300'
+                          ? 'border-blue-600 bg-blue-700 text-slate-200' 
+                          : 'border-slate-300'
                       }`}
                     >
                       <option value="active">Active</option>
@@ -289,16 +289,16 @@ const GroupModal: React.FC<GroupModalProps> = ({
                 {/* Footer */}
                 <div className={`flex items-center justify-end space-x-2 px-4 py-3 border-t ${
                   false 
-                    ? 'bg-slate-900/50 border-slate-700' 
-                    : 'bg-gray-50 border-gray-200'
+                    ? 'bg-blue-900/50 border-blue-700' 
+                    : 'bg-white border-slate-300'
                 }`}>
                   <button
                     type="button"
                     onClick={onClose}
                     className={`px-3 py-1.5 border rounded transition-colors text-sm ${
                       false 
-                        ? 'text-slate-300 bg-slate-800 border-slate-600 hover:bg-slate-700' 
-                        : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'
+                        ? 'text-slate-300 bg-blue-800 border-blue-600 hover:bg-blue-700' 
+                        : 'text-slate-700 bg-white border-slate-300 hover:bg-white'
                     }`}
                   >
                     Cancel
@@ -306,7 +306,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-4 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1 text-sm"
+                    className="px-4 py-1.5 bg-white border border-slate-300 text-slate-700 rounded hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1 text-sm"
                   >
                     {isLoading && (
                       <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>

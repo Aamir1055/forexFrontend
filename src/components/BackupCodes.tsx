@@ -53,11 +53,11 @@ const BackupCodes: React.FC<BackupCodesProps> = ({ codes }) => {
             
             <div className="bg-white border border-yellow-300 rounded-md p-3">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-gray-700">Backup Codes ({codes.length})</span>
+                <span className="text-xs font-medium text-slate-700">Backup Codes ({codes.length})</span>
                 <div className="flex space-x-2">
                   <button
                     onClick={() => setIsVisible(!isVisible)}
-                    className="text-xs text-gray-500 hover:text-gray-700 flex items-center"
+                    className="text-xs text-slate-500 hover:text-slate-700 flex items-center"
                   >
                     {isVisible ? (
                       <>
@@ -73,7 +73,7 @@ const BackupCodes: React.FC<BackupCodesProps> = ({ codes }) => {
                   </button>
                   <button
                     onClick={handleCopy}
-                    className="text-xs text-gray-500 hover:text-gray-700 flex items-center"
+                    className="text-xs text-slate-500 hover:text-slate-700 flex items-center"
                   >
                     <DocumentDuplicateIcon className="h-3 w-3 mr-1" />
                     {copied ? 'Copied!' : 'Copy'}
@@ -84,14 +84,14 @@ const BackupCodes: React.FC<BackupCodesProps> = ({ codes }) => {
               {isVisible ? (
                 <div className="grid grid-cols-2 gap-2">
                   {codes.map((code, index) => (
-                    <div key={index} className="bg-gray-50 p-2 rounded text-center">
+                    <div key={index} className="bg-white p-2 rounded text-center">
                       <code className="text-xs font-mono">{code}</code>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-4">
-                  <p className="text-xs text-gray-500">Click "Show" to reveal backup codes</p>
+                  <p className="text-xs text-slate-500">Click "Show" to reveal backup codes</p>
                 </div>
               )}
             </div>

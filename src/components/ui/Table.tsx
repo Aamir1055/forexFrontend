@@ -32,7 +32,7 @@ interface TableCellProps {
 
 const Table: React.FC<TableProps> = ({ children, className }) => {
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
+    <div className="overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-lg">
       <div className="overflow-x-auto">
         <table className={cn("w-full", className)}>
           {children}
@@ -44,7 +44,7 @@ const Table: React.FC<TableProps> = ({ children, className }) => {
 
 const TableHeader: React.FC<TableHeaderProps> = ({ children, className }) => {
   return (
-    <thead className={cn("bg-gradient-to-r from-gray-50 to-gray-100", className)}>
+    <thead className={cn("bg-gradient-to-r from-white to-blue-100", className)}>
       {children}
     </thead>
   )
@@ -52,7 +52,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ children, className }) => {
 
 const TableBody: React.FC<TableBodyProps> = ({ children, className }) => {
   return (
-    <tbody className={cn("divide-y divide-gray-200", className)}>
+    <tbody className={cn("divide-y divide-blue-200", className)}>
       {children}
     </tbody>
   )
@@ -94,8 +94,8 @@ const TableCell: React.FC<TableCellProps> = ({
       className={cn(
         "px-6 py-4 text-left",
         header 
-          ? "text-xs font-semibold text-gray-700 uppercase tracking-wider" 
-          : "text-sm text-gray-900",
+          ? "text-xs font-semibold text-slate-700 uppercase tracking-wider" 
+          : "text-sm text-slate-900",
         className
       )}
     >

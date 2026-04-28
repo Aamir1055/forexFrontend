@@ -97,25 +97,25 @@ const TwoFactorSetup: React.FC = () => {
 
   if (step === 'initial' && !is2FAEnabled) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white border border-slate-300 rounded-lg p-6">
         <div className="flex items-center mb-4">
-          <ShieldCheckIcon className="h-8 w-8 text-gray-400 mr-3" />
+          <ShieldCheckIcon className="h-8 w-8 text-slate-400 mr-3" />
           <div>
-            <h3 className="text-lg font-medium text-gray-900">Two-Factor Authentication</h3>
-            <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
+            <h3 className="text-lg font-medium text-slate-900">Two-Factor Authentication</h3>
+            <p className="text-sm text-slate-500">Add an extra layer of security to your account</p>
           </div>
         </div>
         
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
+        <div className="bg-white border border-slate-300 rounded-md p-4 mb-4">
           <div className="flex">
             <div className="flex-shrink-0">
-              <ShieldCheckIcon className="h-5 w-5 text-blue-400" />
+              <ShieldCheckIcon className="h-5 w-5 text-slate-700" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">
+              <h3 className="text-sm font-medium text-slate-800">
                 Enhance Your Security
               </h3>
-              <div className="mt-2 text-sm text-blue-700">
+              <div className="mt-2 text-sm text-slate-700">
                 <p>Two-factor authentication adds an extra layer of security by requiring a code from your phone in addition to your password.</p>
               </div>
             </div>
@@ -136,12 +136,12 @@ const TwoFactorSetup: React.FC = () => {
 
   if (step === 'setup' && setupData) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white border border-slate-300 rounded-lg p-6">
         <div className="flex items-center mb-4">
           <QrCodeIcon className="h-8 w-8 text-primary-600 mr-3" />
           <div>
-            <h3 className="text-lg font-medium text-gray-900">Scan QR Code</h3>
-            <p className="text-sm text-gray-500">Use your authenticator app to scan this QR code</p>
+            <h3 className="text-lg font-medium text-slate-900">Scan QR Code</h3>
+            <p className="text-sm text-slate-500">Use your authenticator app to scan this QR code</p>
           </div>
         </div>
 
@@ -149,15 +149,15 @@ const TwoFactorSetup: React.FC = () => {
           <QRCodeDisplay qrCodeUri={setupData.qr_code_uri} />
           
           <div>
-            <h4 className="text-sm font-medium text-gray-900 mb-2">Manual Entry</h4>
-            <p className="text-xs text-gray-500 mb-2">If you can't scan the QR code, enter this secret manually:</p>
-            <div className="bg-gray-50 p-3 rounded-md border">
+            <h4 className="text-sm font-medium text-slate-900 mb-2">Manual Entry</h4>
+            <p className="text-xs text-slate-500 mb-2">If you can't scan the QR code, enter this secret manually:</p>
+            <div className="bg-white p-3 rounded-md border">
               <code className="text-sm font-mono break-all">{setupData.secret}</code>
             </div>
           </div>
 
           <div>
-            <label htmlFor="verification-code" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="verification-code" className="block text-sm font-medium text-slate-700 mb-2">
               Verification Code
             </label>
             <input
@@ -166,10 +166,10 @@ const TwoFactorSetup: React.FC = () => {
               maxLength={6}
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm text-center tracking-widest"
+              className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm text-center tracking-widest"
               placeholder="000000"
             />
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-slate-500">
               Enter the 6-digit code from your authenticator app
             </p>
           </div>
@@ -186,7 +186,7 @@ const TwoFactorSetup: React.FC = () => {
             </button>
             <button
               onClick={() => setStep('initial')}
-              className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
             >
               Cancel
             </button>
@@ -198,12 +198,12 @@ const TwoFactorSetup: React.FC = () => {
 
   if (step === 'enabled' || is2FAEnabled) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white border border-slate-300 rounded-lg p-6">
         <div className="flex items-center mb-4">
           <ShieldCheckIcon className="h-8 w-8 text-yellow-600 mr-3" />
           <div>
-            <h3 className="text-lg font-medium text-gray-900">Two-Factor Authentication Enabled</h3>
-            <p className="text-sm text-gray-500">Your account is protected with 2FA</p>
+            <h3 className="text-lg font-medium text-slate-900">Two-Factor Authentication Enabled</h3>
+            <p className="text-sm text-slate-500">Your account is protected with 2FA</p>
           </div>
         </div>
 
@@ -229,7 +229,7 @@ const TwoFactorSetup: React.FC = () => {
           <button
             onClick={handleRegenerateBackupCodes}
             disabled={regenerateCodesMutation.isLoading}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+            className="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
           >
             <KeyIcon className="h-4 w-4 mr-2" />
             {regenerateCodesMutation.isLoading ? 'Generating...' : 'Regenerate Backup Codes'}
@@ -254,7 +254,7 @@ const TwoFactorSetup: React.FC = () => {
 
             <div className="space-y-3">
               <div>
-                <label htmlFor="disable-password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="disable-password" className="block text-sm font-medium text-slate-700">
                   Enter your password to disable 2FA
                 </label>
                 <input
@@ -262,7 +262,7 @@ const TwoFactorSetup: React.FC = () => {
                   type="password"
                   value={disablePassword}
                   onChange={(e) => setDisablePassword(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                  className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                   placeholder="Enter your password"
                 />
               </div>

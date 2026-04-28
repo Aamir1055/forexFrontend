@@ -13,6 +13,7 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline'
 import { HeartIcon } from '@heroicons/react/24/solid'
+import { ServerIcon } from '@heroicons/react/24/outline'
 import BrokerModal from '../components/BrokerModal'
 import GroupModal from '../components/GroupModal'
 import { useMutation, useQueryClient } from 'react-query'
@@ -88,8 +89,8 @@ const Dashboard: React.FC = () => {
       change: '+12.5%',
       trend: 'up',
       icon: UsersIcon,
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-600'
+      bgColor: 'bg-white',
+      iconColor: 'text-slate-600'
     },
     {
       title: 'Active Users',
@@ -97,8 +98,8 @@ const Dashboard: React.FC = () => {
       change: '+8.2%',
       trend: 'up',
       icon: UserGroupIcon,
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-600'
+      bgColor: 'bg-white',
+      iconColor: 'text-slate-600'
     },
     {
       title: 'Total Groups',
@@ -106,25 +107,25 @@ const Dashboard: React.FC = () => {
       change: '-2.1%',
       trend: 'down',
       icon: ShieldCheckIcon,
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-600'
+      bgColor: 'bg-white',
+      iconColor: 'text-slate-600'
     },
     {
       title: 'System Health',
       value: '98.5%',
       change: 'All systems operational',
       trend: 'up',
-      icon: HeartIcon,
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-600'
+      icon: ServerIcon,
+      bgColor: 'bg-white',
+      iconColor: 'text-slate-600'
     }
   ]
 
   const recentActivities = [
     {
       icon: UserPlusIcon,
-      iconBg: 'bg-yellow-100',
-      iconColor: 'text-yellow-600',
+      iconBg: 'bg-blue-100',
+      iconColor: 'text-slate-600',
       title: 'New broker registered',
       description: 'John Smith joined the platform',
       time: '2 min ago'
@@ -132,23 +133,23 @@ const Dashboard: React.FC = () => {
     {
       icon: PencilSquareIcon,
       iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
+      iconColor: 'text-slate-600',
       title: 'Group settings updated',
       description: 'Premium group permissions modified',
       time: '15 min ago'
     },
     {
       icon: ExclamationTriangleIcon,
-      iconBg: 'bg-orange-100',
-      iconColor: 'text-orange-600',
+      iconBg: 'bg-blue-100',
+      iconColor: 'text-slate-600',
       title: 'System alert resolved',
       description: 'Database connection issue fixed',
       time: '1 hour ago'
     },
     {
       icon: ShieldCheckIcon,
-      iconBg: 'bg-purple-100',
-      iconColor: 'text-purple-600',
+      iconBg: 'bg-blue-100',
+      iconColor: 'text-slate-600',
       title: 'Role permissions updated',
       description: 'Admin role access level modified',
       time: '3 hours ago'
@@ -156,26 +157,26 @@ const Dashboard: React.FC = () => {
   ]
 
   const quickActions = [
-    { title: 'Add New Broker', icon: UserPlusIcon, color: 'bg-blue-600' },
-    { title: 'Create Group', icon: UserGroupIcon, color: 'bg-yellow-500' },
-    { title: 'Manage Roles', icon: ShieldCheckIcon, color: 'bg-purple-500' },
-    { title: 'System Settings', icon: ChartBarIcon, color: 'bg-orange-500' }
+    { title: 'Add New Broker', icon: UserPlusIcon, color: 'bg-blue-700' },
+    { title: 'Create Group', icon: UserGroupIcon, color: 'bg-blue-700' },
+    { title: 'Manage Roles', icon: ShieldCheckIcon, color: 'bg-blue-700' },
+    { title: 'System Settings', icon: ChartBarIcon, color: 'bg-blue-700' }
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-white">
       {/* Header */}
       <PageHeaderShell>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+              <div className="w-9 h-9 rounded-xl bg-blue-700 flex items-center justify-center">
                 <ChartBarIcon className="w-5 h-5 text-white" />
               </div>
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
             </div>
             <div>
-              <h1 className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+              <h1 className="text-lg font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
                 Dashboard Overview
               </h1>
               <p className="text-xs font-medium text-slate-500">
@@ -199,7 +200,7 @@ const Dashboard: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="backdrop-blur-xl rounded-xl p-4 shadow-lg border transition-all duration-300 hover:scale-105 bg-white/80 border-white/60 shadow-blue-500/5"
+                  className="backdrop-blur-xl rounded-xl p-4 shadow-lg border transition-all duration-300 hover:scale-105 bg-white/80 border-slate-300 shadow-blue-500/5"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
@@ -238,11 +239,11 @@ const Dashboard: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="backdrop-blur-xl rounded-xl p-6 shadow-lg border bg-white/80 border-white/60 shadow-blue-500/5"
+              className="backdrop-blur-xl rounded-xl p-6 shadow-lg border bg-white/80 border-slate-300 shadow-blue-500/5"
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-slate-900">User Activity</h3>
-                <select className="text-sm border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white border-slate-300 text-slate-700">
+                <select className="text-sm border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-slate-400 bg-white border-slate-300 text-slate-700">
                   <option>Last 7 days</option>
                   <option>Last 30 days</option>
                   <option>Last 90 days</option>
@@ -252,7 +253,7 @@ const Dashboard: React.FC = () => {
                 {[820, 932, 901, 934, 1290, 1330, 1320].map((value, index) => (
                   <div key={index} className="flex-1 flex flex-col items-center justify-end">
                     <div 
-                      className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-lg hover:from-blue-700 hover:to-blue-500 transition-all cursor-pointer shadow-md"
+                      className="w-full bg-blue-400 rounded-t-lg hover:bg-white0 transition-all cursor-pointer"
                       style={{ height: `${Math.max((value / 1500) * 230, 50)}px` }}
                     ></div>
                     <span className="text-xs font-medium mt-2 text-slate-600">
@@ -268,17 +269,17 @@ const Dashboard: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="backdrop-blur-xl rounded-xl p-6 shadow-lg border bg-white/80 border-white/60 shadow-blue-500/5"
+              className="backdrop-blur-xl rounded-xl p-6 shadow-lg border bg-white/80 border-slate-300 shadow-blue-500/5"
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-slate-900">System Performance</h3>
                 <div className="flex space-x-4">
                   <div className="flex items-center">
-                    <div className="w-3 h-3 bg-blue-600 rounded-full mr-1.5"></div>
+                    <div className="w-3 h-3 bg-blue-700 rounded-full mr-1.5"></div>
                     <span className="text-xs text-slate-600">CPU</span>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-3 h-3 bg-yellow-500 rounded-full mr-1.5"></div>
+                    <div className="w-3 h-3 bg-blue-400 rounded-full mr-1.5"></div>
                     <span className="text-xs text-slate-600">Memory</span>
                   </div>
                 </div>
@@ -302,7 +303,7 @@ const Dashboard: React.FC = () => {
                   <polyline
                     points="0,110 57,96 114,104 171,78 228,84 285,90 342,102 400,102"
                     fill="none"
-                    stroke="#2563eb"
+                    stroke="#1d4ed8"
                     strokeWidth="2"
                   />
                   
@@ -310,7 +311,7 @@ const Dashboard: React.FC = () => {
                   <polyline
                     points="0,130 57,116 114,122 171,104 228,110 285,118 342,124 400,124"
                     fill="none"
-                    stroke="#10b981"
+                    stroke="#93c5fd"
                     strokeWidth="2"
                   />
                 </svg>
@@ -325,11 +326,11 @@ const Dashboard: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="lg:col-span-2 backdrop-blur-xl rounded-xl p-6 shadow-lg border bg-white/80 border-white/60 shadow-blue-500/5"
+              className="lg:col-span-2 backdrop-blur-xl rounded-xl p-6 shadow-lg border bg-white/80 border-slate-300 shadow-blue-500/5"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-slate-900">Recent Activity</h3>
-                <button className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors">
+                <button className="text-sm text-slate-600 hover:text-slate-900 font-medium transition-colors">
                   View All
                 </button>
               </div>
@@ -337,7 +338,7 @@ const Dashboard: React.FC = () => {
                 {recentActivities.map((activity, index) => {
                   const Icon = activity.icon
                   return (
-                    <div key={index} className="flex items-center space-x-3 pb-3 border-b last:border-0 border-slate-100">
+                    <div key={index} className="flex items-center space-x-3 pb-3 border-b last:border-0 border-slate-300">
                       <div className={`w-9 h-9 ${activity.iconBg} rounded-lg flex items-center justify-center flex-shrink-0`}>
                         <Icon className={`w-4 h-4 ${activity.iconColor}`} />
                       </div>
@@ -357,7 +358,7 @@ const Dashboard: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
-              className="backdrop-blur-xl rounded-xl p-6 shadow-lg border bg-white/80 border-white/60 shadow-blue-500/5"
+              className="backdrop-blur-xl rounded-xl p-6 shadow-lg border bg-white/80 border-slate-300 shadow-blue-500/5"
             >
               <h3 className="text-lg font-semibold mb-4 text-slate-900">Quick Actions</h3>
               <div className="space-y-2">
@@ -367,7 +368,7 @@ const Dashboard: React.FC = () => {
                     <button
                       key={index}
                       onClick={() => handleQuickAction(action.title)}
-                      className="w-full flex items-center space-x-3 p-3 text-left rounded-lg transition-all group hover:bg-blue-50"
+                      className="w-full flex items-center space-x-3 p-3 text-left rounded-lg transition-all group hover:bg-white"
                     >
                       <div className={`w-8 h-8 ${action.color} rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
                         <Icon className="w-4 h-4 text-white" />

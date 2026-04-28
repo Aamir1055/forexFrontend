@@ -59,12 +59,12 @@ const ApiTest: React.FC = () => {
   }
 
   return (
-    <div className="fixed top-4 right-4 w-96 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50">
+    <div className="fixed top-4 right-4 w-96 bg-white border border-slate-300 rounded-lg shadow-lg p-4 z-50">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">API Test</h3>
+        <h3 className="text-lg font-semibold text-slate-800">API Test</h3>
         <button
           onClick={clearResults}
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-slate-500 hover:text-slate-700"
         >
           Clear
         </button>
@@ -73,21 +73,21 @@ const ApiTest: React.FC = () => {
       <button
         onClick={testApiConnection}
         disabled={isLoading}
-        className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50 mb-4"
+        className="w-full bg-white0 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50 mb-4"
       >
         {isLoading ? 'Testing...' : 'Test API Connection'}
       </button>
       
       <div className="max-h-64 overflow-y-auto">
         {results.map((result, index) => (
-          <div key={index} className="text-sm mb-2 p-2 bg-gray-50 rounded">
+          <div key={index} className="text-sm mb-2 p-2 bg-white rounded">
             {result}
           </div>
         ))}
       </div>
       
       {results.length === 0 && (
-        <div className="text-sm text-gray-500 text-center py-4">
+        <div className="text-sm text-slate-500 text-center py-4">
           Click "Test API Connection" to check if the infinite refresh loop is fixed
         </div>
       )}

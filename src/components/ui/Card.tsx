@@ -20,9 +20,9 @@ const Card: React.FC<CardProps> = ({
   const baseStyles = "rounded-2xl border transition-all duration-300"
   
   const variants = {
-    default: "bg-white border-gray-200 shadow-lg hover:shadow-xl",
+    default: "bg-white border-slate-300 shadow-lg hover:shadow-xl",
     glass: "backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl",
-    gradient: "bg-gradient-to-br from-white to-gray-50 border-gray-200 shadow-lg hover:shadow-xl"
+    gradient: "bg-gradient-to-br from-white to-white border-slate-300 shadow-lg hover:shadow-xl"
   }
   
   const getVariant = () => {

@@ -286,8 +286,8 @@ const Users: React.FC = () => {
     
     if (is403) {
       return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-          <div className="max-w-md w-full mx-4 p-8 rounded-xl border shadow-xl text-center bg-white border-slate-200">
+        <div className="flex items-center justify-center min-h-screen bg-white">
+          <div className="max-w-md w-full mx-4 p-8 rounded-xl border shadow-xl text-center bg-white border-slate-300">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
               <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -301,7 +301,7 @@ const Users: React.FC = () => {
             </p>
             <button
               onClick={() => window.history.back()}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg transition-colors hover:bg-white"
             >
               Go Back
             </button>
@@ -311,11 +311,11 @@ const Users: React.FC = () => {
     }
     
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-white">
         <div className="text-center p-8 bg-white rounded-2xl shadow-lg border border-red-200">
           <XCircleIcon className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Users</h3>
-          <p className="text-gray-600">Please check your connection and try again.</p>
+          <h3 className="text-xl font-semibold text-slate-900 mb-2">Error Loading Users</h3>
+          <p className="text-slate-600">Please check your connection and try again.</p>
         </div>
       </div>
     )
@@ -324,8 +324,8 @@ const Users: React.FC = () => {
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
       false 
-        ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
-        : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
+        ? 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900' 
+        : 'bg-gradient-to-br from-white via-blue-50/30 to-white'
     }`}>
       {/* Compact Header with Glass Effect */}
       <PageHeaderShell>
@@ -333,7 +333,7 @@ const Users: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+                  <div className="w-9 h-9 rounded-xl bg-blue-700 flex items-center justify-center">
                     <UserGroupIcon className="w-5 h-5 text-white" />
                   </div>
                   <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
@@ -341,8 +341,8 @@ const Users: React.FC = () => {
                 <div>
                   <h1 className={`text-lg font-bold transition-colors duration-300 ${
                     false 
-                      ? 'bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent' 
-                      : 'bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent'
+                      ? 'bg-gradient-to-r from-white to-blue-300 bg-clip-text text-transparent' 
+                      : 'bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent'
                   }`}>
                     User Management
                   </h1>
@@ -382,12 +382,12 @@ const Users: React.FC = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className={`w-full pl-9 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 text-xs shadow-sm ${
                           false 
-                            ? 'bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-blue-500/50 focus:border-blue-400' 
-                            : 'bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-blue-500/50 focus:border-blue-400'
+                            ? 'bg-blue-700/50 border-blue-600 text-white placeholder:text-slate-400 focus:ring-slate-400/50 focus:border-slate-300' 
+                            : 'bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:ring-slate-400/50 focus:border-slate-300'
                         }`}
                       />
                       <MagnifyingGlassIcon className={`w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors ${
-                        false ? 'text-slate-400 group-focus-within:text-blue-400' : 'text-slate-400 group-focus-within:text-blue-500'
+                        false ? 'text-slate-400 group-focus-within:text-slate-600' : 'text-slate-400 group-focus-within:text-slate-600'
                       }`} />
                       {searchTerm && (
                         <button 
@@ -405,10 +405,10 @@ const Users: React.FC = () => {
                       <select
                         value={selectedRole}
                         onChange={(e) => setSelectedRole(e.target.value)}
-                        className={`px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 text-xs font-medium shadow-sm cursor-pointer transition-all ${
+                        className={`px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/50 focus:border-slate-300 text-xs font-medium shadow-sm cursor-pointer transition-all ${
                           false 
-                            ? 'bg-slate-700/50 border-slate-600 text-slate-200 hover:border-slate-500' 
-                            : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                            ? 'bg-blue-700/50 border-blue-600 text-slate-200 hover:border-blue-500' 
+                            : 'bg-white border-slate-300 text-slate-700 hover:border-slate-300'
                         }`}
                       >
                         <option value="all">All Roles</option>
@@ -419,7 +419,7 @@ const Users: React.FC = () => {
 
                       <button
                         onClick={handleRefresh}
-                        className="px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 font-semibold text-xs group"
+                        className="px-3 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-sm font-semibold text-xs group hover:bg-white"
                         title="Refresh users list"
                       >
                         <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
@@ -429,7 +429,7 @@ const Users: React.FC = () => {
                       <PermissionGate module={MODULES.USERS} action="create">
                         <button
                           onClick={handleCreateUser}
-                          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 font-semibold text-xs group"
+                          className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-sm font-semibold text-xs group hover:bg-white"
                         >
                           <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
                           <span>Add User</span>
@@ -444,10 +444,10 @@ const Users: React.FC = () => {
                       <select
                         value={itemsPerPage}
                         onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                        className={`px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-400 text-xs font-medium shadow-sm cursor-pointer transition-all ${
+                        className={`px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-slate-400/50 focus:border-slate-300 text-xs font-medium shadow-sm cursor-pointer transition-all ${
                           false 
-                            ? 'bg-slate-700/50 border-slate-600 text-slate-200 hover:border-slate-500' 
-                            : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                            ? 'bg-blue-700/50 border-blue-600 text-slate-200 hover:border-blue-500' 
+                            : 'bg-white border-slate-300 text-slate-700 hover:border-slate-300'
                         }`}
                       >
                         {paginationOptions.map(option => (
@@ -461,7 +461,7 @@ const Users: React.FC = () => {
 
                     <div className="flex items-center gap-3">
                       <div className={`text-xs font-medium transition-colors ${false ? 'text-slate-400' : 'text-slate-600'}`}>
-                        Showing <span className={`font-semibold ${false ? 'text-blue-400' : 'text-blue-600'}`}>{totalItems === 0 ? 0 : startIndex + 1}</span> to <span className={`font-semibold ${false ? 'text-blue-400' : 'text-blue-600'}`}>{Math.min(endIndex, totalItems)}</span> of <span className={`font-semibold ${false ? 'text-blue-400' : 'text-blue-600'}`}>{totalItems}</span> results
+                        Showing <span className={`font-semibold ${false ? 'text-slate-600' : 'text-slate-700'}`}>{totalItems === 0 ? 0 : startIndex + 1}</span> to <span className={`font-semibold ${false ? 'text-slate-600' : 'text-slate-700'}`}>{Math.min(endIndex, totalItems)}</span> of <span className={`font-semibold ${false ? 'text-slate-600' : 'text-slate-700'}`}>{totalItems}</span> results
                       </div>
 
                       {totalPages > 1 && (
@@ -471,8 +471,8 @@ const Users: React.FC = () => {
                             disabled={currentPage === 1}
                             className={`p-1.5 border rounded-md transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm ${
                               false 
-                                ? 'border-slate-600 hover:bg-slate-700/50 hover:border-blue-500 disabled:hover:bg-transparent disabled:hover:border-slate-600' 
-                                : 'border-slate-200 hover:bg-white hover:border-blue-300 disabled:hover:bg-transparent disabled:hover:border-slate-200'
+                                ? 'border-blue-600 hover:bg-blue-700/50 hover:border-slate-300 disabled:hover:bg-transparent disabled:hover:border-blue-600' 
+                                : 'border-slate-300 hover:bg-white hover:border-slate-300 disabled:hover:bg-transparent disabled:hover:border-slate-300'
                             }`}
                           >
                             <svg className={`w-3.5 h-3.5 ${false ? 'text-slate-400' : 'text-slate-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -482,8 +482,8 @@ const Users: React.FC = () => {
 
                           <div className={`px-2 py-1 border rounded-md text-xs font-semibold shadow-sm ${
                             false 
-                              ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
-                              : 'bg-white border-slate-200 text-slate-700'
+                              ? 'bg-blue-700/50 border-blue-600 text-slate-200' 
+                              : 'bg-white border-slate-300 text-slate-700'
                           }`}>
                             Page {currentPage} of {totalPages}
                           </div>
@@ -493,8 +493,8 @@ const Users: React.FC = () => {
                             disabled={currentPage === totalPages}
                             className={`p-1.5 border rounded-md transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm ${
                               false 
-                                ? 'border-slate-600 hover:bg-slate-700/50 hover:border-blue-500 disabled:hover:bg-transparent disabled:hover:border-slate-600' 
-                                : 'border-slate-200 hover:bg-white hover:border-blue-300 disabled:hover:bg-transparent disabled:hover:border-slate-200'
+                                ? 'border-blue-600 hover:bg-blue-700/50 hover:border-slate-300 disabled:hover:bg-transparent disabled:hover:border-blue-600' 
+                                : 'border-slate-300 hover:bg-white hover:border-slate-300 disabled:hover:bg-transparent disabled:hover:border-slate-300'
                             }`}
                           >
                             <svg className={`w-3.5 h-3.5 ${false ? 'text-slate-400' : 'text-slate-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">

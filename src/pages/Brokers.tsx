@@ -359,13 +359,13 @@ const Brokers: React.FC = () => {
       return (
         <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${
           false 
-            ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
-            : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
+            ? 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900' 
+            : 'bg-gradient-to-br from-white via-blue-50/30 to-white'
         }`}>
           <div className={`max-w-md w-full mx-4 p-8 rounded-xl border shadow-xl text-center ${
             false 
-              ? 'bg-slate-800/80 border-slate-700' 
-              : 'bg-white border-slate-200'
+              ? 'bg-blue-800/80 border-blue-700' 
+              : 'bg-white border-slate-300'
           }`}>
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
               <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -380,7 +380,7 @@ const Brokers: React.FC = () => {
             </p>
             <button
               onClick={() => window.history.back()}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg transition-colors hover:bg-white"
             >
               Go Back
             </button>
@@ -399,15 +399,15 @@ const Brokers: React.FC = () => {
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
       false 
-        ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
-        : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
+        ? 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900' 
+        : 'bg-gradient-to-br from-white via-blue-50/30 to-white'
     }`}>
       {/* Compact Header with Glass Effect */}
       <PageHeaderShell>
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+                  <div className="w-9 h-9 rounded-xl bg-blue-700 flex items-center justify-center">
                     <BuildingOfficeIcon className="w-5 h-5 text-white" />
                   </div>
                   <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
@@ -415,8 +415,8 @@ const Brokers: React.FC = () => {
                 <div>
                   <h1 className={`text-lg font-bold transition-colors duration-300 ${
                     false 
-                      ? 'bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent' 
-                      : 'bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent'
+                      ? 'bg-gradient-to-r from-white to-blue-300 bg-clip-text text-transparent' 
+                      : 'bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent'
                   }`}>
                     Broker Management
                   </h1>
@@ -460,8 +460,8 @@ const Brokers: React.FC = () => {
                 <div
                   className={`w-[min(450px,calc(100vw-2rem))] max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl border shadow-2xl p-6 pointer-events-auto ${
                     false
-                      ? 'bg-slate-800 border-slate-700'
-                      : 'bg-white border-slate-200'
+                      ? 'bg-blue-800 border-blue-700'
+                      : 'bg-white border-slate-300'
                   }`}
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -490,9 +490,9 @@ const Brokers: React.FC = () => {
                             onChange={(e) => handleFilterChange({ 
                               is_active: e.target.value === 'all' ? undefined : e.target.value === 'true' 
                             })}
-                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-slate-400 transition-colors ${
                               false 
-                                ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
+                                ? 'bg-blue-700/50 border-blue-600 text-slate-200' 
                                 : 'bg-white border-slate-300 text-slate-900'
                             }`}
                           >
@@ -512,9 +512,9 @@ const Brokers: React.FC = () => {
                             onChange={(e) => handleFilterChange({ 
                               has_rights: e.target.value === 'all' ? undefined : e.target.value === 'true' 
                             })}
-                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-slate-400 transition-colors ${
                               false 
-                                ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
+                                ? 'bg-blue-700/50 border-blue-600 text-slate-200' 
                                 : 'bg-white border-slate-300 text-slate-900'
                             }`}
                           >
@@ -542,9 +542,9 @@ const Brokers: React.FC = () => {
                                 e.preventDefault()
                               }
                             }}
-                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-slate-400 transition-colors ${
                               false 
-                                ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
+                                ? 'bg-blue-700/50 border-blue-600 text-slate-200 placeholder-slate-400' 
                                 : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
                             }`}
                           />
@@ -568,9 +568,9 @@ const Brokers: React.FC = () => {
                                 e.preventDefault()
                               }
                             }}
-                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-slate-400 transition-colors ${
                               false 
-                                ? 'bg-slate-700/50 border-slate-600 text-slate-200 placeholder-slate-400' 
+                                ? 'bg-blue-700/50 border-blue-600 text-slate-200 placeholder-slate-400' 
                                 : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
                             }`}
                           />
@@ -587,9 +587,9 @@ const Brokers: React.FC = () => {
                             onChange={(e) => handleFilterChange({ 
                               created_from: e.target.value || undefined 
                             })}
-                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-slate-400 transition-colors ${
                               false 
-                                ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
+                                ? 'bg-blue-700/50 border-blue-600 text-slate-200' 
                                 : 'bg-white border-slate-300 text-slate-900'
                             }`}
                           />
@@ -606,9 +606,9 @@ const Brokers: React.FC = () => {
                             onChange={(e) => handleFilterChange({ 
                               created_to: e.target.value || undefined 
                             })}
-                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors ${
+                            className={`w-full px-2 py-1.5 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-slate-400 transition-colors ${
                               false 
-                                ? 'bg-slate-700/50 border-slate-600 text-slate-200' 
+                                ? 'bg-blue-700/50 border-blue-600 text-slate-200' 
                                 : 'bg-white border-slate-300 text-slate-900'
                             }`}
                           />
@@ -616,7 +616,7 @@ const Brokers: React.FC = () => {
 
                         {/* Actions */}
                         <div className={`flex items-center justify-between pt-3 border-t transition-colors ${
-                          'border-slate-200'
+                          'border-slate-300'
                         }`}>
                           <button
                             onClick={() => {
@@ -631,7 +631,7 @@ const Brokers: React.FC = () => {
                           </button>
                           <button
                             onClick={() => setShowFilters(false)}
-                            className="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs rounded-md hover:from-blue-700 hover:to-blue-800 shadow-md shadow-blue-500/30"
+                            className="px-3 py-1.5 bg-white border border-slate-300 text-slate-700 text-xs rounded-md hover:bg-white shadow-sm"
                           >
                             Apply
                           </button>
@@ -676,7 +676,7 @@ const Brokers: React.FC = () => {
                       placeholder="Search by name, email, username..."
                       value={searchTerm}
                       onChange={(e) => handleSearch(e.target.value)}
-                      className="w-full pl-9 pr-9 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white text-slate-900 placeholder-slate-400"
+                      className="w-full pl-9 pr-9 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 text-sm bg-white text-slate-900 placeholder-slate-400"
                     />
                     <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
                     {searchTerm && (
@@ -690,14 +690,14 @@ const Brokers: React.FC = () => {
                   </div>
                   <button
                     onClick={() => setShowFilters(!showFilters)}
-                    className="px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap text-sm shadow-lg shadow-blue-500/30"
+                    className="px-3 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap text-sm shadow-sm hover:bg-white"
                   >
                     <FunnelIcon className="w-4 h-4" />
                     <span>Filters</span>
                   </button>
                   <button
                     onClick={handleRefresh}
-                    className="px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 font-semibold text-xs group"
+                    className="px-3 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-sm font-semibold text-xs group hover:bg-white"
                     title="Refresh brokers list"
                   >
                     <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
@@ -706,7 +706,7 @@ const Brokers: React.FC = () => {
                   <PermissionGate module={MODULES.BROKERS} action="create">
                     <button
                       onClick={handleCreateBroker}
-                      className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-lg shadow-blue-500/30 font-semibold text-xs group"
+                      className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-sm font-semibold text-xs group hover:bg-white"
                     >
                       <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
                       <span>Add Broker</span>
@@ -720,7 +720,7 @@ const Brokers: React.FC = () => {
                     <select
                       value={pageSize}
                       onChange={(e) => setPageSize(Number(e.target.value))}
-                      className="px-2 py-1 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs bg-white text-slate-900"
+                      className="px-2 py-1 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-400 text-xs bg-white text-slate-900"
                     >
                       {paginationOptions.map(option => (
                         <option key={option} value={option}>
@@ -738,7 +738,7 @@ const Brokers: React.FC = () => {
                       <button
                         onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                         disabled={currentPage === 1}
-                        className="px-2 py-1 border border-slate-300 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
+                        className="px-2 py-1 border border-slate-300 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -748,7 +748,7 @@ const Brokers: React.FC = () => {
                       <button
                         onClick={() => setCurrentPage(prev => Math.min(brokersData.pagination.pages, prev + 1))}
                         disabled={currentPage === brokersData.pagination.pages}
-                        className="px-2 py-1 border border-slate-300 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
+                        className="px-2 py-1 border border-slate-300 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

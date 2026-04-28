@@ -148,40 +148,40 @@ const BrokerRightsModal: React.FC<BrokerRightsModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose}></div>
+        <div className="fixed inset-0 bg-white0 bg-opacity-75 transition-opacity" onClick={onClose}></div>
 
         <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-7xl sm:w-full">
           <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                <h3 className="text-lg leading-6 font-medium text-slate-900">
                   Manage Rights for {broker.full_name}
                 </h3>
-                <p className="text-sm text-gray-500">{broker.email}</p>
+                <p className="text-sm text-slate-500">{broker.email}</p>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-slate-400 hover:text-slate-500"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
             </div>
 
             {/* Header Controls */}
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-300">
               <div className="flex items-center space-x-4">
                 <input
                   type="text"
                   placeholder="Search rights..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 text-sm w-64"
+                  className="px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 text-sm w-64"
                 />
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  className="px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 text-sm"
                 >
                   <option value="all">All Categories</option>
                   {categories.map(category => (
@@ -213,22 +213,22 @@ const BrokerRightsModal: React.FC<BrokerRightsModalProps> = ({
             {/* Category Navigation */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-lg font-medium text-gray-900">Permission Categories</h4>
+                <h4 className="text-lg font-medium text-slate-900">Permission Categories</h4>
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-slate-500">
                     {currentCategoryIndex + 1} of {categories.length}
                   </span>
                   <button
                     onClick={prevCategory}
                     disabled={categories.length <= 1}
-                    className="p-2 rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 rounded-md border border-slate-300 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ChevronLeftIcon className="h-4 w-4" />
                   </button>
                   <button
                     onClick={nextCategory}
                     disabled={categories.length <= 1}
-                    className="p-2 rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 rounded-md border border-slate-300 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ChevronRightIcon className="h-4 w-4" />
                   </button>
@@ -243,8 +243,8 @@ const BrokerRightsModal: React.FC<BrokerRightsModalProps> = ({
                     onClick={() => goToCategory(index)}
                     className={`w-3 h-3 rounded-full transition-colors ${
                       index === currentCategoryIndex
-                        ? 'bg-blue-600'
-                        : 'bg-gray-300 hover:bg-gray-400'
+                        ? 'bg-blue-700'
+                        : 'bg-blue-300 hover:bg-blue-400'
                     }`}
                     title={category.replace('_', ' ').charAt(0).toUpperCase() + category.replace('_', ' ').slice(1)}
                   />
@@ -257,20 +257,20 @@ const BrokerRightsModal: React.FC<BrokerRightsModalProps> = ({
               <div className="space-y-6">
                 {/* Category Header */}
                 <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-900 capitalize mb-2">
+                  <h3 className="text-2xl font-bold text-slate-900 capitalize mb-2">
                     {currentCategory.replace('_', ' ')}
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-slate-600">
                     Manage {currentCategory.replace('_', ' ').toLowerCase()} permissions for this broker
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Available Rights */}
-                  <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
+                  <div className="bg-white rounded-lg p-6 border border-slate-300">
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-lg font-medium text-blue-900">Available Rights</h4>
-                      <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                      <h4 className="text-lg font-medium text-slate-900">Available Rights</h4>
+                      <span className="bg-blue-100 text-slate-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         {currentAvailableRights.length}
                       </span>
                     </div>
@@ -278,11 +278,11 @@ const BrokerRightsModal: React.FC<BrokerRightsModalProps> = ({
                     {currentAvailableRights.length > 0 ? (
                       <div className="space-y-3 max-h-80 overflow-y-auto">
                         {currentAvailableRights.map(right => (
-                          <div key={right.id} className="bg-white p-4 rounded-md border border-blue-200 hover:shadow-md transition-shadow">
+                          <div key={right.id} className="bg-white p-4 rounded-md border border-slate-300 hover:shadow-md transition-shadow">
                             <div className="flex items-start justify-between">
                               <div className="flex-1 min-w-0">
-                                <div className="text-sm font-medium text-gray-900 mb-1">{right.name}</div>
-                                <div className="text-xs text-gray-600">{right.description}</div>
+                                <div className="text-sm font-medium text-slate-900 mb-1">{right.name}</div>
+                                <div className="text-xs text-slate-600">{right.description}</div>
                               </div>
                               <button
                                 onClick={() => assignRightMutation.mutate({ brokerId: broker.id, rightId: right.id })}
@@ -297,7 +297,7 @@ const BrokerRightsModal: React.FC<BrokerRightsModalProps> = ({
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-8 text-blue-600">
+                      <div className="text-center py-8 text-slate-600">
                         <p>No available rights in this category</p>
                       </div>
                     )}
@@ -324,8 +324,8 @@ const BrokerRightsModal: React.FC<BrokerRightsModalProps> = ({
                           <div key={right.id} className="bg-white p-4 rounded-md border border-green-200 hover:shadow-md transition-shadow">
                             <div className="flex items-start justify-between">
                               <div className="flex-1 min-w-0">
-                                <div className="text-sm font-medium text-gray-900 mb-1">{right.name}</div>
-                                <div className="text-xs text-gray-600">{right.description}</div>
+                                <div className="text-sm font-medium text-slate-900 mb-1">{right.name}</div>
+                                <div className="text-xs text-slate-600">{right.description}</div>
                               </div>
                               <button
                                 onClick={() => handleRevokeRight(right.id)}
@@ -350,11 +350,11 @@ const BrokerRightsModal: React.FC<BrokerRightsModalProps> = ({
             )}
           </div>
 
-          <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <div className="bg-white px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <button
               type="button"
               onClick={onClose}
-              className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:w-auto sm:text-sm"
+              className="w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:w-auto sm:text-sm"
             >
               Close
             </button>

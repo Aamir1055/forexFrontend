@@ -141,21 +141,21 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
   return (
     <div className="space-y-6">
       {/* Password Security */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <div className="bg-white rounded-lg border border-slate-300 shadow-sm p-6">
         <div className="flex items-center space-x-3 mb-4">
-          <KeyIcon className="w-5 h-5 text-gray-500" />
-          <h3 className="text-lg font-semibold text-gray-900">Password Security</h3>
+          <KeyIcon className="w-5 h-5 text-slate-500" />
+          <h3 className="text-lg font-semibold text-slate-900">Password Security</h3>
         </div>
         
         {!showPasswordForm ? (
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-sm font-medium text-gray-900">Password</h4>
-              <p className="text-sm text-gray-500">Last changed: Never</p>
+              <h4 className="text-sm font-medium text-slate-900">Password</h4>
+              <p className="text-sm text-slate-500">Last changed: Never</p>
             </div>
             <button
               onClick={() => setShowPasswordForm(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
             >
               Change Password
             </button>
@@ -163,7 +163,7 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
         ) : (
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Current Password
               </label>
               <input
@@ -172,11 +172,11 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
                 value={passwordData.current_password}
                 onChange={handlePasswordChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 New Password
               </label>
               <input
@@ -186,11 +186,11 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
                 onChange={handlePasswordChange}
                 required
                 minLength={8}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Confirm New Password
               </label>
               <input
@@ -200,21 +200,21 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
                 onChange={handlePasswordChange}
                 required
                 minLength={8}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300"
               />
             </div>
             <div className="flex items-center space-x-3">
               <button
                 type="submit"
                 disabled={changePasswordMutation.isLoading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm font-medium"
+                className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 text-sm font-medium"
               >
                 {changePasswordMutation.isLoading ? 'Changing...' : 'Change Password'}
               </button>
               <button
                 type="button"
                 onClick={() => setShowPasswordForm(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors text-sm font-medium"
+                className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors text-sm font-medium"
               >
                 Cancel
               </button>
@@ -224,19 +224,19 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
       </div>
 
       {/* Two-Factor Authentication */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <div className="bg-white rounded-lg border border-slate-300 shadow-sm p-6">
         <div className="flex items-center space-x-3 mb-4">
-          <ShieldCheckIcon className="w-5 h-5 text-gray-500" />
-          <h3 className="text-lg font-semibold text-gray-900">Two-Factor Authentication</h3>
+          <ShieldCheckIcon className="w-5 h-5 text-slate-500" />
+          <h3 className="text-lg font-semibold text-slate-900">Two-Factor Authentication</h3>
         </div>
         
         {!profile.two_factor_enabled ? (
           <div className="space-y-4">
-            <div className="flex items-start space-x-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-              <ExclamationTriangleIcon className="w-5 h-5 text-yellow-600 mt-0.5" />
+            <div className="flex items-start space-x-3 p-4 bg-white rounded-lg border border-slate-300">
+              <ExclamationTriangleIcon className="w-5 h-5 text-slate-500 mt-0.5" />
               <div>
-                <h4 className="text-sm font-medium text-yellow-800">Two-Factor Authentication Disabled</h4>
-                <p className="text-sm text-yellow-700 mt-1">
+                <h4 className="text-sm font-medium text-slate-800">Two-Factor Authentication Disabled</h4>
+                <p className="text-sm text-slate-600 mt-1">
                   Enable 2FA to add an extra layer of security to your account.
                 </p>
               </div>
@@ -244,18 +244,18 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
             <button
               onClick={() => enable2FAMutation.mutate()}
               disabled={enable2FAMutation.isLoading}
-              className="px-4 py-2 bg-yellow-600 text-black rounded-lg hover:bg-yellow-700 transition-colors disabled:opacity-50 text-sm font-medium"
+              className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-colors disabled:opacity-50 text-sm font-medium"
             >
               {enable2FAMutation.isLoading ? 'Setting up...' : 'Enable 2FA'}
             </button>
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="flex items-start space-x-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-              <ShieldCheckIcon className="w-5 h-5 text-yellow-600 mt-0.5" />
+            <div className="flex items-start space-x-3 p-4 bg-white rounded-lg border border-slate-300">
+              <ShieldCheckIcon className="w-5 h-5 text-slate-500 mt-0.5" />
               <div>
-                <h4 className="text-sm font-medium text-yellow-800">Two-Factor Authentication Enabled</h4>
-                <p className="text-sm text-yellow-700 mt-1">
+                <h4 className="text-sm font-medium text-slate-800">Two-Factor Authentication Enabled</h4>
+                <p className="text-sm text-slate-600 mt-1">
                   Your account is protected with two-factor authentication.
                 </p>
               </div>
@@ -274,11 +274,11 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
         {show2FASetup && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Set up Two-Factor Authentication</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Set up Two-Factor Authentication</h3>
               
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-600 mb-3">
+                  <p className="text-sm text-slate-600 mb-3">
                     Scan this QR code with your authenticator app:
                   </p>
                   <div className="flex justify-center">
@@ -287,7 +287,7 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
                     Enter verification code from your app:
                   </label>
                   <input
@@ -295,14 +295,14 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
                     value={verificationCode}
                     onChange={(e) => setVerificationCode(e.target.value)}
                     placeholder="000000"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg tracking-widest"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 text-center text-lg tracking-widest"
                     maxLength={6}
                   />
                 </div>
                 
-                <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-                  <h4 className="text-sm font-medium text-yellow-800 mb-2">Backup Codes</h4>
-                  <p className="text-xs text-yellow-700 mb-2">
+                <div className="bg-white p-3 rounded-lg border border-slate-300">
+                  <h4 className="text-sm font-medium text-slate-800 mb-2">Backup Codes</h4>
+                  <p className="text-xs text-slate-600 mb-2">
                     Save these backup codes in a safe place. You can use them to access your account if you lose your phone.
                   </p>
                   <div className="grid grid-cols-2 gap-1 text-xs font-mono">
@@ -318,13 +318,13 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
                   <button
                     onClick={() => confirm2FAMutation.mutate(verificationCode)}
                     disabled={!verificationCode || confirm2FAMutation.isLoading}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm font-medium"
+                    className="flex-1 px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-colors disabled:opacity-50 text-sm font-medium"
                   >
                     {confirm2FAMutation.isLoading ? 'Verifying...' : 'Enable 2FA'}
                   </button>
                   <button
                     onClick={() => setShow2FASetup(false)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors text-sm font-medium"
+                    className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors text-sm font-medium"
                   >
                     Cancel
                   </button>
@@ -336,17 +336,17 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
       </div>
 
       {/* Account Verification */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <div className="bg-white rounded-lg border border-slate-300 shadow-sm p-6">
         <div className="flex items-center space-x-3 mb-4">
-          <DevicePhoneMobileIcon className="w-5 h-5 text-gray-500" />
-          <h3 className="text-lg font-semibold text-gray-900">Account Verification</h3>
+          <DevicePhoneMobileIcon className="w-5 h-5 text-slate-500" />
+          <h3 className="text-lg font-semibold text-slate-900">Account Verification</h3>
         </div>
         
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-sm font-medium text-gray-900">Email Verification</h4>
-              <p className="text-sm text-gray-500">{profile.email}</p>
+              <h4 className="text-sm font-medium text-slate-900">Email Verification</h4>
+              <p className="text-sm text-slate-500">{profile.email}</p>
             </div>
             <div className="flex items-center space-x-2">
               {profile.email_verified ? (
@@ -361,7 +361,7 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
                   <button
                     onClick={() => sendEmailVerificationMutation.mutate()}
                     disabled={sendEmailVerificationMutation.isLoading}
-                    className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    className="px-3 py-1 bg-blue-700 text-white rounded text-xs font-medium hover:bg-blue-600 transition-colors disabled:opacity-50"
                   >
                     {sendEmailVerificationMutation.isLoading ? 'Sending...' : 'Verify'}
                   </button>
@@ -373,8 +373,8 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
           {profile.phone && (
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-sm font-medium text-gray-900">Phone Verification</h4>
-                <p className="text-sm text-gray-500">{profile.phone}</p>
+                <h4 className="text-sm font-medium text-slate-900">Phone Verification</h4>
+                <p className="text-sm text-slate-500">{profile.phone}</p>
               </div>
               <div className="flex items-center space-x-2">
                 {profile.phone_verified ? (
@@ -389,7 +389,7 @@ const ProfileSecurity: React.FC<ProfileSecurityProps> = ({ profile }) => {
                     <button
                       onClick={() => sendPhoneVerificationMutation.mutate()}
                       disabled={sendPhoneVerificationMutation.isLoading}
-                      className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+                      className="px-3 py-1 bg-blue-700 text-white rounded text-xs font-medium hover:bg-blue-600 transition-colors disabled:opacity-50"
                     >
                       {sendPhoneVerificationMutation.isLoading ? 'Sending...' : 'Verify'}
                     </button>

@@ -85,12 +85,12 @@ const Profile: React.FC = () => {
     return (
       <div className={`flex items-center justify-center min-h-screen transition-colors ${
         false 
-          ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
-          : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
+          ? 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900' 
+          : 'bg-gradient-to-br from-white via-blue-50/30 to-white'
       }`}>
         <div className={`text-center p-8 rounded-2xl shadow-lg border ${
           false 
-            ? 'bg-slate-800/80 border-red-900/50' 
+            ? 'bg-blue-800/80 border-red-900/50' 
             : 'bg-white border-red-200'
         }`}>
           <ShieldCheckIcon className="w-16 h-16 text-red-500 mx-auto mb-4" />
@@ -106,20 +106,20 @@ const Profile: React.FC = () => {
   return (
     <div className={`min-h-screen p-4 transition-colors duration-300 ${
       false 
-        ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
-        : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20'
+        ? 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900' 
+        : 'bg-gradient-to-br from-white via-blue-50/30 to-white'
     }`}>
       <div className="max-w-7xl mx-auto space-y-4">
         {/* Header */}
         <div className={`backdrop-blur-xl rounded-xl border shadow-lg p-4 transition-colors ${
           false 
-            ? 'bg-slate-800/80 border-slate-700/60' 
+            ? 'bg-blue-800/80 border-blue-700/60' 
             : 'bg-white/80 border-white/60'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+                <div className="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center">
                   <UserCircleIcon className="w-5 h-5 text-white" />
                 </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
@@ -127,8 +127,8 @@ const Profile: React.FC = () => {
               <div>
                 <h1 className={`text-lg font-bold transition-colors ${
                   false 
-                    ? 'bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent' 
-                    : 'bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent'
+                    ? 'bg-gradient-to-r from-white to-blue-300 bg-clip-text text-transparent' 
+                    : 'bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent'
                 }`}>Profile Management</h1>
                 <p className={`text-xs font-medium ${
                   false ? 'text-slate-400' : 'text-slate-500'
@@ -143,7 +143,7 @@ const Profile: React.FC = () => {
           <div className="lg:col-span-1">
             <div className={`backdrop-blur-xl rounded-xl border shadow-lg p-3 transition-colors ${
               false 
-                ? 'bg-slate-800/80 border-slate-700/60' 
+                ? 'bg-blue-800/80 border-blue-700/60' 
                 : 'bg-white/80 border-white/60'
             }`}>
               <nav className="space-y-1.5">
@@ -156,11 +156,11 @@ const Profile: React.FC = () => {
                       className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left transition-all duration-200 ${
                         activeTab === tab.id
                           ? false 
-                            ? 'bg-blue-900/50 text-blue-300 border border-blue-700/50' 
-                            : 'bg-blue-50 text-blue-700 border border-blue-200'
+                            ? 'bg-blue-700/50 text-slate-300 border border-blue-600/50' 
+                            : 'bg-white text-slate-700 border border-slate-300'
                           : false 
-                            ? 'text-slate-300 hover:bg-slate-700/50' 
-                            : 'text-slate-600 hover:bg-slate-50'
+                            ? 'text-slate-300 hover:bg-blue-700/50' 
+                            : 'text-slate-600 hover:bg-white'
                       }`}
                     >
                       <Icon className="w-4 h-4 flex-shrink-0" />
@@ -168,7 +168,7 @@ const Profile: React.FC = () => {
                         <div className="text-sm font-medium">{tab.name}</div>
                         <div className={`text-xs truncate ${
                           activeTab === tab.id
-                            ? false ? 'text-blue-400' : 'text-blue-600'
+                            ? false ? 'text-slate-500' : 'text-slate-700'
                             : false ? 'text-slate-500' : 'text-slate-500'
                         }`}>{tab.description}</div>
                       </div>
@@ -184,11 +184,11 @@ const Profile: React.FC = () => {
             {isLoading ? (
               <div className={`backdrop-blur-xl rounded-xl border shadow-lg p-8 transition-colors ${
                 false 
-                  ? 'bg-slate-800/80 border-slate-700/60' 
+                  ? 'bg-blue-800/80 border-blue-700/60' 
                   : 'bg-white/80 border-white/60'
               }`}>
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-6"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-300 mx-auto mb-6"></div>
                   <p className={`font-medium ${false ? 'text-slate-300' : 'text-slate-600'}`}>Loading profile...</p>
                 </div>
               </div>
