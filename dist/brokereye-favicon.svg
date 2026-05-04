@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <!-- Eye outline: bright sky-blue to deep navy -->
+    <linearGradient id="g-eye" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#48B6FF"/>
+      <stop offset="55%" stop-color="#1A5FD4"/>
+      <stop offset="100%" stop-color="#0A2462"/>
+    </linearGradient>
+    <!-- 3D angular base - left dark face -->
+    <linearGradient id="g-base-l" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0B2460"/>
+      <stop offset="100%" stop-color="#1545A8"/>
+    </linearGradient>
+    <!-- 3D angular base - right medium face -->
+    <linearGradient id="g-base-r" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1B55C0"/>
+      <stop offset="100%" stop-color="#2D7BE0"/>
+    </linearGradient>
+    <!-- Bars: top bright to bottom medium -->
+    <linearGradient id="g-bar" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6DCEFF"/>
+      <stop offset="100%" stop-color="#1A6FE8"/>
+    </linearGradient>
+    <!-- Arrow: bright white-blue -->
+    <linearGradient id="g-arr" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2468CC"/>
+      <stop offset="100%" stop-color="#80D4FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── Eye / lens outline ── -->
+  <!-- Left swooping stroke (thicker outer edge) -->
+  <path d="M8,50 C18,25 38,14 50,14 C62,14 82,25 92,50"
+        fill="none" stroke="url(#g-eye)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M8,50 C18,75 38,86 50,86 C62,86 82,75 92,50"
+        fill="none" stroke="#0A2462" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- ── 3D angular base (bottom-left of icon, like the logo) ── -->
+  <!-- Back top edge -->
+  <polygon points="18,62 34,52 50,62 34,72" fill="#0B2460" opacity="0.9"/>
+  <!-- Front face -->
+  <polygon points="34,52 50,62 50,76 34,66" fill="url(#g-base-l)"/>
+  <!-- Right face -->
+  <polygon points="50,62 50,76 34,66" fill="url(#g-base-r)" opacity="0.7"/>
+
+  <!-- ── 3 ascending bar chart columns ── -->
+  <rect x="38" y="44" width="8" height="18" rx="1" fill="url(#g-bar)"/>
+  <rect x="49" y="36" width="8" height="26" rx="1" fill="url(#g-bar)"/>
+  <rect x="60" y="27" width="8" height="35" rx="1" fill="url(#g-bar)"/>
+
+  <!-- ── Swooping upward arrow ── -->
+  <!-- Arrow shaft: curves from bottom-left sweeping up-right -->
+  <path d="M24,70 C32,55 48,36 78,22"
+        fill="none" stroke="url(#g-arr)" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- Arrowhead pointing upper-right -->
+  <polygon points="78,22 64,22 72,33" fill="url(#g-arr)"/>
+</svg>

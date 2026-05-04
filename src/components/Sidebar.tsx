@@ -5,7 +5,6 @@ import {
   X,
   ChevronRight,
   LogOut,
-  Sparkles,
 } from 'lucide-react'
 import {
   ChartBarIcon,
@@ -53,6 +52,70 @@ const allNavigation: NavigationItem[] = [
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon, module: MODULES.PROFILE },
 ]
 
+// ── BrokerEye logo icon – matches the actual logo: eye lens, 3D base, bars, arrow ──
+const BrokerEyeIcon: React.FC<{ size?: number }> = ({ size = 40 }) => (
+  <svg width={size} height={size} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      {/* Outer eye stroke: sky-blue → deep navy */}
+      <linearGradient id="be-lens-t" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#1E90FF" />
+        <stop offset="50%" stopColor="#0A5EDC" />
+        <stop offset="100%" stopColor="#09246B" />
+      </linearGradient>
+      {/* Lower eye arc: solid navy */}
+      <linearGradient id="be-lens-b" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#09246B" />
+        <stop offset="100%" stopColor="#0A3DAA" />
+      </linearGradient>
+      {/* 3D base left face */}
+      <linearGradient id="be-base-l" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
+        <stop offset="0%" stopColor="#071A55" />
+        <stop offset="100%" stopColor="#0E3A90" />
+      </linearGradient>
+      {/* 3D base right face */}
+      <linearGradient id="be-base-r" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
+        <stop offset="0%" stopColor="#1251B8" />
+        <stop offset="100%" stopColor="#2A7AE8" />
+      </linearGradient>
+      {/* Bars: bright azure top → medium blue bottom */}
+      <linearGradient id="be-bar" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+        <stop offset="0%" stopColor="#58C8FF" />
+        <stop offset="100%" stopColor="#1060D8" />
+      </linearGradient>
+      {/* Arrow */}
+      <linearGradient id="be-arrow" x1="0" y1="1" x2="1" y2="0" gradientUnits="objectBoundingBox">
+        <stop offset="0%" stopColor="#0A3DAA" />
+        <stop offset="100%" stopColor="#58C8FF" />
+      </linearGradient>
+    </defs>
+
+    {/* ── Eye / lens outline ── */}
+    {/* Top arc: bright blue gradient */}
+    <path d="M10,60 C25,28 95,28 110,60" fill="none" stroke="url(#be-lens-t)" strokeWidth="7" strokeLinecap="round"/>
+    {/* Bottom arc: dark navy */}
+    <path d="M10,60 C25,92 95,92 110,60" fill="none" stroke="url(#be-lens-b)" strokeWidth="7" strokeLinecap="round"/>
+
+    {/* ── 3D angular base (bottom-left diamond / shield) ── */}
+    {/* Top face (lighter) */}
+    <polygon points="18,75 38,63 60,75 38,87" fill="#1251B8" opacity="0.95"/>
+    {/* Left face (dark) */}
+    <polygon points="18,75 38,87 38,100 18,88" fill="url(#be-base-l)"/>
+    {/* Right face (medium) */}
+    <polygon points="38,87 60,75 60,88 38,100" fill="url(#be-base-r)"/>
+
+    {/* ── 4 ascending bar chart columns ── */}
+    <rect x="45" y="58" width="9" height="20" rx="1.5" fill="url(#be-bar)"/>
+    <rect x="57" y="50" width="9" height="28" rx="1.5" fill="url(#be-bar)"/>
+    <rect x="69" y="41" width="9" height="37" rx="1.5" fill="url(#be-bar)"/>
+    <rect x="81" y="32" width="9" height="46" rx="1.5" fill="url(#be-bar)"/>
+
+    {/* ── Sweeping arrow: bottom-left curving up to top-right ── */}
+    <path d="M26,82 C40,62 62,42 96,26" fill="none" stroke="url(#be-arrow)" strokeWidth="5.5" strokeLinecap="round"/>
+    {/* Arrowhead */}
+    <polygon points="96,26 80,25 88,38" fill="url(#be-arrow)"/>
+  </svg>
+)
+
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation()
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -97,13 +160,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             isCollapsed ? "flex items-center justify-center px-3" : "px-3 flex items-center"
           )}>
             {isCollapsed ? (
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-700 shadow-lg flex-shrink-0">
-                <Sparkles className="h-5 w-5 text-white" />
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl flex-shrink-0 overflow-hidden">
+                <BrokerEyeIcon size={44} />
               </div>
             ) : (
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-9 h-9 bg-blue-700 rounded-lg flex items-center justify-center shadow-md flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-white" />
+                <div className="flex-shrink-0">
+                  <BrokerEyeIcon size={36} />
                 </div>
                 <div className="min-w-0 leading-tight">
                   <h1 className="text-base font-bold text-slate-900 whitespace-nowrap tracking-tight">
@@ -222,12 +285,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-slate-200 bg-white">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg">
-                      <Sparkles className="w-6 h-6 text-white" />
-                    </div>
+                    <BrokerEyeIcon size={40} />
                     <div>
                       <h1 className="text-xl font-bold text-slate-900">
-                        UserAdmin
+                        Broker Eye Admin
                       </h1>
                       <p className="text-xs text-slate-500 font-medium">Management Pro</p>
                     </div>
