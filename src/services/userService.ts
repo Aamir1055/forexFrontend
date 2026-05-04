@@ -1,5 +1,5 @@
 import api from './api'
-import { getApiBaseUrl } from '../lib/apiBase'
+import { getApiBaseUrl, buildApiUrl } from '../lib/apiBase'
 
 export interface User {
  id: number
@@ -185,11 +185,14 @@ export const userService = {
  // Get current authenticated user with permissions
  async getCurrentUser(): Promise<any> {
  const token = localStorage.getItem('authToken')
- // Derive auth base from the configured API base URL
- // e.g. https://api.brokereye.app → https://brokereye.app
- const apiBase = getApiBaseUrl()
- const authBase = apiBase.replace(/^(https?:\/\/)api\./, '$1')
- const response = await fetch(`${authBase}/api/auth/me?ts=${Date.now()}`, {
+ // Use buildApiUrl so this always calls the same host as every other API request:
+ //   dev  → /api/auth/me  (relative, goes through Vite proxy)
+ //   prod → https://api.brokereye.app/api/auth/me  (same origin as axios)
+ // The previous approach derived "https://brokereye.app/api/auth/me" which hit
+ // the frontend host (no API proxy in production) and silently failed to return
+ // permissions, leaving all permission checks empty after login.
+ const url = buildApiUrl('/api/auth/me')
+ const response = await fetch(`${url}?ts=${Date.now()}`, {
  method: 'GET',
  cache: 'no-store',
  headers: {
