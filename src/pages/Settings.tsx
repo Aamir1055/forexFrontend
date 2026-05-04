@@ -80,15 +80,23 @@ const Settings: React.FC = () => {
                   <span className={`h-1.5 w-1.5 rounded-full ${currentUser?.is_active ? 'bg-emerald-500' : 'bg-red-500'}`} />
                   {currentUser?.is_active ? 'Active' : 'Inactive'}
                 </span>
-                {currentUser?.roles?.map((role: string) => (
-                  <span
-                    key={role}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 capitalize"
-                  >
-                    <ShieldCheckIcon className="w-3.5 h-3.5" />
-                    {role}
-                  </span>
-                ))}
+                {currentUser?.roles?.map((role: any) => {
+                  const roleName = typeof role === 'string' ? role : role?.name
+
+                  if (!roleName) {
+                    return null
+                  }
+
+                  return (
+                    <span
+                      key={roleName}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 capitalize"
+                    >
+                      <ShieldCheckIcon className="w-3.5 h-3.5" />
+                      {roleName}
+                    </span>
+                  )
+                })}
               </div>
             </div>
           </div>
