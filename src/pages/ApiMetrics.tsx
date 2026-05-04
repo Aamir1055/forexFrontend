@@ -320,15 +320,13 @@ export default function ApiMetrics() {
             <tbody className="divide-y divide-slate-200 bg-white">
               {sortedMetrics.map((metric, index) => (
                 <tr key={index} className="group transition-colors duration-150 hover:bg-white/80">
-                  <td className="px-6 py-4 text-sm font-semibold text-slate-900 transition-colors group-hover:text-slate-950">
-                    <code className="rounded-lg bg-blue-100 px-3 py-1.5 font-mono text-xs text-slate-700 transition-colors group-hover:bg-blue-200">
+                  <td className="px-6 py-4">
+                    <code className="rounded-full bg-blue-50 px-4 py-1.5 font-mono text-xs text-blue-700 border border-blue-200 inline-flex items-center justify-center">
                       {metric.path}
                     </code>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className="inline-flex items-center rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-blue-200">
-                      {metric.total_calls.toLocaleString()}
-                    </span>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-700">
+                    {metric.total_calls.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-700">
                     {formatTime(metric.avg_time_ms)}

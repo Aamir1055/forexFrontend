@@ -8,8 +8,12 @@ import BrokerProfileModal from '../components/BrokerProfileModal'
 import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import PageHeaderShell from '../components/layout/PageHeaderShell'
 import toast from 'react-hot-toast'
+import { PermissionGate, usePermissionCheck } from '../components/PermissionGate'
+import { MODULES } from '../utils/permissions'
 
 const BrokerProfiles: React.FC = () => {
+  const { canCreate, canEdit, canDelete } = usePermissionCheck()
+  const showActions = canEdit(MODULES.BROKER_PROFILES) || canDelete(MODULES.BROKER_PROFILES)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingProfile, setEditingProfile] = useState<BrokerProfile | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -202,13 +206,15 @@ const BrokerProfiles: React.FC = () => {
                   <ArrowPathIcon className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
                   <span>Refresh</span>
                 </button>
-                <button
-                  onClick={handleCreateProfile}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-sm font-semibold text-sm group"
-                >
-                  <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                  <span>Create Profile</span>
-                </button>
+                <PermissionGate module={MODULES.BROKER_PROFILES} action="create">
+                  <button
+                    onClick={handleCreateProfile}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap shadow-sm font-semibold text-sm group"
+                  >
+                    <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                    <span>Create Profile</span>
+                  </button>
+                </PermissionGate>
               </div>
             </div>
       </PageHeaderShell>
@@ -325,15 +331,17 @@ const BrokerProfiles: React.FC = () => {
                             )}
                           </div>
                         </th>
-                        <th className="px-3 py-2 text-center text-xs font-bold text-slate-700 uppercase tracking-wider">
-                          Actions
-                        </th>
+                        {showActions && (
+                          <th className="px-3 py-2 text-center text-xs font-bold text-slate-700 uppercase tracking-wider">
+                            Actions
+                          </th>
+                        )}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200">
                       {paginatedProfiles?.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="px-4 py-12 text-center text-slate-500">
+                          <td colSpan={showActions ? 5 : 4} className="px-4 py-12 text-center text-slate-500">
                             {searchTerm ? 'No profiles found matching your search.' : 'No profiles found. Create your first profile to get started.'}
                           </td>
                         </tr>
@@ -361,28 +369,34 @@ const BrokerProfiles: React.FC = () => {
                                 {new Date(profile.createdAt).toLocaleDateString()}
                               </div>
                             </td>
-                            <td className="px-3 py-2 text-center">
-                              <div className="flex items-center justify-center gap-1">
-                                <button
-                                  onClick={() => handleEditProfile(profile)}
-                                  className="group/btn relative p-1.5 text-blue-600 hover:text-white rounded-lg bg-blue-50 hover:bg-blue-700 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/50 hover:scale-110"
-                                  title="Edit Profile"
-                                >
-                                  <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                  </svg>
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteProfile(profile.id)}
-                                  className="group/btn relative p-1.5 text-red-500 hover:text-white rounded-lg bg-blue-50 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:shadow-red-500/50 hover:scale-110"
-                                  title="Delete Profile"
-                                >
-                                  <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                  </svg>
-                                </button>
-                              </div>
-                            </td>
+                            {showActions && (
+                              <td className="px-3 py-2 text-center">
+                                <div className="flex items-center justify-center gap-1">
+                                  {canEdit(MODULES.BROKER_PROFILES) && (
+                                    <button
+                                      onClick={() => handleEditProfile(profile)}
+                                      className="group/btn relative p-1.5 text-blue-600 hover:text-white rounded-lg bg-blue-50 hover:bg-blue-700 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/50 hover:scale-110"
+                                      title="Edit Profile"
+                                    >
+                                      <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                      </svg>
+                                    </button>
+                                  )}
+                                  {canDelete(MODULES.BROKER_PROFILES) && (
+                                    <button
+                                      onClick={() => handleDeleteProfile(profile.id)}
+                                      className="group/btn relative p-1.5 text-red-500 hover:text-white rounded-lg bg-blue-50 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:shadow-red-500/50 hover:scale-110"
+                                      title="Delete Profile"
+                                    >
+                                      <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                      </svg>
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            )}
                           </motion.tr>
                         ))
                       )}

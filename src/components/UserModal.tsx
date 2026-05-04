@@ -151,259 +151,227 @@ const UserModal: React.FC<UserModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          {/* Backdrop */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30" 
-            onClick={onClose} 
+            className="fixed inset-0 bg-black/30"
+            onClick={onClose}
           />
 
-          {/* Modal - Compact Size */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 30 }}
-            transition={{ duration: 0.25, type: "spring", damping: 25, stiffness: 300 }}
-            className={`relative rounded-2xl shadow-2xl transform w-full max-w-2xl mx-4 overflow-hidden border transition-colors duration-300 ${
-              false 
-                ? 'bg-slate-800 border-slate-700/50' 
-                : 'bg-white border-white/20'
-            }`}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className="relative rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl bg-white"
           >
-              {/* Compact Header */}
-              <div className="relative flex items-center justify-between bg-white border-b border-gray-200 px-6 py-3.5">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">
-                    {user ? 'Edit User' : 'Create New User'}
-                  </h3>
-                  <p className="mt-0.5 text-xs text-gray-500">
-                    {user ? 'Update user details and assign roles.' : 'Add user details and assign roles.'}
-                  </p>
-                </div>
-                <button
-                  onClick={onClose}
-                  className="rounded-lg p-1.5 text-gray-400 transition-all hover:bg-gray-100 hover:text-gray-700"
-                >
-                  <XMarkIcon className="w-5 h-5" />
-                </button>
+            {/* Header */}
+            <div className="relative flex items-center justify-between px-6 py-3.5 bg-white border-b border-slate-300">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">
+                  {user ? 'Edit User' : 'Create New User'}
+                </h2>
+                <p className="text-slate-500 text-xs mt-0.5">
+                  {user ? 'Update user details and assign roles' : 'Add user details and assign roles'}
+                </p>
               </div>
+              <button
+                onClick={onClose}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-blue-100 transition-all"
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+            </div>
 
-              {/* Compact Form */}
-              <form onSubmit={handleSubmit} className={`px-5 py-4 max-h-[calc(100vh-200px)] overflow-y-auto transition-colors duration-300 ${
-                'bg-white'
-              }`}>
-                <div className="space-y-3">
-                  {/* Basic Information Section */}
-                  <div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                      {/* Username */}
-                      <div>
-                        <label className={`block text-[11px] font-semibold mb-1 transition-colors ${
-                          'text-slate-700'
-                        }`}>
-                          Username <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="username"
-                          value={formData.username}
-                          onChange={handleInputChange}
-                          className={`w-full px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 transition-all duration-200 ${
-                            errors.username 
-                              ? 'border-red-300 bg-red-50/50' 
-                              : false 
-                                ? 'border-slate-600 bg-slate-700/50 text-white placeholder:text-slate-400 hover:border-slate-500' 
-                                : 'border-slate-200 bg-white text-slate-900 hover:border-slate-300'
-                          }`}
-                          placeholder="Enter username"
-                        />
-                        {errors.username && (
-                          <p className="mt-1 text-[10px] text-red-600 font-medium flex items-center gap-0.5">
-                            <span>⚠️</span> {errors.username}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Email */}
-                      <div>
-                        <label className={`block text-[11px] font-semibold mb-1 transition-colors ${
-                          'text-slate-700'
-                        }`}>
-                          Email Address <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          className={`w-full px-2.5 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 transition-all duration-200 ${
-                            errors.email 
-                              ? 'border-red-300 bg-red-50/50' 
-                              : false 
-                                ? 'border-slate-600 bg-slate-700/50 text-white placeholder:text-slate-400 hover:border-slate-500' 
-                                : 'border-slate-200 bg-white text-slate-900 hover:border-slate-300'
-                          }`}
-                          placeholder="Enter email address"
-                        />
-                        {errors.email && (
-                          <p className="mt-1 text-[10px] text-red-600 font-medium flex items-center gap-0.5">
-                            <span>⚠️</span> {errors.email}
-                          </p>
-                        )}
-                      </div>
+            {/* Content */}
+            <div className="overflow-y-auto max-h-[480px] bg-white">
+              <form id="user-form" onSubmit={handleSubmit}>
+                {/* Basic Information */}
+                <div className="px-6 py-4">
+                  <div className="flex items-center mb-3">
+                    <h3 className="text-sm font-semibold text-slate-900">Basic Information</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Username */}
+                    <div>
+                      <label className="block text-xs font-semibold mb-1.5 text-slate-700">
+                        Username <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleInputChange}
+                        className={`w-full px-3 py-2 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all ${
+                          errors.username
+                            ? 'border-red-300 bg-red-50/50'
+                            : 'border-slate-300 bg-white text-slate-900'
+                        }`}
+                        placeholder="Enter username"
+                      />
+                      {errors.username && (
+                        <p className="mt-1 text-[10px] text-red-600 font-medium flex items-center gap-0.5">
+                          <span>⚠️</span> {errors.username}
+                        </p>
+                      )}
                     </div>
 
-                    {/* Password */}
-                    <div className="mt-2.5">
-                      <label className={`block text-[11px] font-semibold mb-1 transition-colors ${
-                        'text-slate-700'
-                      }`}>
-                        Password {user ? <span className="font-normal text-[10px] text-slate-500">(leave blank to keep current)</span> : <span className="text-red-500">*</span>}
+                    {/* Email */}
+                    <div>
+                      <label className="block text-xs font-semibold mb-1.5 text-slate-700">
+                        Email Address <span className="text-red-500">*</span>
                       </label>
-                      <div className="relative">
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          name="password"
-                          value={formData.password}
-                          onChange={handleInputChange}
-                          className={`w-full px-2.5 py-1.5 pr-9 border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 transition-all duration-200 ${
-                            errors.password 
-                              ? 'border-red-300 bg-red-50/50' 
-                              : false 
-                                ? 'border-slate-600 bg-slate-700/50 text-white placeholder:text-slate-400 hover:border-slate-500' 
-                                : 'border-slate-200 bg-white text-slate-900 hover:border-slate-300'
-                          }`}
-                          placeholder={user ? 'Leave blank to keep current' : 'Enter password'}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700 transition-colors"
-                          tabIndex={-1}
-                        >
-                          {showPassword ? <EyeSlashIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
-                        </button>
-                        {errors.password && (
-                          <p className="mt-1 text-[10px] text-red-600 font-medium flex items-center gap-0.5">
-                            <span>⚠️</span> {errors.password}
-                          </p>
-                        )}
-                      </div>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={`w-full px-3 py-2 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all ${
+                          errors.email
+                            ? 'border-red-300 bg-red-50/50'
+                            : 'border-slate-300 bg-white text-slate-900'
+                        }`}
+                        placeholder="Enter email address"
+                      />
+                      {errors.email && (
+                        <p className="mt-1 text-[10px] text-red-600 font-medium flex items-center gap-0.5">
+                          <span>⚠️</span> {errors.email}
+                        </p>
+                      )}
                     </div>
                   </div>
 
-                  {/* Roles & Permissions Section */}
-                  <div>
-                    <label className="block text-[11px] font-semibold mb-1.5 text-slate-700">
-                      Roles <span className="text-red-500">*</span>
+                  {/* Password */}
+                  <div className="mt-4">
+                    <label className="block text-xs font-semibold mb-1.5 text-slate-700">
+                      Password{' '}
+                      {user
+                        ? <span className="font-normal text-slate-500">(leave blank to keep current)</span>
+                        : <span className="text-red-500">*</span>
+                      }
                     </label>
-                    <div className={`flex flex-nowrap gap-2 overflow-x-auto ${errors.role_ids ? 'p-2 rounded-lg border border-red-300 bg-red-50/50' : ''}`}>
-                      {roles.map((role) => (
-                        <label
-                          key={role.id}
-                          className={`flex items-center cursor-pointer px-2.5 py-1.5 border rounded-lg transition-all duration-200 flex-shrink-0 ${
-                            formData.role_ids.includes(role.id)
-                              ? 'border-gray-400 bg-gray-100 shadow-sm'
-                              : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={formData.role_ids.includes(role.id)}
-                            onChange={(e) => handleRoleChange(role.id, e.target.checked)}
-                            className="w-3.5 h-3.5 rounded border-slate-300 text-gray-700 focus:ring-gray-400 focus:ring-1 transition-colors duration-200 flex-shrink-0"
-                          />
-                          <span className="ml-1.5 text-xs font-medium text-slate-700 capitalize whitespace-nowrap">{role.name}</span>
-                        </label>
-                      ))}
+                    <div className="relative">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className={`w-full px-3 py-2 pr-10 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all ${
+                          errors.password
+                            ? 'border-red-300 bg-red-50/50'
+                            : 'border-slate-300 bg-white text-slate-900'
+                        }`}
+                        placeholder={user ? 'Leave blank to keep current' : 'Enter password'}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700 transition-colors"
+                        tabIndex={-1}
+                      >
+                        {showPassword ? <EyeSlashIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
+                      </button>
                     </div>
-                    {errors.role_ids && (
-                      <p className="mt-1.5 text-[10px] text-red-600 font-semibold flex items-center gap-1">
-                        <span>⚠️</span> {errors.role_ids}
-                      </p>
-                    )}
-                    {formData.role_ids.length === 0 && !errors.role_ids && (
-                      <p className="mt-1.5 text-[11px] text-slate-500">
-                        Select at least one role for the user.
+                    {errors.password && (
+                      <p className="mt-1 text-[10px] text-red-600 font-medium flex items-center gap-0.5">
+                        <span>⚠️</span> {errors.password}
                       </p>
                     )}
                   </div>
+                </div>
 
-                  {/* Status Section */}
-                  <div className="space-y-2 pt-1 border-t border-slate-100 mt-2">
-                    <div className="flex items-center pt-2">
-                      <label className="flex items-center cursor-pointer group">
-                        <input
-                          type="checkbox"
-                          name="is_active"
-                          checked={formData.is_active}
-                          onChange={handleInputChange}
-                          className="w-3.5 h-3.5 rounded border-slate-300 text-gray-700 focus:ring-gray-400 focus:ring-1"
-                        />
-                        <span className="ml-2 text-[11px] font-semibold text-slate-700">User is active</span>
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <label className="flex items-center cursor-pointer group">
-                        <input
-                          type="checkbox"
-                          name="force_two_factor"
-                          checked={formData.force_two_factor}
-                          onChange={handleInputChange}
-                          className="w-3.5 h-3.5 rounded border-slate-300 text-gray-700 focus:ring-gray-400 focus:ring-1"
-                        />
-                        <span className="ml-2 text-[11px] font-semibold text-slate-700">Force 2FA</span>
-                      </label>
-                    </div>
+                {/* Roles Section */}
+                <div className="px-6 py-3 border-t border-slate-200">
+                  <div className="flex items-center mb-3">
+                    <h3 className="text-sm font-semibold text-slate-900">Roles</h3>
+                    <span className="ml-1.5 text-red-500 text-sm">*</span>
                   </div>
+                  <div className={`flex flex-wrap gap-2 ${errors.role_ids ? 'p-2 rounded-lg border border-red-300 bg-red-50/50' : ''}`}>
+                    {roles.map((role) => (
+                      <label
+                        key={role.id}
+                        className={`flex items-center cursor-pointer px-3 py-1.5 border-2 rounded-lg transition-all duration-200 flex-shrink-0 ${
+                          formData.role_ids.includes(role.id)
+                            ? 'border-blue-600 bg-blue-600 shadow-sm'
+                            : 'border-slate-300 bg-white hover:border-slate-400 hover:bg-white'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={formData.role_ids.includes(role.id)}
+                          onChange={(e) => handleRoleChange(role.id, e.target.checked)}
+                          className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-slate-400 focus:ring-2 flex-shrink-0"
+                        />
+                        <span className={`ml-2 text-sm font-medium capitalize whitespace-nowrap ${
+                          formData.role_ids.includes(role.id) ? 'text-white' : 'text-slate-700'
+                        }`}>{role.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {errors.role_ids && (
+                    <p className="mt-1.5 text-[10px] text-red-600 font-semibold flex items-center gap-1">
+                      <span>⚠️</span> {errors.role_ids}
+                    </p>
+                  )}
+                </div>
+
+                {/* Status Section */}
+                <div className="px-6 py-3 border-t border-slate-200 space-y-2.5">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="is_active"
+                      checked={formData.is_active}
+                      onChange={handleInputChange}
+                      className="w-4 h-4 rounded border-slate-300 text-slate-700 focus:ring-slate-400 focus:ring-2"
+                    />
+                    <span className="ml-2 text-sm font-medium text-slate-700">User is active</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="force_two_factor"
+                      checked={formData.force_two_factor}
+                      onChange={handleInputChange}
+                      className="w-4 h-4 rounded border-slate-300 text-slate-700 focus:ring-slate-400 focus:ring-2"
+                    />
+                    <span className="ml-2 text-sm font-medium text-slate-700">Force 2FA</span>
+                  </label>
                 </div>
               </form>
+            </div>
 
-              {/* Actions */}
-              <div className={`px-5 py-3 border-t flex justify-end items-center transition-colors duration-300 ${
-                false 
-                  ? 'bg-gradient-to-r from-slate-900/50 via-gray-800/20 to-purple-900/20 border-slate-700' 
-                  : 'bg-slate-50 border-slate-200'
-              }`}>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className={`px-4 py-1.5 text-xs font-semibold border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 shadow-sm ${
-                      false 
-                        ? 'text-slate-300 bg-slate-700 border-slate-600 hover:bg-slate-600 hover:border-slate-500 focus:ring-slate-500/50' 
-                        : 'text-slate-700 bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 focus:ring-slate-300/50'
-                    }`}
-                    disabled={isLoading}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    onClick={handleSubmit}
-                    disabled={isLoading}
-                    className="px-5 py-1.5 text-xs font-bold text-gray-700 bg-white border border-gray-400 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400/50 shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-1.5">
-                        <svg className="animate-spin h-3 w-3 text-white" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>{user ? 'Updating...' : 'Creating...'}</span>
-                      </div>
-                    ) : (
-                      <span className="flex items-center gap-1.5">
-                        <span>{user ? 'Update User' : 'Create User'}</span>
-                      </span>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
+            {/* Footer */}
+            <div className="px-6 py-3 border-t border-slate-300 bg-white flex items-center justify-end space-x-2.5">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-1.5 text-sm border-2 rounded-lg transition-all duration-200 font-medium border-slate-300 text-slate-700 hover:bg-white"
+                disabled={isLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="user-form"
+                disabled={isLoading}
+                className="px-5 py-1.5 text-sm bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm"
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-1.5">
+                    <svg className="animate-spin h-4 w-4 text-slate-700" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>{user ? 'Updating...' : 'Creating...'}</span>
+                  </div>
+                ) : (
+                  <span>{user ? 'Update User' : 'Create User'}</span>
+                )}
+              </button>
+            </div>
+          </motion.div>
         </div>
       )}
     </AnimatePresence>

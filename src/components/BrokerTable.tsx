@@ -7,9 +7,9 @@ import {
 } from '@heroicons/react/24/outline'
 import { Broker } from '../types'
 
-import { brokerRightsService } from '../services/brokerRightsService'
 import { PermissionGate } from './PermissionGate'
 import { MODULES } from '../utils/permissions'
+import { usePermissions } from '../contexts/PermissionContext'
 
 interface BrokerTableProps {
   brokers: Broker[]
@@ -43,6 +43,8 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
   onPageChange,
   topContent
 }) => {
+  const { canEdit, canDelete } = usePermissions()
+  const showActions = canEdit(MODULES.BROKERS) || canDelete(MODULES.BROKERS)
 
     // No need to fetch rights separately; use rights_count from brokers API response
     // Remove brokerRights and loadingRights state and effect
@@ -79,8 +81,8 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <h3 className="text-sm font-medium text-slate-900">{broker.username || 'No Username'}</h3>
-                    <p className="text-sm text-slate-500">{broker.email || 'No email'}</p>
-                    <p className="text-sm text-slate-500">{broker.phone}</p>
+                    <p className="text-sm text-slate-500">{broker.full_name || '-'}</p>
+                    <p className="text-sm text-slate-500">Default %: {broker.default_percentage ?? 0}</p>
                     <p className="text-sm text-slate-500">Range: {broker.account_range_from} - {broker.account_range_to}</p>
                     <div className="mt-2 flex items-center space-x-3">
                       <div className="flex items-center space-x-2">
@@ -137,7 +139,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
             }`}>
               <tr>
                 <th 
-                  onClick={() => onSort('full_name')}
+                  onClick={() => onSort('username')}
                   className={`px-2 py-1.5 text-center text-xs font-bold uppercase tracking-wide cursor-pointer transition-colors ${
                     false 
                       ? 'text-slate-300 hover:bg-blue-600/50' 
@@ -147,13 +149,13 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                 >
                   <div className="flex items-center justify-center space-x-1">
                     <span>Username</span>
-                    {currentSort.field === 'full_name' && (
+                    {currentSort.field === 'username' && (
                       <span className="text-slate-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                     )}
                   </div>
                 </th>
                 <th 
-                  onClick={() => onSort('email')}
+                  onClick={() => onSort('full_name')}
                   className={`px-2 py-1.5 text-center text-xs font-bold uppercase tracking-wide cursor-pointer transition-colors ${
                     false 
                       ? 'text-slate-300 hover:bg-blue-600/50' 
@@ -162,15 +164,28 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                   title="Click to sort"
                 >
                   <div className="flex items-center justify-center space-x-1">
-                    <span>Email</span>
-                    {currentSort.field === 'email' && (
+                    <span>Full Name</span>
+                    {currentSort.field === 'full_name' && (
                       <span className="text-slate-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
                     )}
                   </div>
                 </th>
-                <th className={`px-2 py-1.5 text-center text-xs font-bold uppercase tracking-wide ${
-                  'text-slate-600'
-                }`}>Phone</th>
+                <th 
+                  onClick={() => onSort('default_percentage')}
+                  className={`px-2 py-1.5 text-center text-xs font-bold uppercase tracking-wide cursor-pointer transition-colors ${
+                    false 
+                      ? 'text-slate-300 hover:bg-blue-600/50' 
+                      : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                  title="Click to sort"
+                >
+                  <div className="flex items-center justify-center space-x-1">
+                    <span>Default %</span>
+                    {currentSort.field === 'default_percentage' && (
+                      <span className="text-slate-600">{currentSort.order === 'ASC' ? '↑' : '↓'}</span>
+                    )}
+                  </div>
+                </th>
                 <th 
                   onClick={() => onSort('is_active')}
                   className={`px-2 py-1.5 text-center text-xs font-bold uppercase tracking-wide cursor-pointer transition-colors ${
@@ -219,9 +234,11 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                     )}
                   </div>
                 </th>
-                <th className={`px-2 py-1.5 text-center text-xs font-bold uppercase tracking-wide ${
-                  'text-slate-600'
-                }`}>Actions</th>
+                {showActions && (
+                  <th className={`px-2 py-1.5 text-center text-xs font-bold uppercase tracking-wide ${
+                    'text-slate-600'
+                  }`}>Actions</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -235,10 +252,10 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                     </p>
                   </td>
                   <td className="px-2 py-2 text-center">
-                    <p className="text-xs text-slate-700">{broker.email || '-'}</p>
+                    <p className="text-xs text-slate-700">{broker.full_name || '-'}</p>
                   </td>
                   <td className="px-2 py-2 text-center">
-                    <p className="text-xs text-slate-700">{broker.phone || '-'}</p>
+                    <p className="text-xs text-slate-700">{broker.default_percentage ?? 0}</p>
                   </td>
                   <td className="px-4 py-3 text-center">
                     <PermissionGate module={MODULES.BROKERS} action="edit">
@@ -263,32 +280,34 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                       {getRightsDisplay(broker.id)}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <PermissionGate module={MODULES.BROKERS} action="edit">
-                        <button 
-                          onClick={() => onEdit(broker)}
-                          className="group/btn relative p-1.5 text-blue-600 hover:text-white rounded-lg bg-blue-50 hover:bg-blue-700 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/50 hover:scale-110"
-                          title="Edit broker"
-                        >
-                          <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                        </button>
-                      </PermissionGate>
-                      <PermissionGate module={MODULES.BROKERS} action="delete">
-                        <button 
-                          onClick={() => onDelete(broker.id)}
-                          className="group/btn relative p-1.5 text-red-500 hover:text-white rounded-lg bg-blue-50 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:shadow-red-500/50 hover:scale-110"
-                          title="Delete broker"
-                        >
-                          <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </PermissionGate>
-                    </div>
-                  </td>
+                  {showActions && (
+                    <td className="px-4 py-3 text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <PermissionGate module={MODULES.BROKERS} action="edit">
+                          <button 
+                            onClick={() => onEdit(broker)}
+                            className="group/btn relative p-1.5 text-blue-600 hover:text-white rounded-lg bg-blue-50 hover:bg-blue-700 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/50 hover:scale-110"
+                            title="Edit broker"
+                          >
+                            <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                        </PermissionGate>
+                        <PermissionGate module={MODULES.BROKERS} action="delete">
+                          <button 
+                            onClick={() => onDelete(broker.id)}
+                            className="group/btn relative p-1.5 text-red-500 hover:text-white rounded-lg bg-blue-50 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:shadow-red-500/50 hover:scale-110"
+                            title="Delete broker"
+                          >
+                            <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </PermissionGate>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

@@ -1,4 +1,5 @@
 import api from './api'
+import { getApiBaseUrl } from '../lib/apiBase'
 
 export interface User {
  id: number
@@ -15,6 +16,7 @@ export interface User {
  two_factor_backup_codes: string | null
  two_factor_verified_at: string | null
  force_two_factor: boolean
+ permissions?: Array<string | Permission>
  roles: Role[]
 }
 
@@ -181,8 +183,25 @@ export const userService = {
  },
 
  // Get current authenticated user with permissions
- async getCurrentUser(): Promise<UserResponse> {
- const response = await api.get('/api/users/me')
- return response.data
+ async getCurrentUser(): Promise<any> {
+ const token = localStorage.getItem('authToken')
+ // Derive auth base from the configured API base URL
+ // e.g. https://api.brokereye.app → https://brokereye.app
+ const apiBase = getApiBaseUrl()
+ const authBase = apiBase.replace(/^(https?:\/\/)api\./, '$1')
+ const response = await fetch(`${authBase}/api/auth/me?ts=${Date.now()}`, {
+ method: 'GET',
+ cache: 'no-store',
+ headers: {
+ 'Content-Type': 'application/json',
+ 'Cache-Control': 'no-cache, no-store, must-revalidate',
+ 'Pragma': 'no-cache',
+ ...(token ? { Authorization: `Bearer ${token}` } : {}),
+ },
+ })
+ if (!response.ok) {
+ throw new Error(`Failed to fetch user profile: ${response.status}`)
+ }
+ return response.json()
  }
 }

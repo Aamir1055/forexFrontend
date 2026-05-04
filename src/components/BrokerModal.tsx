@@ -889,64 +889,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <>
-          <style>
-            {`
-              .hide-scrollbar {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-              }
-              .hide-scrollbar::-webkit-scrollbar {
-                display: none;
-              }
-
-              /* Clean form styling */
-              .form-label {
-                display: block;
-                font-size: 11px;
-                font-weight: 500;
-                color: #000000;
-                margin-bottom: 4px;
-                letter-spacing: 0.01em;
-              }
-              
-              .form-input {
-                width: 100%;
-                padding: 7px 10px;
-                font-size: 13px;
-                line-height: 1.4;
-                color: #000000;
-                background-color: #ffffff;
-                border: 1px solid #d1d5db;
-                border-radius: 6px;
-                transition: all 0.15s ease;
-              }
-              
-              .form-input::placeholder {
-                color: #9ca3af;
-              }
-              
-              .form-input:hover {
-                border-color: #9ca3af;
-              }
-              
-              .form-input:focus {
-                outline: none;
-                border-color: #3b82f6;
-                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-              }
-              
-              .form-input-error {
-                border-color: #ef4444;
-                background-color: #fef2f2;
-              }
-              
-              .form-error-text {
-                margin-top: 3px;
-                font-size: 10px;
-                color: #ef4444;
-              }
-            `}
-          </style>
+          <style>{`.hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}.hide-scrollbar::-webkit-scrollbar{display:none;}`}</style>
           <div className="fixed inset-0 z-50 overflow-hidden">
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20">
             {/* Backdrop */}
@@ -968,16 +911,12 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
             >
               <form onSubmit={handleSubmit}>
                 {/* Header */}
-                <div className="flex items-center justify-between bg-white border-b border-slate-300 px-6 py-4">
-                  <div>
-                    <h2 className="text-xl font-semibold text-slate-900">{broker ? 'Edit Broker' : 'Create New Broker'}</h2>
-                    <p className="mt-0.5 text-xs text-slate-500">
-                      Manage broker details, account mapping, and access settings
-                    </p>
-                  </div>
-                  <button 
+                <div className="flex items-center justify-between bg-white border-b border-slate-300 px-6 py-3.5">
+                  <h2 className="text-lg font-bold text-slate-900">{broker ? 'Edit Broker' : 'Create New Broker'}</h2>
+                  <button
+                    type="button"
                     onClick={onClose}
-                    className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-700"
+                    className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-blue-100 hover:text-slate-700"
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>
@@ -1053,83 +992,89 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                         exit={{ opacity: 0, x: 20 }}
                         transition={{ duration: 0.2 }}
                       >
-                        {/* Clean Grid Layout */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
                           <div>
-                            <label className="form-label">Full Name *</label>
+                            <label className="block text-xs font-semibold mb-1.5 text-slate-700">Full Name <span className="text-red-500">*</span></label>
                             <input
                               type="text"
                               name="full_name"
                               value={formData.full_name}
                               onChange={handleInputChange}
-                              className="form-input ${errors.full_name ? 'form-input-error' : ''}"
+                              className={`w-full px-3 py-2 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all ${
+                                errors.full_name ? 'border-red-300 bg-red-50/50' : 'border-slate-300 bg-white text-slate-900'
+                              }`}
                               placeholder="Enter full name"
-                              required
                             />
-                            {errors.full_name && <p className="form-error-text">{errors.full_name}</p>}
+                            {errors.full_name && <p className="mt-1 text-[10px] text-red-600 font-medium">⚠️ {errors.full_name}</p>}
                           </div>
 
                           <div>
-                            <label className="form-label">Username *</label>
+                            <label className="block text-xs font-semibold mb-1.5 text-slate-700">Username <span className="text-red-500">*</span></label>
                             <input
                               type="text"
                               name="username"
                               value={formData.username}
                               onChange={handleInputChange}
-                              className="form-input ${errors.username ? 'form-input-error' : ''}"
+                              className={`w-full px-3 py-2 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all ${
+                                errors.username ? 'border-red-300 bg-red-50/50' : 'border-slate-300 bg-white text-slate-900'
+                              }`}
                               placeholder="Enter username"
-                              required
                             />
-                            {errors.username && <p className="form-error-text">{errors.username}</p>}
+                            {errors.username && <p className="mt-1 text-[10px] text-red-600 font-medium">⚠️ {errors.username}</p>}
                           </div>
 
                           <div>
-                            <label className="form-label">Password {broker ? '(leave blank to keep current)' : '*'}</label>
+                            <label className="block text-xs font-semibold mb-1.5 text-slate-700">
+                              Password{' '}
+                              {broker
+                                ? <span className="font-normal text-slate-500">(leave blank to keep current)</span>
+                                : <span className="text-red-500">*</span>
+                              }
+                            </label>
                             <input
                               type="password"
                               name="password"
                               value={formData.password}
                               onChange={handleInputChange}
-                              className="form-input"
+                              className="w-full px-3 py-2 text-sm border-2 border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all"
                               placeholder={broker ? 'Enter new password to change' : 'Enter password'}
-                              required={!broker}
                             />
-                            {errors.password && <p className="form-error-text">{errors.password}</p>}
+                            {errors.password && <p className="mt-1 text-[10px] text-red-600 font-medium">⚠️ {errors.password}</p>}
                           </div>
 
                           <div>
-                            <label className="form-label">Credit Limit</label>
+                            <label className="block text-xs font-semibold mb-1.5 text-slate-700">Credit Limit</label>
                             <input
                               type="number"
                               step="0.01"
                               name="credit_limit"
                               value={formData.credit_limit || ''}
                               onChange={handleInputChange}
-                              className="form-input"
+                              className="w-full px-3 py-2 text-sm border-2 border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all"
                               placeholder="Enter credit limit"
                             />
                           </div>
 
                           <div>
-                            <label className="form-label">Default Percentage (%)</label>
+                            <label className="block text-xs font-semibold mb-1.5 text-slate-700">Default Percentage (%)</label>
                             <input
                               type="number"
                               step="0.01"
                               name="default_percentage"
                               value={formData.default_percentage || ''}
                               onChange={handleInputChange}
-                              className="form-input"
+                              className="w-full px-3 py-2 text-sm border-2 border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all"
                               placeholder="0.00"
                             />
                           </div>
 
                           <div>
-                            <label className="form-label">Status</label>
-                            <select 
+                            <label className="block text-xs font-semibold mb-1.5 text-slate-700">Status</label>
+                            <select
                               name="is_active"
                               value={formData.is_active ? 'active' : 'inactive'}
                               onChange={(e) => setFormData(prev => ({ ...prev, is_active: e.target.value === 'active' }))}
-                              className="form-input"
+                              className="w-full px-3 py-2 text-sm border-2 border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all"
                             >
                               <option value="active">Active</option>
                               <option value="inactive">Inactive</option>
@@ -1819,114 +1764,92 @@ const BrokerModal: React.FC<BrokerModalProps> = ({
                 </div>
 
                 {/* Form Actions */}
-                <div className="flex items-center justify-end space-x-4 border-t border-slate-300 bg-white px-6 py-4">
-                  <div className="flex space-x-3">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                <div className="flex items-center justify-end space-x-2.5 border-t border-slate-300 bg-white px-6 py-3">
+                  <div className="flex space-x-2.5">
+                    <button
                       type="button"
                       onClick={onClose}
-                      className="px-4 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                      className="px-4 py-1.5 text-sm border-2 rounded-lg transition-all duration-200 font-medium border-slate-300 text-slate-700 hover:bg-white"
                       disabled={isLoading}
                     >
                       Cancel
-                    </motion.button>
+                    </button>
                     {activeTab === 'account-mapping' && (
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                      <button
                         type="button"
                         onClick={() => setActiveTab('basic')}
-                        className="px-4 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-colors"
+                        className="px-4 py-1.5 text-sm border-2 rounded-lg transition-all duration-200 font-medium border-slate-300 text-slate-700 hover:bg-white"
                         disabled={isLoading}
                       >
-                        Back to Basic Info
-                      </motion.button>
+                        ← Back
+                      </button>
                     )}
                   </div>
                   
-                  <div className="flex space-x-3">
+                  <div className="flex space-x-2.5">
                     {activeTab === 'basic' ? (
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                      <button
                         type="button"
                         onClick={() => {
                           if (validateForm()) {
                             setActiveTab('account-mapping')
                           }
                         }}
-                        className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-all shadow-sm hover:shadow-md flex items-center"
+                        className="px-5 py-1.5 text-sm bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-all duration-200 font-medium shadow-sm flex items-center gap-1.5"
                       >
                         Next: Account Mapping
-                        <svg className="w-3.5 h-3.5 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
-                      </motion.button>
+                      </button>
                     ) : activeTab === 'account-mapping' ? (
-                      <div className="flex space-x-3">
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
+                      <div className="flex space-x-2.5">
+                        <button
                           type="button"
                           onClick={() => setActiveTab(broker ? 'rights' : 'profiles')}
-                          className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-all shadow-sm hover:shadow-md flex items-center"
+                          className="px-5 py-1.5 text-sm bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-all duration-200 font-medium shadow-sm flex items-center gap-1.5"
                         >
                           Next: {broker ? 'Rights' : 'Assign Profile'}
-                          <svg className="w-3.5 h-3.5 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
+                        </button>
+                        <button
                           type="submit"
-                        className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
-                        disabled={isLoading || syncRightsMutation.isLoading}
-                      >
-                        {isLoading || syncRightsMutation.isLoading ? (
-                          <div className="flex items-center">
-                            <svg className="animate-spin -ml-1 mr-2 h-3.5 w-3.5 text-slate-700" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            {broker ? 'Updating...' : 'Creating...'}
-                          </div>
-                        ) : (
-                          <>
-                            <svg className="w-3.5 h-3.5 mr-1.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            {broker ? 'Update Broker' : 'Create Broker'}
-                          </>
-                        )}
-                      </motion.button>
+                          className="px-5 py-1.5 text-sm bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm"
+                          disabled={isLoading || syncRightsMutation.isLoading}
+                        >
+                          {isLoading || syncRightsMutation.isLoading ? (
+                            <div className="flex items-center gap-1.5">
+                              <svg className="animate-spin h-4 w-4 text-slate-700" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              {broker ? 'Updating...' : 'Creating...'}
+                            </div>
+                          ) : (
+                            <span>{broker ? 'Update Broker' : 'Create Broker'}</span>
+                          )}
+                        </button>
                       </div>
                     ) : (
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                      <button
                         type="submit"
-                        className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+                        className="px-5 py-1.5 text-sm bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm"
                         disabled={isLoading || syncRightsMutation.isLoading}
                       >
                         {isLoading || syncRightsMutation.isLoading ? (
-                          <div className="flex items-center">
-                            <svg className="animate-spin -ml-1 mr-2 h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
+                          <div className="flex items-center gap-1.5">
+                            <svg className="animate-spin h-4 w-4 text-slate-700" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                             {broker ? 'Updating...' : 'Creating...'}
                           </div>
                         ) : (
-                          <>
-                            <svg className="w-3.5 h-3.5 mr-1.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            {broker ? 'Update Broker' : 'Create Broker'}
-                          </>
+                          <span>{broker ? 'Update Broker' : 'Create Broker'}</span>
                         )}
-                      </motion.button>
+                      </button>
                     )}
                   </div>
                 </div>

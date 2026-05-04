@@ -10,6 +10,7 @@ import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import { Role, CreateRoleData, UpdateRoleData } from '../types'
 import toast from 'react-hot-toast'
 import PageHeaderShell from '../components/layout/PageHeaderShell'
+import { authService } from '../services/authService'
 
 import { PermissionGate } from '../components/PermissionGate'
 import { MODULES } from '../utils/permissions'
@@ -30,6 +31,17 @@ const Roles: React.FC = () => {
     roleName: ''
   })
   const queryClient = useQueryClient()
+
+  const refreshSessionPermissions = async () => {
+    try {
+      // Refresh token first in case backend permission claims are token-bound.
+      await authService.refreshToken()
+    } catch (error) {
+      console.warn('Token refresh after role update failed, falling back to auth:updated event', error)
+    }
+    // Force PermissionContext to fetch /api/auth/me immediately.
+    window.dispatchEvent(new Event('auth:updated'))
+  }
 
   // Fetch roles
   const { data: roles, isLoading, error, refetch } = useQuery(
@@ -71,8 +83,9 @@ const Roles: React.FC = () => {
     ({ id, roleData }: { id: number; roleData: UpdateRoleData }) =>
       roleService.updateRole(id, roleData),
     {
-      onSuccess: () => {
+      onSuccess: async () => {
         queryClient.invalidateQueries(['roles'])
+        await refreshSessionPermissions()
         setIsModalOpen(false)
         setEditingRole(null)
         toast.success('Role updated successfully!')

@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { motion } from 'framer-motion'
 import { userService, User, CreateUserData, UpdateUserData } from '../services/userService'
+import { authService } from '../services/authService'
 
 import { PermissionGate } from '../components/PermissionGate'
 import { MODULES } from '../utils/permissions'
@@ -37,6 +38,17 @@ const Users: React.FC = () => {
     username: ''
   })
   const queryClient = useQueryClient()
+
+  const refreshSessionPermissions = async () => {
+    try {
+      // Refresh token first in case backend permission claims are token-bound.
+      await authService.refreshToken()
+    } catch (error) {
+      console.warn('Token refresh after user update failed, falling back to auth:updated event', error)
+    }
+    // Force PermissionContext to fetch /api/auth/me immediately.
+    window.dispatchEvent(new Event('auth:updated'))
+  }
 
   // Fetch users
   const { data: usersResponse, isLoading, error, refetch } = useQuery(
@@ -126,9 +138,10 @@ const Users: React.FC = () => {
       return userService.updateUser(id, userData)
     },
     {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         console.log('✅ Users.tsx - Update successful, response:', data)
         queryClient.invalidateQueries(['users'])
+        await refreshSessionPermissions()
         setIsModalOpen(false)
         setEditingUser(null)
         toast.success('User updated successfully!')

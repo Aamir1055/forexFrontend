@@ -67,17 +67,23 @@ export const PERMISSIONS = {
  MT5_USER_VIEW: 'mt5.user.view',
  MT5_ACCOUNT_VIEW: 'mt5.account.view',
  MT5_DEALS_VIEW: 'mt5.deals.view',
+ MT5_DEALS_MANAGE: 'mt5.deals.manage',
  MT5_BALANCE_DEPOSIT: 'mt5.balance.deposit',
  MT5_BALANCE_WITHDRAW: 'mt5.balance.withdraw',
  MT5_BALANCE_MANAGE: 'mt5.balance.manage',
  MT5_USERS_BATCH: 'mt5.users.batch',
  
- // Rule Definition permissions
- RULES: 'rules', // Generic rules permission grants all access
- RULES_VIEW: 'rules.view',
- RULES_CREATE: 'rules.create',
- RULES_EDIT: 'rules.edit',
- RULES_DELETE: 'rules.delete',
+ // Rule Definition permissions — backend uses 'manage_rules' for all rule operations
+ RULES: 'rules', // Generic legacy shortcut
+ MANAGE_RULES: 'manage_rules', // Actual backend permission (covers view/create/edit/delete)
+ RULES_VIEW: 'manage_rules',
+ RULES_CREATE: 'manage_rules',
+ RULES_EDIT: 'manage_rules',
+ RULES_DELETE: 'manage_rules',
+
+ // Logs
+ LOGS_VIEW: 'logs.view',
+ AUDIT_LOGS_VIEW: 'audit.read',
 } as const
 
 // Module constants
@@ -179,7 +185,23 @@ export const getCurrentUser = (): User | null => {
 
 // Extract all permissions from user's roles
 export const getUserPermissions = (user: User | null): string[] => {
- if (!user || !user.roles || !Array.isArray(user.roles) || user.roles.length === 0) {
+ if (!user) {
+ return []
+ }
+
+ // Prefer explicit permissions from /api/auth/me when present.
+ // This ensures live permission updates take effect immediately without logout,
+ // even for roles like "admin" that previously relied on fallback role maps.
+ if (Array.isArray((user as any).permissions) && (user as any).permissions.length > 0) {
+ const directPermissions = (user as any).permissions
+  .map((permission: any) => typeof permission === 'string' ? permission : permission?.name)
+  .filter(Boolean)
+
+ console.log('🎯 getUserPermissions - Using explicit auth/me permissions:', directPermissions)
+ return Array.from(new Set(directPermissions))
+ }
+
+ if (!user.roles || !Array.isArray(user.roles) || user.roles.length === 0) {
  return []
  }
 
@@ -264,11 +286,6 @@ export const hasPermission = (permissionName: string, user?: User | null): boole
  const currentUser = user || getCurrentUser()
  if (!currentUser) return false
 
- // If user is admin, grant all permissions
- if (isAdmin(currentUser)) {
- return true
- }
-
  const userPermissions = getUserPermissions(currentUser)
  return userPermissions.includes(permissionName)
 }
@@ -291,107 +308,87 @@ export const hasAllPermissions = (permissionNames: string[], user?: User | null)
  return permissionNames.every(permission => userPermissions.includes(permission))
 }
 
-export const canViewModule = (module: string): boolean => {
+export const canViewModule = (module: string, user?: User | null): boolean => {
+ // Modules with no explicit permission in the 26-permission set are accessible to all authenticated users
  const viewPermissionMap: { [key: string]: string } = {
- [MODULES.DASHBOARD]: PERMISSIONS.DASHBOARD_VIEW,
  [MODULES.USERS]: PERMISSIONS.USERS_VIEW,
  [MODULES.BROKERS]: PERMISSIONS.BROKERS_VIEW,
  [MODULES.BROKER_PROFILES]: PERMISSIONS.BROKER_PROFILE_VIEW,
  [MODULES.ROLES]: PERMISSIONS.ROLES_VIEW,
- [MODULES.GROUPS]: PERMISSIONS.GROUPS_VIEW,
- [MODULES.TRADES]: PERMISSIONS.TRADE_VIEW,
- [MODULES.RULES]: PERMISSIONS.RULES_VIEW,
+ [MODULES.RULES]: PERMISSIONS.MANAGE_RULES, // backend uses 'manage_rules'
  [MODULES.AUDIT_LOGS]: PERMISSIONS.AUDIT_READ,
- [MODULES.LOGS]: PERMISSIONS.SYSTEM_ADMIN, // System/MT5 logs require system.admin
- [MODULES.PROFILE]: PERMISSIONS.PROFILE_VIEW,
+ [MODULES.LOGS]: PERMISSIONS.LOGS_VIEW, // backend uses 'logs.view'
  }
 
- const requiredPermission = viewPermissionMap[module]
- if (!requiredPermission) {
- return true // If no permission defined, allow by default
- }
-
- // Special case: 'rules' permission grants full access to Rules module
- if (module === MODULES.RULES && hasPermission(PERMISSIONS.RULES)) {
+ // Dashboard, Groups, Profile, Trades: no matching permission in the 26 — allow all authenticated users
+ if (!(module in viewPermissionMap)) {
  return true
  }
 
- return hasPermission(requiredPermission)
+ const requiredPermission = viewPermissionMap[module]
+ return hasPermission(requiredPermission, user)
 }
 
 // Check if user can create in a module
-export const canCreate = (module: string): boolean => {
+export const canCreate = (module: string, user?: User | null): boolean => {
  const createPermissionMap: { [key: string]: string } = {
  [MODULES.USERS]: PERMISSIONS.USERS_CREATE,
  [MODULES.BROKERS]: PERMISSIONS.BROKERS_CREATE,
  [MODULES.BROKER_PROFILES]: PERMISSIONS.BROKER_PROFILE_CREATE,
  [MODULES.ROLES]: PERMISSIONS.ROLES_CREATE,
- [MODULES.GROUPS]: PERMISSIONS.GROUPS_CREATE,
- [MODULES.TRADES]: PERMISSIONS.TRADE_CREATE,
- [MODULES.RULES]: PERMISSIONS.RULES_CREATE,
+ [MODULES.RULES]: PERMISSIONS.MANAGE_RULES, // 'manage_rules' covers all rule operations
+ }
+
+ // Groups/Trades: no explicit create permission in the 26 — allow if authenticated
+ if (!(module in createPermissionMap)) {
+ return !!user
  }
 
  const requiredPermission = createPermissionMap[module]
- if (!requiredPermission) return false
-
- // Special case: 'rules' permission grants full access to Rules module
- if (module === MODULES.RULES && hasPermission(PERMISSIONS.RULES)) {
- return true
- }
-
- return hasPermission(requiredPermission)
+ return hasPermission(requiredPermission, user)
 }
 
 // Check if user can edit in a module
-export const canEdit = (module: string): boolean => {
+export const canEdit = (module: string, user?: User | null): boolean => {
  const editPermissionMap: { [key: string]: string } = {
  [MODULES.USERS]: PERMISSIONS.USERS_EDIT,
  [MODULES.BROKERS]: PERMISSIONS.BROKERS_EDIT,
  [MODULES.BROKER_PROFILES]: PERMISSIONS.BROKER_PROFILE_UPDATE,
  [MODULES.ROLES]: PERMISSIONS.ROLES_EDIT,
- [MODULES.GROUPS]: PERMISSIONS.GROUPS_EDIT,
- [MODULES.TRADES]: PERMISSIONS.TRADE_EDIT,
- [MODULES.RULES]: PERMISSIONS.RULES_EDIT,
- [MODULES.PROFILE]: PERMISSIONS.PROFILE_EDIT,
+ [MODULES.RULES]: PERMISSIONS.MANAGE_RULES, // 'manage_rules' covers all rule operations
+ }
+
+ // Groups/Trades/Profile: no explicit edit permission in the 26 — allow if authenticated
+ if (!(module in editPermissionMap)) {
+ return !!user
  }
 
  const requiredPermission = editPermissionMap[module]
- if (!requiredPermission) return false
-
- // Special case: 'rules' permission grants full access to Rules module
- if (module === MODULES.RULES && hasPermission(PERMISSIONS.RULES)) {
- return true
- }
-
- return hasPermission(requiredPermission)
+ return hasPermission(requiredPermission, user)
 }
 
 // Check if user can delete in a module
-export const canDelete = (module: string): boolean => {
+export const canDelete = (module: string, user?: User | null): boolean => {
  const deletePermissionMap: { [key: string]: string } = {
  [MODULES.USERS]: PERMISSIONS.USERS_DELETE,
  [MODULES.BROKERS]: PERMISSIONS.BROKERS_DELETE,
  [MODULES.BROKER_PROFILES]: PERMISSIONS.BROKER_PROFILE_DELETE,
  [MODULES.ROLES]: PERMISSIONS.ROLES_DELETE,
- [MODULES.GROUPS]: PERMISSIONS.GROUPS_DELETE,
- [MODULES.TRADES]: PERMISSIONS.TRADE_DELETE,
- [MODULES.RULES]: PERMISSIONS.RULES_DELETE,
+ [MODULES.RULES]: PERMISSIONS.MANAGE_RULES, // 'manage_rules' covers all rule operations
+ }
+
+ // Groups/Trades: no explicit delete permission in the 26 — allow if authenticated
+ if (!(module in deletePermissionMap)) {
+ return !!user
  }
 
  const requiredPermission = deletePermissionMap[module]
- if (!requiredPermission) return false
-
- // Special case: 'rules' permission grants full access to Rules module
- if (module === MODULES.RULES && hasPermission(PERMISSIONS.RULES)) {
- return true
- }
-
- return hasPermission(requiredPermission)
+ return hasPermission(requiredPermission, user)
 }
 
 // Get accessible modules for current user
-export const getAccessibleModules = (): string[] => {
- return Object.values(MODULES).filter(module => canViewModule(module))
+export const getAccessibleModules = (user?: User | null): string[] => {
+ return Object.values(MODULES).filter(module => canViewModule(module, user))
 }
 
 // Check if user is admin (has all permissions)

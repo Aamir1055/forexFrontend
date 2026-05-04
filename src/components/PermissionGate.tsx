@@ -52,11 +52,6 @@ export const PermissionGate: React.FC<PermissionGateProps> = ({
 }) => {
   const permissionContext = usePermissions()
 
-  // If user is admin, grant access to everything immediately
-  if (permissionContext.isAdmin) {
-    return <>{children}</>
-  }
-
   let hasAccess = false
 
   // Check by module and action
@@ -127,11 +122,6 @@ export const usePermissionCheck = () => {
         ? permissionContext.hasAllPermissions(permissions)
         : permissionContext.hasAnyPermission(permissions)
     } else {
-      hasAccess = true
-    }
-
-    // If user is admin, grant access to everything
-    if (permissionContext.isAdmin) {
       hasAccess = true
     }
 

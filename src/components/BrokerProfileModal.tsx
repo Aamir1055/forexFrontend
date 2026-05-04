@@ -226,7 +226,7 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[600px] overflow-hidden"
+            className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl flex flex-col overflow-hidden" style={{ maxHeight: '90vh' }}
           >
             {/* Header */}
             <div className="px-6 py-4 bg-white border-b border-slate-300">
@@ -274,34 +274,34 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
               </nav>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
               {/* Tab Content */}
-              <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(75vh - 120px)' }}>
+              <div className="p-4 overflow-y-auto flex-1">
                 {/* Basic Info Tab */}
                 {activeTab === 'basic' && (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-medium text-slate-700 mb-1">
-                        Profile Name *
+                      <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        Profile Name <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-400 focus:border-transparent"
+                        className="w-full px-3 py-2 text-sm border-2 border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all"
                         placeholder="Enter profile name"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-slate-700 mb-1">
-                        Description *
+                      <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        Description <span className="text-red-500">*</span>
                       </label>
                       <textarea
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-400 focus:border-transparent"
+                        className="w-full px-3 py-2 text-sm border-2 border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all"
                         placeholder="Enter profile description"
                         rows={3}
                         required
@@ -499,11 +499,11 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-end gap-2 px-4 py-2.5 border-t border-slate-300 bg-white">
+              <div className="flex items-center justify-end space-x-2.5 px-6 py-3 border-t border-slate-300 bg-white">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-3 py-1.5 text-xs text-slate-700 hover:bg-blue-200 rounded-lg transition-colors"
+                  className="px-4 py-1.5 text-sm font-medium border-2 border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-all duration-200"
                   disabled={isLoading}
                 >
                   Cancel
@@ -511,7 +511,7 @@ const BrokerProfileModal: React.FC<BrokerProfileModalProps> = ({
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="px-4 py-1.5 text-xs bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-5 py-1.5 text-sm font-medium bg-white border border-slate-300 text-slate-700 rounded-lg shadow-sm hover:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Saving...' : profile ? 'Update Profile' : 'Create Profile'}
                 </button>

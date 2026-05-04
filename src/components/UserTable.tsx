@@ -5,6 +5,7 @@ import {
 import { User, PaginationInfo } from '../services/userService'
 import { PermissionGate } from './PermissionGate'
 import { MODULES } from '../utils/permissions'
+import { usePermissions } from '../contexts/PermissionContext'
 
 interface UserTableProps {
   users: User[]
@@ -34,6 +35,9 @@ const UserTable: React.FC<UserTableProps> = ({
   currentPage,
   onPageChange
 }) => {
+  const { canEdit, canDelete } = usePermissions()
+  const showActions = canEdit(MODULES.USERS) || canDelete(MODULES.USERS)
+
   // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -168,9 +172,11 @@ const UserTable: React.FC<UserTableProps> = ({
                   )}
                 </div>
               </th>
-              <th className={`px-4 py-3 text-center text-xs font-bold uppercase tracking-wider ${
-                'text-slate-700'
-              }`}>Actions</th>
+              {showActions && (
+                <th className={`px-4 py-3 text-center text-xs font-bold uppercase tracking-wider ${
+                  'text-slate-700'
+                }`}>Actions</th>
+              )}
             </tr>
           </thead>
           <tbody className={`divide-y ${
@@ -247,32 +253,34 @@ const UserTable: React.FC<UserTableProps> = ({
                     <span className="text-xs text-slate-600 font-medium">{formatDate(user.created_at)}</span>
                   </div>
                 </td>
-                <td className="px-3 py-2 whitespace-nowrap text-center">
-                  <div className="flex items-center justify-center gap-1">
-                    <PermissionGate module={MODULES.USERS} action="edit">
-                      <button 
-                        onClick={() => onEdit(user)}
-                        className="group/btn relative p-1.5 text-blue-600 hover:text-white rounded-lg bg-blue-50 hover:bg-blue-700 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/50 hover:scale-110"
-                        title="Edit user"
-                      >
-                        <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                      </button>
-                    </PermissionGate>
-                    <PermissionGate module={MODULES.USERS} action="delete">
-                      <button 
-                        onClick={() => onDelete(user.id)}
-                        className="group/btn relative p-1.5 text-red-500 hover:text-white rounded-lg bg-blue-50 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:shadow-red-500/50 hover:scale-110"
-                        title="Delete user"
-                      >
-                        <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </PermissionGate>
-                  </div>
-                </td>
+                {showActions && (
+                  <td className="px-3 py-2 whitespace-nowrap text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <PermissionGate module={MODULES.USERS} action="edit">
+                        <button 
+                          onClick={() => onEdit(user)}
+                          className="group/btn relative p-1.5 text-blue-600 hover:text-white rounded-lg bg-blue-50 hover:bg-blue-700 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/50 hover:scale-110"
+                          title="Edit user"
+                        >
+                          <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
+                      </PermissionGate>
+                      <PermissionGate module={MODULES.USERS} action="delete">
+                        <button 
+                          onClick={() => onDelete(user.id)}
+                          className="group/btn relative p-1.5 text-red-500 hover:text-white rounded-lg bg-blue-50 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-200 hover:shadow-md hover:shadow-red-500/50 hover:scale-110"
+                          title="Delete user"
+                        >
+                          <svg className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </PermissionGate>
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

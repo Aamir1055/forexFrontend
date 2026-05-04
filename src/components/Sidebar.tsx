@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   X,
@@ -56,29 +56,18 @@ const allNavigation: NavigationItem[] = [
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation()
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const navigate = useNavigate()
-  const { canViewModule, isAdmin, user, permissions } = usePermissions()
+  const { canViewModule } = usePermissions()
 
-  // Filter navigation items based on user permissions
-  const navigation = allNavigation.filter(item => {
-    // If user is admin, show everything
-    if (isAdmin) {
-      return true
-    }
-    
-    // Always show Dashboard
-    if (item.href === '/') {
-      return true
-    }
-    
-    // If no module specified, show the item
-    if (!item.module) {
-      return true
-    }
-    
-    // Check if user has permission to view the module
+  // Show only modules the user can view
+  const navigation = allNavigation.filter((item) => {
+    if (item.href === '/') return true
+    if (!item.module) return true
     return canViewModule(item.module)
   })
+
+  const handleNavClick = () => {
+    onClose()
+  }
 
   const { logout } = useAuth()
   const handleLogout = async () => {
@@ -141,6 +130,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                     <Link
                       to={item.href}
                       title={isCollapsed ? item.name : undefined}
+                      onClick={handleNavClick}
                       className={cn(
                         "flex items-center rounded-lg transition-all duration-200 group relative",
                         isCollapsed ? "justify-center h-11 w-11 mx-auto" : "space-x-3 p-3",
@@ -261,7 +251,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                         <div key={item.name}>
                           <Link
                             to={item.href}
-                            onClick={onClose}
+                            onClick={handleNavClick}
                             className={cn(
                               "flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 group relative",
                               isActive

@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { useLocation } from 'react-router-dom'
 import { User, Role } from '../types'
 import { userService } from '../services/userService'
+import { useAuth } from './AuthContext'
 import { 
  hasPermission as checkPermission,
  hasAnyPermission as checkAnyPermission,
@@ -16,6 +18,7 @@ import {
 interface PermissionContextType {
  user: User | null
  permissions: string[]
+ isLoading: boolean
  hasPermission: (permission: string) => boolean
  hasAnyPermission: (permissions: string[]) => boolean
  hasAllPermissions: (permissions: string[]) => boolean
@@ -46,16 +49,18 @@ interface PermissionProviderProps {
 }
 
 export const PermissionProvider: React.FC<PermissionProviderProps> = ({ children }) => {
+ const { initialized, token } = useAuth()
+ const location = useLocation()
  const [user, setUser] = useState<User | null>(null)
  const [permissions, setPermissions] = useState<string[]>([])
  const [accessibleModules, setAccessibleModules] = useState<string[]>([])
  const [isLoadingPermissions, setIsLoadingPermissions] = useState(true)
 
- // Fetch current user with permissions from /api/users/me
+ // Fetch current user with permissions from /api/auth/me
  const fetchUserPermissions = async () => {
- const token = localStorage.getItem('authToken')
+ const authToken = localStorage.getItem('authToken')
  
- if (!token) {
+ if (!authToken) {
  setUser(null)
  setPermissions([])
  setAccessibleModules([])
@@ -63,52 +68,70 @@ export const PermissionProvider: React.FC<PermissionProviderProps> = ({ children
  return
  }
 
+	// Show loading state on every fetch so ModuleRoute shows a spinner
+	// instead of AccessDenied while fresh permissions are in-flight.
+	setIsLoadingPermissions(true)
+
  try {
  const response = await userService.getCurrentUser()
- const userData = response.data.user
- 
+ // Handle both { data: {...} } and flat { id, permissions, ... } API shapes
+ const data = response.data ?? response
+
+ // Map the auth/me response shape to the User type
+ const userData = {
+ id: data.id,
+ username: data.username,
+ email: data.email,
+ is_active: data.is_active,
+ permissions: Array.isArray(data.permissions) ? data.permissions : [],
+ // Map string roles array to Role objects for compatibility
+ roles: Array.isArray(data.roles)
+ ? data.roles.map((r: string) => ({ id: 0, name: r, description: '', created_at: '', updated_at: '' }))
+ : [],
+ } as any
+
+ localStorage.setItem('user', JSON.stringify(userData))
+ localStorage.setItem('authUser', JSON.stringify({ username: data.username, email: data.email }))
+
  setUser(userData)
- 
- // Extract all permissions from all roles
- const allPermissions: string[] = []
- if (userData.roles && Array.isArray(userData.roles)) {
- userData.roles.forEach(role => {
- if (role.permissions && Array.isArray(role.permissions)) {
- role.permissions.forEach(perm => {
- if (perm.name && !allPermissions.includes(perm.name)) {
- allPermissions.push(perm.name)
- }
- })
- }
- })
- }
- 
- console.log('✅ Loaded user permissions from /api/users/me:', allPermissions)
+
+ // Permissions come as a flat string array directly from the API
+ const allPermissions: string[] = Array.isArray(data.permissions) ? data.permissions : []
+
+ console.log('✅ Loaded user permissions from /api/auth/me:', allPermissions)
  setPermissions(allPermissions)
- setAccessibleModules(fetchAccessibleModules())
+ setAccessibleModules(fetchAccessibleModules(userData))
  setIsLoadingPermissions(false)
  } catch (error) {
  console.error('❌ Failed to fetch user permissions:', error)
- setUser(null)
- setPermissions([])
- setAccessibleModules([])
+ // Do NOT clear permissions on transient network errors — keep existing state.
  setIsLoadingPermissions(false)
  }
  }
 
- // Load user permissions on mount
+ // Load user permissions after auth initialization, on token changes,
+ // and on route/tab changes so /api/auth/me is called when navigating.
  useEffect(() => {
- fetchUserPermissions()
- }, [])
+ if (!initialized) {
+ setIsLoadingPermissions(true)
+ return
+ }
 
- // Listen for auth updates (login/logout)
+ fetchUserPermissions()
+ }, [initialized, token, location.pathname])
+
+ // Listen for auth updates (login/logout/refresh)
  useEffect(() => {
  const handleAuthUpdate = () => {
  fetchUserPermissions()
  }
 
  window.addEventListener('auth:updated', handleAuthUpdate)
- return () => window.removeEventListener('auth:updated', handleAuthUpdate)
+ window.addEventListener('token:refreshed', handleAuthUpdate)
+ return () => {
+ window.removeEventListener('auth:updated', handleAuthUpdate)
+ window.removeEventListener('token:refreshed', handleAuthUpdate)
+ }
  }, [])
 
  const hasPermission = (permission: string): boolean => {
@@ -124,19 +147,19 @@ export const PermissionProvider: React.FC<PermissionProviderProps> = ({ children
  }
 
  const canViewModule = (module: string): boolean => {
- return checkCanViewModule(module)
+ return checkCanViewModule(module, user)
  }
 
  const canCreate = (module: string): boolean => {
- return checkCanCreate(module)
+ return checkCanCreate(module, user)
  }
 
  const canEdit = (module: string): boolean => {
- return checkCanEdit(module)
+ return checkCanEdit(module, user)
  }
 
  const canDelete = (module: string): boolean => {
- return checkCanDelete(module)
+ return checkCanDelete(module, user)
  }
 
  const isAdmin = checkIsAdmin(user)
@@ -150,6 +173,7 @@ export const PermissionProvider: React.FC<PermissionProviderProps> = ({ children
  value={{
  user,
  permissions,
+ isLoading: isLoadingPermissions,
  hasPermission,
  hasAnyPermission,
  hasAllPermissions,

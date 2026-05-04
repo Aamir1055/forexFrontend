@@ -1,10 +1,13 @@
 
+import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import { Toaster } from 'react-hot-toast'
+import { Toaster, toast } from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
+import { PermissionGate } from './components/PermissionGate'
 import { PermissionProvider } from './contexts/PermissionContext'
+import { usePermissions } from './contexts/PermissionContext'
 import Login from './pages/Login'
 import Users from './pages/Users'
 import Roles from './pages/Roles'
@@ -20,6 +23,41 @@ import ApiMetrics from './pages/ApiMetrics'
 import ModalTest from './components/ModalTest'
 import Dashboard from './pages/Dashboard'
 import CreateBroker from './pages/CreateBroker'
+import { MODULES, PERMISSIONS } from './utils/permissions'
+
+
+const AccessDenied = ({ title }: { title: string }) => {
+    useEffect(() => {
+        toast.error(`You do not have permission to access ${title}.`, { id: `access-denied-${title}` })
+    }, [title])
+
+    return (
+        <div className="flex min-h-[60vh] items-center justify-center px-4">
+            <div className="w-full max-w-xl rounded-2xl border border-slate-300 bg-white p-8 text-center shadow-sm">
+                <h2 className="text-xl font-bold text-slate-900">You do not have permission</h2>
+                <p className="mt-2 text-sm text-slate-500">You do not have permission to access the {title} page.</p>
+            </div>
+        </div>
+    )
+}
+
+const ModuleRoute = ({ module, title, children }: { module: string; title: string; children: React.ReactNode }) => {
+    const { isLoading } = usePermissions()
+    // While /api/auth/me is in-flight show a spinner so we never flash
+    // "Access Denied" before fresh permissions have arrived.
+    if (isLoading) {
+        return (
+            <div className="flex min-h-[60vh] items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+            </div>
+        )
+    }
+    return (
+        <PermissionGate module={module} action="view" fallback={<AccessDenied title={title} />}>
+            {children}
+        </PermissionGate>
+    )
+}
 
 
 
@@ -40,20 +78,20 @@ function App() {
                                     className="min-h-full"
                                 >
                                     <Routes>
-                                        <Route path="/" element={<Dashboard />} />
-                                        <Route path="/users" element={<Users />} />
-                                        <Route path="/roles" element={<Roles />} />
-                                        <Route path="/brokers" element={<Brokers />} />
-                                        <Route path="/broker-profiles" element={<BrokerProfiles />} />
-                                        <Route path="/groups" element={<Groups />} />
-                                        <Route path="/rules" element={<Rules />} />
-                                        <Route path="/audit-logs" element={<AuditLogs />} />
-                                        <Route path="/logs" element={<Logs />} />
+                                        <Route path="/" element={<ModuleRoute module={MODULES.DASHBOARD} title="Dashboard"><Dashboard /></ModuleRoute>} />
+                                        <Route path="/users" element={<ModuleRoute module={MODULES.USERS} title="Users"><Users /></ModuleRoute>} />
+                                        <Route path="/roles" element={<ModuleRoute module={MODULES.ROLES} title="Roles"><Roles /></ModuleRoute>} />
+                                        <Route path="/brokers" element={<ModuleRoute module={MODULES.BROKERS} title="Brokers"><Brokers /></ModuleRoute>} />
+                                        <Route path="/broker-profiles" element={<ModuleRoute module={MODULES.BROKER_PROFILES} title="Broker Profiles"><BrokerProfiles /></ModuleRoute>} />
+                                        <Route path="/groups" element={<ModuleRoute module={MODULES.GROUPS} title="Groups"><Groups /></ModuleRoute>} />
+                                        <Route path="/rules" element={<ModuleRoute module={MODULES.RULES} title="Rules"><Rules /></ModuleRoute>} />
+                                        <Route path="/audit-logs" element={<ModuleRoute module={MODULES.AUDIT_LOGS} title="Audit Logs"><AuditLogs /></ModuleRoute>} />
+                                        <Route path="/logs" element={<ModuleRoute module={MODULES.LOGS} title="Logs"><Logs /></ModuleRoute>} />
                                         <Route path="/api-metrics" element={<ApiMetrics />} />
 
-                                        <Route path="/settings" element={<Settings />} />
+                                        <Route path="/settings" element={<ModuleRoute module={MODULES.PROFILE} title="Settings"><Settings /></ModuleRoute>} />
                                         <Route path="/modal-test" element={<ModalTest />} />
-                                        <Route path="/create-broker" element={<CreateBroker />} />
+                                        <Route path="/create-broker" element={<PermissionGate permission={PERMISSIONS.BROKERS_CREATE} fallback={<AccessDenied title="Create Broker" />}><CreateBroker /></PermissionGate>} />
                                     </Routes>
                                 </motion.div>
                             </Layout>

@@ -12,6 +12,7 @@ export interface User {
  two_factor_secret: string | null
  two_factor_verified_at: string | null
  two_factor_backup_codes: string | null
+ permissions?: Array<string | Permission>
  roles: Role[]
 }
 

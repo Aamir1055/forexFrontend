@@ -143,25 +143,21 @@ const RuleModal: React.FC<RuleModalProps> = ({
             className="relative w-full max-w-2xl overflow-hidden rounded-xl bg-white shadow-xl"
           >
             {/* Header */}
-            <div className="flex items-center justify-between bg-white border-b border-slate-300 px-5 py-4">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">
-                  {rule ? 'Edit Rule' : 'Create New Rule'}
-                </h2>
-                <p className="mt-0.5 text-xs text-slate-500">
-                  Configure rule details and MT5 mapping values
-                </p>
-              </div>
+            <div className="flex items-center justify-between bg-white border-b border-slate-300 px-6 py-3.5">
+              <h2 className="text-lg font-bold text-slate-900">
+                {rule ? 'Edit Rule' : 'Create New Rule'}
+              </h2>
               <button
+                type="button"
                 onClick={onClose}
-                className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-blue-100 hover:text-slate-700"
+                className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-blue-100 hover:text-slate-700"
               >
                 <XMarkIcon className="h-5 w-5" />
               </button>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-2 p-4">
+            <form onSubmit={handleSubmit} className="space-y-4 p-6">
               {/* General Error Alert */}
               {errors.general && (
                 <div className="rounded-lg bg-red-50 border border-red-200 p-4">
@@ -178,10 +174,10 @@ const RuleModal: React.FC<RuleModalProps> = ({
                 </div>
               )}
 
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {/* Rule Code */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Rule Code <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -190,21 +186,19 @@ const RuleModal: React.FC<RuleModalProps> = ({
                     value={formData.rule_code}
                     onChange={handleChange}
                     disabled={!!rule}
-                    className={`w-full rounded-lg border ${
-                      errors.rule_code ? 'border-red-300' : 'border-slate-300'
-                    } px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-slate-400/20 ${
-                      rule ? 'bg-blue-100 cursor-not-allowed' : ''
+                    className={`w-full px-3 py-2 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all ${
+                      errors.rule_code ? 'border-red-300 bg-red-50/50' : rule ? 'border-slate-300 bg-slate-100 cursor-not-allowed text-slate-500' : 'border-slate-300 bg-white text-slate-900'
                     }`}
                     placeholder="e.g., CLOSE_ONLY"
                   />
                   {errors.rule_code && (
-                    <p className="mt-1 text-xs text-red-500">{errors.rule_code}</p>
+                    <p className="mt-1 text-[10px] text-red-600 font-medium">⚠️ {errors.rule_code}</p>
                   )}
                 </div>
 
                 {/* Rule Name */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Rule Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -212,31 +206,31 @@ const RuleModal: React.FC<RuleModalProps> = ({
                     name="rule_name"
                     value={formData.rule_name}
                     onChange={handleChange}
-                    className={`w-full rounded-lg border ${
-                      errors.rule_name ? 'border-red-300' : 'border-slate-300'
-                    } px-4 py-2.5 text-sm focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400/20`}
+                    className={`w-full px-3 py-2 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all ${
+                      errors.rule_name ? 'border-red-300 bg-red-50/50' : 'border-slate-300 bg-white text-slate-900'
+                    }`}
                     placeholder="e.g., Close Only"
                   />
                   {errors.rule_name && (
-                    <p className="mt-1 text-xs text-red-500">{errors.rule_name}</p>
+                    <p className="mt-1 text-[10px] text-red-600 font-medium">⚠️ {errors.rule_name}</p>
                   )}
                 </div>
               </div>
 
               <div>
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {/* MT5 Field */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     MT5 Field <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="mt5_field"
                     value={formData.mt5_field}
                     onChange={handleChange}
-                    className={`w-full rounded-lg border ${
-                      errors.mt5_field ? 'border-red-300' : 'border-slate-300'
-                    } px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-slate-400/20 bg-white`}
+                    className={`w-full px-3 py-2 text-sm border-2 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all ${
+                      errors.mt5_field ? 'border-red-300 bg-red-50/50' : 'border-slate-300'
+                    }`}
                   >
                     <option value="">Select MT5 Field</option>
                     <option value="Group">Group</option>
@@ -257,13 +251,13 @@ const RuleModal: React.FC<RuleModalProps> = ({
                     <option value="Comment">Comment</option>
                   </select>
                   {errors.mt5_field && (
-                    <p className="mt-1 text-xs text-red-500">{errors.mt5_field}</p>
+                    <p className="mt-1 text-[10px] text-red-600 font-medium">⚠️ {errors.mt5_field}</p>
                   )}
                 </div>
 
                 {/* MT5 Value Template */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     MT5 Value Template <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -271,15 +265,15 @@ const RuleModal: React.FC<RuleModalProps> = ({
                     name="mt5_value_template"
                     value={formData.mt5_value_template}
                     onChange={handleChange}
-                    className={`w-full rounded-lg border ${
-                      errors.mt5_value_template ? 'border-red-300' : 'border-slate-300'
-                    } px-4 py-2.5 text-sm focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400/20`}
+                    className={`w-full px-3 py-2 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all ${
+                      errors.mt5_value_template ? 'border-red-300 bg-red-50/50' : 'border-slate-300 bg-white text-slate-900'
+                    }`}
                     placeholder="e.g., Close Only, Reject {time}"
                   />
                   {errors.mt5_value_template && (
-                    <p className="mt-1 text-xs text-red-500">{errors.mt5_value_template}</p>
+                    <p className="mt-1 text-[10px] text-red-600 font-medium">⚠️ {errors.mt5_value_template}</p>
                   )}
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-[10px] text-slate-500">
                     Use {'{time}'} placeholder if the rule requires a time parameter
                   </p>
                 </div>
@@ -287,21 +281,21 @@ const RuleModal: React.FC<RuleModalProps> = ({
 
                 {/* Description */}
                 <div className="mt-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Description <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    rows={2}
-                    className={`w-full rounded-lg border ${
-                      errors.description ? 'border-red-300' : 'border-slate-300'
-                    } px-3 py-2 text-sm focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400/20`}
+                    rows={3}
+                    className={`w-full px-3 py-2 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-300 transition-all ${
+                      errors.description ? 'border-red-300 bg-red-50/50' : 'border-slate-300 bg-white text-slate-900'
+                    }`}
                     placeholder="Describe what this rule does..."
                   />
                   {errors.description && (
-                    <p className="mt-1 text-xs text-red-500">{errors.description}</p>
+                    <p className="mt-1 text-[10px] text-red-600 font-medium">⚠️ {errors.description}</p>
                   )}
                 </div>
               </div>
@@ -345,19 +339,19 @@ const RuleModal: React.FC<RuleModalProps> = ({
               </div>
 
               {/* Buttons */}
-              <div className="flex justify-end gap-3 pt-2 border-t border-slate-300">
+              <div className="flex justify-end items-center space-x-2.5 pt-2 border-t border-slate-300">
                 <button
                   type="button"
                   onClick={onClose}
                   disabled={isLoading}
-                  className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-white transition-colors disabled:opacity-50"
+                  className="px-4 py-1.5 text-sm font-medium border-2 border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-all duration-200 disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-5 py-1.5 text-sm font-medium bg-white border border-slate-300 text-slate-700 rounded-lg shadow-sm hover:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <span className="flex items-center gap-2">
