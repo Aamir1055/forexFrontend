@@ -9,7 +9,6 @@ import {
 } from '@heroicons/react/24/outline'
 import { motion } from 'framer-motion'
 import { userService, User, CreateUserData, UpdateUserData } from '../services/userService'
-import { authService } from '../services/authService'
 
 import { PermissionGate } from '../components/PermissionGate'
 import { MODULES } from '../utils/permissions'
@@ -18,6 +17,7 @@ import UserModal from '../components/UserModal'
 import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import PageHeaderShell from '../components/layout/PageHeaderShell'
 import toast from 'react-hot-toast'
+import { authService } from '../services/authService'
 
 const Users: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -40,16 +40,16 @@ const Users: React.FC = () => {
   const queryClient = useQueryClient()
 
   const refreshSessionPermissions = async () => {
+    const savedToken = localStorage.getItem('authToken')
+    const savedRefresh = localStorage.getItem('refreshToken')
     try {
-      // Refresh token first in case backend permission claims are token-bound.
       await authService.refreshToken()
-    } catch (error) {
-      console.warn('Token refresh after user update failed, falling back to auth:updated event', error)
+    } catch {
+      if (savedToken && !localStorage.getItem('authToken')) localStorage.setItem('authToken', savedToken)
+      if (savedRefresh && !localStorage.getItem('refreshToken')) localStorage.setItem('refreshToken', savedRefresh)
     }
-    // Force PermissionContext to fetch /api/auth/me immediately.
     window.dispatchEvent(new Event('auth:updated'))
   }
-
   // Fetch users
   const { data: usersResponse, isLoading, error, refetch } = useQuery(
     ['users', currentPage, itemsPerPage],

@@ -10,8 +10,8 @@ import ConfirmationDialog from '../components/ui/ConfirmationDialog'
 import { Role, CreateRoleData, UpdateRoleData } from '../types'
 import toast from 'react-hot-toast'
 import PageHeaderShell from '../components/layout/PageHeaderShell'
-import { authService } from '../services/authService'
 
+import { authService } from '../services/authService'
 import { PermissionGate } from '../components/PermissionGate'
 import { MODULES } from '../utils/permissions'
 
@@ -33,13 +33,18 @@ const Roles: React.FC = () => {
   const queryClient = useQueryClient()
 
   const refreshSessionPermissions = async () => {
+    // Need a new JWT so updated permission claims are included.
+    // Save tokens first — authService.refreshToken clears them on 401/403.
+    // If refresh fails we restore the originals so the session stays alive.
+    const savedToken = localStorage.getItem('authToken')
+    const savedRefresh = localStorage.getItem('refreshToken')
     try {
-      // Refresh token first in case backend permission claims are token-bound.
       await authService.refreshToken()
-    } catch (error) {
-      console.warn('Token refresh after role update failed, falling back to auth:updated event', error)
+    } catch {
+      if (savedToken && !localStorage.getItem('authToken')) localStorage.setItem('authToken', savedToken)
+      if (savedRefresh && !localStorage.getItem('refreshToken')) localStorage.setItem('refreshToken', savedRefresh)
     }
-    // Force PermissionContext to fetch /api/auth/me immediately.
+    // Force PermissionContext to re-fetch /api/auth/me with the new token.
     window.dispatchEvent(new Event('auth:updated'))
   }
 
