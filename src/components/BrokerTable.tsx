@@ -3,7 +3,8 @@ import {
   PencilIcon, 
   TrashIcon,
   ChevronLeftIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
+  DocumentTextIcon
 } from '@heroicons/react/24/outline'
 import { Broker } from '../types'
 
@@ -17,6 +18,7 @@ interface BrokerTableProps {
   onEdit: (broker: Broker) => void
   onDelete: (id: number) => void
   onToggleStatus: (id: number) => void
+  onViewBills?: (broker: Broker) => void
   onSort: (field: string) => void
   currentSort: { field: string; order: 'ASC' | 'DESC' }
   pagination?: {
@@ -36,6 +38,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
   onEdit,
   onDelete,
   onToggleStatus,
+  onViewBills,
   onSort,
   currentSort,
   pagination,
@@ -44,7 +47,7 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
   topContent
 }) => {
   const { canEdit, canDelete } = usePermissions()
-  const showActions = canEdit(MODULES.BROKERS) || canDelete(MODULES.BROKERS)
+  const showActions = canEdit(MODULES.BROKERS) || canDelete(MODULES.BROKERS) || !!onViewBills
 
     // No need to fetch rights separately; use rights_count from brokers API response
     // Remove brokerRights and loadingRights state and effect
@@ -105,6 +108,15 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
+                    {onViewBills && (
+                      <button
+                        onClick={() => onViewBills(broker)}
+                        className="p-1 text-blue-500 hover:text-blue-700"
+                        title="View bills"
+                      >
+                        <DocumentTextIcon className="h-5 w-5" />
+                      </button>
+                    )}
                     <PermissionGate module={MODULES.BROKERS} action="edit">
                       <button
                         onClick={() => onEdit(broker)}
@@ -283,6 +295,15 @@ const BrokerTable: React.FC<BrokerTableProps> = ({
                   {showActions && (
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
+                        {onViewBills && (
+                          <button
+                            onClick={() => onViewBills(broker)}
+                            className="group/btn relative p-1.5 text-blue-600 hover:text-white rounded-lg bg-blue-50 hover:bg-blue-700 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/50 hover:scale-110"
+                            title="View bills"
+                          >
+                            <DocumentTextIcon className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" />
+                          </button>
+                        )}
                         <PermissionGate module={MODULES.BROKERS} action="edit">
                           <button 
                             onClick={() => onEdit(broker)}

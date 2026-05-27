@@ -248,13 +248,22 @@ export default function ApiMetrics() {
             <span>Refresh</span>
           </button>
         </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200">
+        <div className="w-full">
+          <table className="w-full table-fixed divide-y divide-slate-200">
+            <colgroup>
+              <col style={{ width: '34%' }} />
+              <col style={{ width: '10%' }} />
+              <col style={{ width: '11%' }} />
+              <col style={{ width: '11%' }} />
+              <col style={{ width: '11%' }} />
+              <col style={{ width: '11%' }} />
+              <col style={{ width: '12%' }} />
+            </colgroup>
             <thead className="bg-white">
               <tr>
                 <th
                   onClick={() => handleSort('path')}
-                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
+                  className="group cursor-pointer px-3 py-3 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
                   <div className="flex items-center space-x-2">
                     <span>API Path</span>
@@ -263,54 +272,54 @@ export default function ApiMetrics() {
                 </th>
                 <th
                   onClick={() => handleSort('total_calls')}
-                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
+                  className="group cursor-pointer px-2 py-3 text-right text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-end space-x-2">
                     <span>Calls</span>
                     <SortIcon field="total_calls" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort('avg_time_ms')}
-                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
+                  className="group cursor-pointer px-2 py-3 text-right text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-end space-x-2">
                     <span>Avg Time</span>
                     <SortIcon field="avg_time_ms" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort('min_time_ms')}
-                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
+                  className="group cursor-pointer px-2 py-3 text-right text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-end space-x-2">
                     <span>Min Time</span>
                     <SortIcon field="min_time_ms" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort('max_time_ms')}
-                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
+                  className="group cursor-pointer px-2 py-3 text-right text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-end space-x-2">
                     <span>Max Time</span>
                     <SortIcon field="max_time_ms" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort('total_sent_bytes')}
-                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
+                  className="group cursor-pointer px-2 py-3 text-right text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-end space-x-2">
                     <span>Data Sent</span>
                     <SortIcon field="total_sent_bytes" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort('total_received_bytes')}
-                  className="group cursor-pointer px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
+                  className="group cursor-pointer px-3 py-3 text-right text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600 transition-colors duration-150 hover:bg-slate-50"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-end space-x-2">
                     <span>Data Received</span>
                     <SortIcon field="total_received_bytes" />
                   </div>
@@ -320,27 +329,27 @@ export default function ApiMetrics() {
             <tbody className="divide-y divide-slate-200 bg-white">
               {sortedMetrics.map((metric, index) => (
                 <tr key={index} className="group transition-colors duration-150 hover:bg-white/80">
-                  <td className="px-6 py-4">
-                    <code className="rounded-full bg-blue-50 px-4 py-1.5 font-mono text-xs text-blue-700 border border-blue-200 inline-flex items-center justify-center">
+                  <td className="px-3 py-3">
+                    <code className="block w-full max-w-[260px] truncate rounded-full bg-blue-50 px-3 py-1 text-left font-mono text-xs text-blue-700 border border-blue-200" title={metric.path}>
                       {metric.path}
                     </code>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-700">
+                  <td className="px-2 py-3 whitespace-nowrap text-right text-sm font-semibold text-slate-700">
                     {metric.total_calls.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-700">
+                  <td className="px-2 py-3 whitespace-nowrap text-right text-sm font-semibold text-slate-700">
                     {formatTime(metric.avg_time_ms)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-amber-600">
+                  <td className="px-2 py-3 whitespace-nowrap text-right text-sm font-semibold text-amber-600">
                     {formatTime(metric.min_time_ms)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-rose-600">
+                  <td className="px-2 py-3 whitespace-nowrap text-right text-sm font-semibold text-rose-600">
                     {formatTime(metric.max_time_ms)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-700">
+                  <td className="px-2 py-3 whitespace-nowrap text-right text-sm font-semibold text-slate-700">
                     {formatBytes(metric.total_sent_bytes)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-700">
+                  <td className="px-3 py-3 whitespace-nowrap text-right text-sm font-semibold text-slate-700">
                     {formatBytes(metric.total_received_bytes)}
                   </td>
                 </tr>

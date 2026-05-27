@@ -23,6 +23,8 @@ import ApiMetrics from './pages/ApiMetrics'
 import ModalTest from './components/ModalTest'
 import Dashboard from './pages/Dashboard'
 import CreateBroker from './pages/CreateBroker'
+import BrokerBills from './pages/BrokerBills'
+import SettlementWeeks from './pages/SettlementWeeks'
 import { MODULES, PERMISSIONS } from './utils/permissions'
 
 
@@ -42,10 +44,11 @@ const AccessDenied = ({ title }: { title: string }) => {
 }
 
 const ModuleRoute = ({ module, title, children }: { module: string; title: string; children: React.ReactNode }) => {
-    const { isLoading } = usePermissions()
-    // While /api/auth/me is in-flight show a spinner so we never flash
-    // "Access Denied" before fresh permissions have arrived.
-    if (isLoading) {
+    const { isLoading, user } = usePermissions()
+    // Only show the full-page spinner on the very first permissions load.
+    // After we have a user, subsequent background refetches keep the page
+    // (including its header) mounted so navigation feels seamless.
+    if (isLoading && !user) {
         return (
             <div className="flex min-h-[60vh] items-center justify-center">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
@@ -92,6 +95,8 @@ function App() {
                                         <Route path="/settings" element={<ModuleRoute module={MODULES.PROFILE} title="Settings"><Settings /></ModuleRoute>} />
                                         <Route path="/modal-test" element={<ModalTest />} />
                                         <Route path="/create-broker" element={<PermissionGate permission={PERMISSIONS.BROKERS_CREATE} fallback={<AccessDenied title="Create Broker" />}><CreateBroker /></PermissionGate>} />
+                                        <Route path="/brokers/:brokerId/bills" element={<ModuleRoute module={MODULES.BROKERS} title="Bills"><BrokerBills /></ModuleRoute>} />
+                                        <Route path="/settlement-weeks" element={<ModuleRoute module={MODULES.SETTLEMENT_WEEKS} title="Settlement Weeks"><SettlementWeeks /></ModuleRoute>} />
                                     </Routes>
                                 </motion.div>
                             </Layout>

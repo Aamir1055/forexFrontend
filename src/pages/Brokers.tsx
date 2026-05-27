@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { createPortal } from 'react-dom'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -17,6 +18,7 @@ import { MODULES } from '../utils/permissions'
 import PageHeaderShell from '../components/layout/PageHeaderShell'
 
 const Brokers: React.FC = () => {
+  const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isGlobalSyncModalOpen, setIsGlobalSyncModalOpen] = useState(false)
@@ -683,6 +685,7 @@ const Brokers: React.FC = () => {
             onEdit={handleEditBroker}
             onDelete={handleDeleteBroker}
             onToggleStatus={handleToggleStatus}
+            onViewBills={(broker) => navigate(`/brokers/${broker.id}/bills`)}
             onSort={handleSort}
             currentSort={{
               field: clientSideSort.field || filters.sort_by || 'created_at',

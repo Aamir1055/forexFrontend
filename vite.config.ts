@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
         ignored: ['**/.git/**', '**/node_modules/**']
       },
       proxy: {
-        '/api': {
+        '^/api/.*': {
           target: 'https://api.brokereye.app',
           changeOrigin: true,
           secure: false,

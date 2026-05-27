@@ -10,6 +10,7 @@ import {
   ChartBarIcon,
   UserGroupIcon,
   Squares2X2Icon,
+  CalendarDaysIcon,
 } from '@heroicons/react/24/outline'
 import {
   ShieldCheckIcon,
@@ -44,6 +45,7 @@ const allNavigation: NavigationItem[] = [
   { name: 'Roles', href: '/roles', icon: ShieldCheckIcon, module: MODULES.ROLES },
   { name: 'Brokers', href: '/brokers', icon: BuildingOfficeIcon, module: MODULES.BROKERS },
   { name: 'Broker Profiles', href: '/broker-profiles', icon: IdentificationIcon, module: MODULES.BROKER_PROFILES },
+  { name: 'Settlements', href: '/settlement-weeks', icon: CalendarDaysIcon, module: MODULES.SETTLEMENT_WEEKS },
   // { name: 'Groups', href: '/groups', icon: Layers, module: MODULES.GROUPS },
   { name: 'Rules', href: '/rules', icon: AdjustmentsHorizontalIcon, module: MODULES.RULES },
   { name: 'Audit Logs', href: '/audit-logs', icon: ClipboardDocumentListIcon, module: MODULES.AUDIT_LOGS },
