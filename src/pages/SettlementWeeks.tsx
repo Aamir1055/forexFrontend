@@ -462,7 +462,7 @@ const SettlementWeeks: React.FC = () => {
 
   // Only show optional columns when at least one row actually has that field
   const hasWeekNumber = useMemo(
-    () => weeks.some((w) => w.week_number != null && w.week_number !== ''),
+    () => weeks.some((w) => w.week_number != null),
     [weeks]
   )
   const hasStatus = useMemo(
@@ -731,7 +731,7 @@ const SettlementWeeks: React.FC = () => {
                         </td>
                         {hasWeekNumber && (
                           <td className="px-4 py-3 text-center">
-                            {w.week_number != null && w.week_number !== '' ? (
+                            {w.week_number != null ? (
                               <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
                                 {w.week_number}
                               </span>

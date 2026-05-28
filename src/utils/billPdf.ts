@@ -55,6 +55,7 @@ const BUY_BG: [number, number, number] = [217, 234, 211]
 const SELL_BG: [number, number, number] = [234, 209, 220]
 const BORDER: [number, number, number] = [180, 180, 180]
 const RED: [number, number, number] = [192, 0, 0]
+const GREEN: [number, number, number] = [21, 128, 61]
 const TEXT: [number, number, number] = [20, 20, 20]
 
 // ─── Helpers ───────────────────────────────────────────────────────
@@ -244,18 +245,26 @@ const renderSymbolBlock = (
     { content: fmt(sym.TotalSellPnL), styles: { fontStyle: 'bold' } },
   ])
 
-  // Footer summary rows
+  // Footer summary rows — green on profit, red on loss/zero
   const gross = Number(sym.TotalGrossAmount ?? 0)
   const net = Number(sym.TotalNetAmount ?? 0)
   const brokerage = Number(sym.TotalBrokerage ?? 0)
-  const grossStatus = gross === 0 ? '-' : gross >= 0 ? 'Profit' : 'Loss'
-  const netStatus = net === 0 ? '-' : net >= 0 ? 'Profit' : 'Loss'
+  const grossStatus = gross === 0 ? '-' : gross > 0 ? 'Profit' : 'Loss'
+  const netStatus = net === 0 ? '-' : net > 0 ? 'Profit' : 'Loss'
   const redStyle = { textColor: RED as any, fontStyle: 'bold' as const }
+  const grossRowStyle = {
+    textColor: (gross > 0 ? GREEN : RED) as any,
+    fontStyle: 'bold' as const,
+  }
+  const netRowStyle = {
+    textColor: (net > 0 ? GREEN : RED) as any,
+    fontStyle: 'bold' as const,
+  }
 
   body.push([
-    { content: 'Total Gross Amount', colSpan: 8, styles: { ...redStyle, halign: 'center' } },
-    { content: grossStatus, styles: { ...redStyle, halign: 'center' } },
-    { content: fmt(gross), styles: { ...redStyle, halign: 'right' } },
+    { content: 'Total Gross Amount', colSpan: 8, styles: { ...grossRowStyle, halign: 'center' } },
+    { content: grossStatus, styles: { ...grossRowStyle, halign: 'center' } },
+    { content: fmt(gross), styles: { ...grossRowStyle, halign: 'right' } },
   ])
   body.push([
     { content: 'Total Brokrage', colSpan: 8, styles: { ...redStyle, halign: 'center' } },
@@ -263,9 +272,9 @@ const renderSymbolBlock = (
     { content: fmt(brokerage), styles: { ...redStyle, halign: 'right' } },
   ])
   body.push([
-    { content: 'Total Net Amount', colSpan: 8, styles: { ...redStyle, halign: 'center' } },
-    { content: netStatus, styles: { ...redStyle, halign: 'center' } },
-    { content: fmt(net), styles: { ...redStyle, halign: 'right' } },
+    { content: 'Total Net Amount', colSpan: 8, styles: { ...netRowStyle, halign: 'center' } },
+    { content: netStatus, styles: { ...netRowStyle, halign: 'center' } },
+    { content: fmt(net), styles: { ...netRowStyle, halign: 'right' } },
   ])
 
   const colW = contentWidth / 10
